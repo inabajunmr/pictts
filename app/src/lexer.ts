@@ -58,8 +58,9 @@ export class Lexer {
             if (this.lastChar()) {
                 break;
             }
-            this.nextChar(); // 次が
+            this.nextChar();
         }
+        this.index--;
 
         return result;
     }
@@ -71,6 +72,7 @@ export class Lexer {
             case ',':
             case '\n':
             case '\r':
+            case '':
                 return true;
             default:
                 return false;
