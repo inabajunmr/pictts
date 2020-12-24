@@ -65,7 +65,7 @@ export class Lexer {
     }
 
     private isEOF(): boolean {
-        return this.index === this.now.length;
+        return this.index === this.input.length;
     }
 
     private readString(): string {
@@ -74,11 +74,11 @@ export class Lexer {
         while (!this.endString()) {
             result += this.now;
             if (this.lastChar()) {
-                break;
+                return result;
             }
             this.nextChar();
         }
-        this.index--; // TODO
+        this.index--;
 
         return result;
     }

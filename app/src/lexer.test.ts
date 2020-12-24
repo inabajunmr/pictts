@@ -1,7 +1,7 @@
 import * as Token from './token';
 import { Lexer } from './lexer';
 
-test('colon and eof token', () => {
+test('colon token', () => {
     const sut = new Lexer(':');
     const actual = sut.tokens();
     expect(actual[0]).toBe(Token.ColonToken.TOKEN);
@@ -9,13 +9,17 @@ test('colon and eof token', () => {
 });
 
 test('comma token', () => {
-    expect(new Lexer(',').tokens()[0]).toBe(Token.CommaToken.TOKEN);
+    const sut = new Lexer(',');
+    const actual = sut.tokens();
+    expect(actual[0]).toBe(Token.CommaToken.TOKEN);
+    expect(actual[1]).toStrictEqual(new Token.EOFToken());
 });
 
 test('ident token', () => {
-    expect(new Lexer('AAA').tokens()[0]).toStrictEqual(
-        new Token.IdentToken('AAA')
-    );
+    const sut = new Lexer('AAA');
+    const actual = sut.tokens();
+    expect(actual[0]).toStrictEqual(new Token.IdentToken('AAA'));
+    expect(actual[1]).toStrictEqual(new Token.EOFToken());
 });
 
 test('parameter line', () => {
