@@ -18,7 +18,9 @@ test('ident token', () => {
 });
 
 test('parameter line', () => {
-    const sut = new Lexer('ABC X : one,two, three ');
+    const sut = new Lexer(
+        'ABC X : one,two, three \r\n C C:a,b\r\n\r\n  \r\n  選択肢:甲,乙\r\n'
+    );
     expect(sut.nextToken()).toStrictEqual(new Token.IdentToken('ABC X'));
     expect(sut.nextToken()).toStrictEqual(Token.ColonToken.TOKEN);
     expect(sut.nextToken()).toStrictEqual(new Token.IdentToken('one'));
@@ -26,6 +28,19 @@ test('parameter line', () => {
     expect(sut.nextToken()).toStrictEqual(new Token.IdentToken('two'));
     expect(sut.nextToken()).toStrictEqual(Token.CommaToken.TOKEN);
     expect(sut.nextToken()).toStrictEqual(new Token.IdentToken('three'));
+    expect(sut.nextToken()).toStrictEqual(Token.ReturnToken.TOKEN);
+    expect(sut.nextToken()).toStrictEqual(new Token.IdentToken('C C'));
+    expect(sut.nextToken()).toStrictEqual(Token.ColonToken.TOKEN);
+    expect(sut.nextToken()).toStrictEqual(new Token.IdentToken('a'));
+    expect(sut.nextToken()).toStrictEqual(Token.CommaToken.TOKEN);
+    expect(sut.nextToken()).toStrictEqual(new Token.IdentToken('b'));
+    expect(sut.nextToken()).toStrictEqual(Token.ReturnToken.TOKEN);
+    expect(sut.nextToken()).toStrictEqual(new Token.IdentToken('選択肢'));
+    expect(sut.nextToken()).toStrictEqual(Token.ColonToken.TOKEN);
+    expect(sut.nextToken()).toStrictEqual(new Token.IdentToken('甲'));
+    expect(sut.nextToken()).toStrictEqual(Token.CommaToken.TOKEN);
+    expect(sut.nextToken()).toStrictEqual(new Token.IdentToken('乙'));
+    expect(sut.nextToken()).toStrictEqual(Token.ReturnToken.TOKEN);
 });
 
 // private
@@ -52,7 +67,7 @@ test('readString', () => {
 });
 
 test('skipWhitespace', () => {
-    const sut: any = new Lexer(' \r \n abc:');
+    const sut: any = new Lexer('   abc:');
     sut.skipWhitespace();
     expect(sut.readString()).toBe('abc');
 });

@@ -21,6 +21,10 @@ export class Lexer {
                     return T.ColonToken.TOKEN;
                 case ',':
                     return T.CommaToken.TOKEN;
+                case '\r':
+                case '\n':
+                    this.skipReturnAndWhitespace();
+                    return T.ReturnToken.TOKEN;
                 default: {
                     return new T.IdentToken(this.readString());
                 }
@@ -37,6 +41,10 @@ export class Lexer {
 
     private nextChar() {
         this.now = this.input.charAt(++this.index);
+    }
+
+    private peekChar(): string {
+        return this.input.charAt(this.index + 1);
     }
 
     private lastChar(): boolean {
@@ -92,7 +100,17 @@ export class Lexer {
     }
 
     private skipWhitespace() {
-        while (this.now === ' ' || this.now === '\n' || this.now === '\r') {
+        while (this.now === ' ') {
+            this.nextChar();
+        }
+    }
+
+    private skipReturnAndWhitespace() {
+        while (
+            this.peekChar() === '\r' ||
+            this.peekChar() === '\n' ||
+            this.peekChar() === ' '
+        ) {
             this.nextChar();
         }
     }
