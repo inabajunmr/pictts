@@ -45,8 +45,10 @@ test('lastChar', () => {
 test('readString', () => {
     const sut1: any = new Lexer('abc:');
     expect(sut1.readString()).toBe('abc');
-    const sut2: any = new Lexer('abc');
+    const sut2: any = new Lexer('abc :');
     expect(sut2.readString()).toBe('abc');
+    const sut3: any = new Lexer('abc');
+    expect(sut3.readString()).toBe('abc');
 });
 
 test('skipWhitespace', () => {

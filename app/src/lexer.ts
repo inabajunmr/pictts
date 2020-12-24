@@ -21,8 +21,9 @@ export class Lexer {
                     return T.ColonToken.TOKEN;
                 case ',':
                     return T.CommaToken.TOKEN;
-                default:
+                default: {
                     return new T.IdentToken(this.readString());
+                }
             }
         } finally {
             if (this.lastChar()) {
@@ -51,18 +52,21 @@ export class Lexer {
 
     private readString(): string {
         let result = '';
+
         while (!this.endString()) {
             result += this.now;
             if (this.lastChar()) {
                 break;
             }
-            this.nextChar();
+            this.nextChar(); // 次が
         }
+
         return result;
     }
 
     private endString(): boolean {
-        switch (this.now) {
+        const next = this.nextWithoutSpace();
+        switch (next) {
             case ':':
             case ',':
             case '\n':
@@ -71,6 +75,18 @@ export class Lexer {
             default:
                 return false;
         }
+    }
+
+    private nextWithoutSpace(): string {
+        let next = this.now;
+        let index = this.index;
+        while (next === ' ') {
+            if (this.now.length == index) {
+                return '';
+            }
+            next = this.input.charAt(++index);
+        }
+        return next;
     }
 
     private skipWhitespace() {
