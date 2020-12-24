@@ -1,46 +1,53 @@
 import * as Token from './token';
 import { Lexer } from './lexer';
 
-test('colon and eof token', () => {
+test('colon token', () => {
     const sut = new Lexer(':');
-    expect(sut.nextToken()).toBe(Token.ColonToken.TOKEN);
-    expect(sut.nextToken()).toStrictEqual(new Token.EOFToken());
+    const actual = sut.tokens();
+    expect(actual[0]).toBe(Token.ColonToken.TOKEN);
+    expect(actual[1]).toStrictEqual(new Token.EOFToken());
 });
 
 test('comma token', () => {
-    expect(new Lexer(',').nextToken()).toBe(Token.CommaToken.TOKEN);
+    const sut = new Lexer(',');
+    const actual = sut.tokens();
+    expect(actual[0]).toBe(Token.CommaToken.TOKEN);
+    expect(actual[1]).toStrictEqual(new Token.EOFToken());
 });
 
 test('ident token', () => {
-    expect(new Lexer('AAA').nextToken()).toStrictEqual(
-        new Token.IdentToken('AAA')
-    );
+    const sut = new Lexer('AAA');
+    const actual = sut.tokens();
+    expect(actual[0]).toStrictEqual(new Token.IdentToken('AAA'));
+    expect(actual[1]).toStrictEqual(new Token.EOFToken());
 });
 
 test('parameter line', () => {
     const sut = new Lexer(
         'ABC X : one,two, three \r\n C C:a,b\r\n\r\n  \r\n  選択肢:甲,乙\r\n'
     );
-    expect(sut.nextToken()).toStrictEqual(new Token.IdentToken('ABC X'));
-    expect(sut.nextToken()).toStrictEqual(Token.ColonToken.TOKEN);
-    expect(sut.nextToken()).toStrictEqual(new Token.IdentToken('one'));
-    expect(sut.nextToken()).toStrictEqual(Token.CommaToken.TOKEN);
-    expect(sut.nextToken()).toStrictEqual(new Token.IdentToken('two'));
-    expect(sut.nextToken()).toStrictEqual(Token.CommaToken.TOKEN);
-    expect(sut.nextToken()).toStrictEqual(new Token.IdentToken('three'));
-    expect(sut.nextToken()).toStrictEqual(Token.ReturnToken.TOKEN);
-    expect(sut.nextToken()).toStrictEqual(new Token.IdentToken('C C'));
-    expect(sut.nextToken()).toStrictEqual(Token.ColonToken.TOKEN);
-    expect(sut.nextToken()).toStrictEqual(new Token.IdentToken('a'));
-    expect(sut.nextToken()).toStrictEqual(Token.CommaToken.TOKEN);
-    expect(sut.nextToken()).toStrictEqual(new Token.IdentToken('b'));
-    expect(sut.nextToken()).toStrictEqual(Token.ReturnToken.TOKEN);
-    expect(sut.nextToken()).toStrictEqual(new Token.IdentToken('選択肢'));
-    expect(sut.nextToken()).toStrictEqual(Token.ColonToken.TOKEN);
-    expect(sut.nextToken()).toStrictEqual(new Token.IdentToken('甲'));
-    expect(sut.nextToken()).toStrictEqual(Token.CommaToken.TOKEN);
-    expect(sut.nextToken()).toStrictEqual(new Token.IdentToken('乙'));
-    expect(sut.nextToken()).toStrictEqual(Token.ReturnToken.TOKEN);
+    const actual = sut.tokens();
+    expect(actual[0]).toStrictEqual(new Token.IdentToken('ABC X'));
+    expect(actual[1]).toStrictEqual(Token.ColonToken.TOKEN);
+    expect(actual[2]).toStrictEqual(new Token.IdentToken('one'));
+    expect(actual[3]).toStrictEqual(Token.CommaToken.TOKEN);
+    expect(actual[4]).toStrictEqual(new Token.IdentToken('two'));
+    expect(actual[5]).toStrictEqual(Token.CommaToken.TOKEN);
+    expect(actual[6]).toStrictEqual(new Token.IdentToken('three'));
+    expect(actual[7]).toStrictEqual(Token.ReturnToken.TOKEN);
+    expect(actual[8]).toStrictEqual(new Token.IdentToken('C C'));
+    expect(actual[9]).toStrictEqual(Token.ColonToken.TOKEN);
+    expect(actual[10]).toStrictEqual(new Token.IdentToken('a'));
+    expect(actual[11]).toStrictEqual(Token.CommaToken.TOKEN);
+    expect(actual[12]).toStrictEqual(new Token.IdentToken('b'));
+    expect(actual[13]).toStrictEqual(Token.ReturnToken.TOKEN);
+    expect(actual[14]).toStrictEqual(new Token.IdentToken('選択肢'));
+    expect(actual[15]).toStrictEqual(Token.ColonToken.TOKEN);
+    expect(actual[16]).toStrictEqual(new Token.IdentToken('甲'));
+    expect(actual[17]).toStrictEqual(Token.CommaToken.TOKEN);
+    expect(actual[18]).toStrictEqual(new Token.IdentToken('乙'));
+    expect(actual[19]).toStrictEqual(Token.ReturnToken.TOKEN);
+    expect(actual[20]).toStrictEqual(new Token.EOFToken());
 });
 
 // private
