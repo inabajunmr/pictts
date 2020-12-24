@@ -47,6 +47,7 @@ test('parameter line', () => {
     expect(actual[17]).toStrictEqual(Token.CommaToken.TOKEN);
     expect(actual[18]).toStrictEqual(new Token.IdentToken('乙'));
     expect(actual[19]).toStrictEqual(Token.ReturnToken.TOKEN);
+    expect(actual[20]).toStrictEqual(new Token.EOFToken());
 });
 
 // private
