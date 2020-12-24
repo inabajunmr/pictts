@@ -9,7 +9,17 @@ export class Lexer {
         this.now = input.charAt(0);
     }
 
-    nextToken(): T.Token {
+    tokens(): Array<T.Token> {
+        let t = T.ReturnToken.TOKEN;
+        const r = new Array<T.Token>();
+        while (t instanceof T.EOFToken == false) {
+            t = this.nextToken();
+            r.push(t);
+        }
+        return r;
+    }
+
+    private nextToken(): T.Token {
         this.skipWhitespace();
         if (this.isEOF()) {
             return new T.EOFToken();
@@ -68,7 +78,7 @@ export class Lexer {
             }
             this.nextChar();
         }
-        this.index--;
+        this.index--; // TODO
 
         return result;
     }
