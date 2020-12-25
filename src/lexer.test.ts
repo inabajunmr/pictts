@@ -13,6 +13,7 @@ test('comma token', () => {
     const actual = sut.tokens();
     expect(actual[0]).toBe(Token.CommaToken.TOKEN);
     expect(actual[1]).toStrictEqual(new Token.EOFToken());
+    expect(actual.length).toBe(2);
 });
 
 test('ident token', () => {
@@ -20,6 +21,7 @@ test('ident token', () => {
     const actual = sut.tokens();
     expect(actual[0]).toStrictEqual(new Token.IdentToken('AAA'));
     expect(actual[1]).toStrictEqual(new Token.EOFToken());
+    expect(actual.length).toBe(2);
 });
 
 test('parameter line', () => {
@@ -48,6 +50,7 @@ test('parameter line', () => {
     expect(actual[18]).toStrictEqual(new Token.IdentToken('乙'));
     expect(actual[19]).toStrictEqual(Token.ReturnToken.TOKEN);
     expect(actual[20]).toStrictEqual(new Token.EOFToken());
+    expect(actual.length).toBe(21);
 });
 
 // private

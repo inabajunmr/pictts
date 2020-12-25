@@ -2,16 +2,16 @@ import { Token } from './token';
 
 import * as T from './token';
 import { Lexer } from './lexer';
-import { SentenceParser, Sentence } from './sentenceParser';
+import * as S from './sentenceParser';
 
 class Parser {
-    private sentences: SentenceParser;
+    private sentences: S.SentenceParser;
     constructor(input: string) {
-        this.sentences = new SentenceParser(input);
+        this.sentences = new S.SentenceParser(input);
     }
 
     parse(): Pict {
-        let s: [Sentence, boolean] = [new Sentence('parameters', []), false];
+        let s: [S.Sentence, boolean] = [new S.ParametersSentence([]), false];
         do {
             s = this.sentences.nextSentence();
         } while (s[1]);
