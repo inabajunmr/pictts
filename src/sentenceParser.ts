@@ -75,8 +75,7 @@ export class ParametersSentence extends Sentence {
             return first.literal;
         }
         throw new E.ParseException(
-            'parameters sentence first token requires identifier. but:' +
-                first.constructor.name
+            'parameters sentence first token requires identifier. but:' + first
         );
     }
     private static getParameters(tokens: Array<T.Token>): Array<string> {

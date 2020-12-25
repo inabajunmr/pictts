@@ -1,24 +1,24 @@
-import { Token } from './token';
-
-import * as T from './token';
-import { Lexer } from './lexer';
 import * as S from './sentenceParser';
+import { Pict } from './evaluator';
 
-class Parser {
+export class Parser {
     private sentences: S.SentenceParser;
     constructor(input: string) {
         this.sentences = new S.SentenceParser(input);
     }
 
     parse(): Pict {
-        let s: [S.Sentence, boolean] = [new S.ParametersSentence([]), false];
+        let eof = false;
+        const result = new Map<string, Array<string>>();
         do {
-            s = this.sentences.nextSentence();
-        } while (s[1]);
+            const s = this.sentences.nextSentence();
+            eof = s[1];
+            const sentence = s[0];
+            if (sentence instanceof S.ParametersSentence) {
+                result.set(sentence.key, sentence.parameters);
+            }
+        } while (!eof);
 
-        return new Pict();
+        return new Pict(result);
     }
-}
-class Pict {
-    private readonly parameters = new Map<string, Array<string>>();
 }
