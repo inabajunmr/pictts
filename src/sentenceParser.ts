@@ -33,7 +33,7 @@ export class SentenceParser {
         if (type === undefined) {
             throw new E.ParseException('Sentence type is undefined');
         }
-        return [new Sentence(type, results), eof];
+        return [new ParametersSentence(results), eof];
     }
 
     private isEOF(): boolean {
@@ -52,12 +52,40 @@ export class SentenceParser {
 
 type SentenceType = 'parameters' | 'constraint';
 
-class Sentence {
+export abstract class Sentence {
     readonly tokens: Array<T.Token>;
-    readonly type: SentenceType;
 
-    constructor(type: SentenceType, tokens: Array<T.Token>) {
+    constructor(tokens: Array<T.Token>) {
         this.tokens = tokens;
-        this.type = type;
+    }
+}
+
+export class ParametersSentence extends Sentence {
+    readonly key: string;
+    readonly parameters: Array<string>;
+    constructor(tokens: Array<T.Token>) {
+        super(tokens);
+        this.key = ParametersSentence.getKey(tokens);
+        this.parameters = ParametersSentence.getParameters(tokens);
+    }
+
+    private static getKey(tokens: Array<T.Token>): string {
+        const first = tokens[0];
+        if (first instanceof T.IdentToken) {
+            return first.literal;
+        }
+        throw new E.ParseException(
+            'parameters sentence first token requires identifier. but:' +
+                first.constructor.name
+        );
+    }
+    private static getParameters(tokens: Array<T.Token>): Array<string> {
+        const parameters = new Array<string>();
+        tokens.slice(2).forEach((t) => {
+            if (t instanceof T.IdentToken) {
+                parameters.push(t.literal);
+            }
+        });
+        return parameters;
     }
 }
