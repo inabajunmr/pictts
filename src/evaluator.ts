@@ -6,7 +6,7 @@ export class Pict {
 
     private allSlotCombination(factorCount: number) {
         const keyCombinations = this.allFactorCombination(factorCount);
-        keyCombinations.map((c) => this.allSlot(c)); // TODO
+        const a = keyCombinations.map((c) => this.allSlot(c)); // TODO
         // キーの組み合わせに対して全パターンの組み合わせを作る
         // keyCはa,b,cで2であれば[a,b][a,c][b,c]
         // a=[a1,a2] b=[b1,b2] c=[c1,c2]であれば[a,b]=[[a1,b1],[a1,b2],[a2,b2]]
@@ -14,13 +14,21 @@ export class Pict {
         return;
     }
 
-    private allSlot(keys: string[]) {
-        const result = new Array<Array<string>>();
+    /**
+     * All combination by multiple params.
+     *
+     * Ex. Values is `{'A':['a','b','c'], 'X':['x','y','z'], 'N':['1','2','3']}` and keys is ['A', 'B'],
+     * return [['a','x'],['a','y'],['a','z'],['b','x'],['b','y'],['b','z'],['c','x'],['c','y'],['c','z']]
+     * @param keys
+     */
+    private allSlot(keys: string[]): string[][] {
+        const result = new Array<Array<string>>(); // TODO KVのクラスにまとめないとkeyがわからん
 
         const a = keys.map((k) => {
             return this.parameters.get(k) as string[];
         });
         this.iAllSlot(a, 0, [], result);
+        return result;
     }
 
     private iAllSlot(
@@ -40,6 +48,12 @@ export class Pict {
         });
     }
 
+    /**
+     * Return All factor combination.
+     *
+     * ex. Keys is `['a','b','c']` and factorCount is 2, return `[['a','b'],['a','c'],['b','c']]`.
+     * @param factorCount
+     */
     private allFactorCombination(factorCount: number): string[][] {
         const parray = new Array<string>();
         for (const key in this.parameters.keys) {
