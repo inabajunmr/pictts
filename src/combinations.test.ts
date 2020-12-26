@@ -29,18 +29,15 @@ test('allCombinationsByMultipleArray', () => {
     map.set('X', ['x', 'y', 'z']);
     map.set('N', ['1', '2', '3']);
 
-    const actual = allCombinationsByMultipleArray(['A', 'X', 'N'], map);
-    expect(actual[0].values).toStrictEqual(['a', 'x']);
-    expect(actual[1].values).toStrictEqual(['a', 'y']);
-    expect(actual[2].values).toStrictEqual(['a', 'z']);
-    expect(actual[3].values).toStrictEqual(['b', 'x']);
-    expect(actual[4].values).toStrictEqual(['b', 'y']);
-    expect(actual[5].values).toStrictEqual(['b', 'z']);
-    expect(actual[6].values).toStrictEqual(['c', 'x']);
-    expect(actual[7].values).toStrictEqual(['c', 'y']);
-    expect(actual[8].values).toStrictEqual(['c', 'z']);
-
-    actual.forEach((v) => {
-        expect(v.keys).toStrictEqual(['A', 'X']);
-    });
+    const actual = allCombinationsByMultipleArray(['A', 'X'], map);
+    expect(actual.keys).toStrictEqual(['A', 'X']);
+    expect(actual.allCombinations[0]).toStrictEqual(['a', 'x']);
+    expect(actual.allCombinations[1]).toStrictEqual(['a', 'y']);
+    expect(actual.allCombinations[2]).toStrictEqual(['a', 'z']);
+    expect(actual.allCombinations[3]).toStrictEqual(['b', 'x']);
+    expect(actual.allCombinations[4]).toStrictEqual(['b', 'y']);
+    expect(actual.allCombinations[5]).toStrictEqual(['b', 'z']);
+    expect(actual.allCombinations[6]).toStrictEqual(['c', 'x']);
+    expect(actual.allCombinations[7]).toStrictEqual(['c', 'y']);
+    expect(actual.allCombinations[8]).toStrictEqual(['c', 'z']);
 });

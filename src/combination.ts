@@ -8,33 +8,31 @@
 export function allCombinationsByMultipleArray(
     keys: string[],
     kvs: Map<string, string[]>
-): Combination[] {
-    const result = new Array<Combination>();
+): Combination {
+    const result = new Combination(keys);
 
     // ex.[['a','b','c'],['x','y','z']]
     const params = keys.map((k) => {
         return kvs.get(k) as string[];
     });
-    iCombinationsByMultipleArray(params, keys, 0, new Combination(), result);
+    iCombinationsByMultipleArray(params, 0, [], result);
     return result;
 }
 
 function iCombinationsByMultipleArray(
     parameters: string[][],
-    keys: string[],
     depth: number,
-    tmp: Combination,
-    result: Combination[]
+    tmp: string[],
+    result: Combination
 ) {
     if (depth == parameters.length) {
-        result.push(tmp.clone());
-        // tmp.clear();
+        result.allCombinations.push(Array.from(tmp));
         return;
     }
 
     parameters[depth].forEach((p) => {
-        tmp.put(depth, keys[depth], p);
-        iCombinationsByMultipleArray(parameters, keys, depth + 1, tmp, result);
+        tmp[depth] = p;
+        iCombinationsByMultipleArray(parameters, depth + 1, tmp, result);
     });
 }
 
@@ -79,26 +77,27 @@ function iCombinationsBySingleArray(
 
 class Combination {
     keys: string[];
-    values: string[];
-    constructor() {
-        this.keys = new Array<string>();
-        this.values = new Array<string>();
+    allCombinations: string[][];
+    constructor(keys: string[]) {
+        this.keys = keys;
+        this.allCombinations = [];
     }
 
     clone(): Combination {
-        const clone = new Combination();
-        clone.keys = Array.from(this.keys);
-        clone.values = Array.from(this.values);
+        const clone = new Combination(this.keys);
+        clone.allCombinations = Array.from(this.allCombinations);
         return clone;
     }
 
     clear() {
         this.keys = [];
-        this.values = [];
+        this.allCombinations = [];
     }
 
-    put(index: number, key: string, value: string) {
-        this.keys[index] = key;
-        this.values[index] = value;
+    put(index: number, value: string) {
+        if (this.allCombinations[index] === undefined) {
+            this.allCombinations[index] = [];
+        }
+        this.allCombinations[index].push(value);
     }
 }
