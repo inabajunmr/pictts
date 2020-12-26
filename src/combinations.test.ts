@@ -28,7 +28,8 @@ test('allCombinationsByMultipleArray', () => {
     map.set('A', ['a', 'b', 'c']);
     map.set('X', ['x', 'y', 'z']);
     map.set('N', ['1', '2', '3']);
-    const actual = allCombinationsByMultipleArray(['A', 'X'], map);
+
+    const actual = allCombinationsByMultipleArray(['A', 'X', 'N'], map);
     expect(actual[0].values).toStrictEqual(['a', 'x']);
     expect(actual[1].values).toStrictEqual(['a', 'y']);
     expect(actual[2].values).toStrictEqual(['a', 'z']);
