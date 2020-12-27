@@ -27,6 +27,9 @@ export class Pict {
             const exceptKeys = result.nowKey();
             const longest = C.longestCombination(exceptKeys, allCombinations);
             if (longest.allCombinations.length === 0) {
+                // TODO longestが0だけど他の項目が残っているケースがある
+                // 全部0じゃないとbreakしちゃだめ
+                // Combinationsに完了フラグつける & nextSlotで1でとっといて全部完了フラグたってたらbreak
                 a = false;
                 break;
             }
