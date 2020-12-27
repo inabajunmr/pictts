@@ -1,6 +1,8 @@
 import {
     combinationsBySingleArray,
     allCombinationsByMultipleArray,
+    longestCombination,
+    Combinations,
 } from './combination';
 
 test('combinationsBySingleArray 2factors', () => {
@@ -40,4 +42,27 @@ test('allCombinationsByMultipleArray', () => {
     expect(actual.allCombinations[6]).toStrictEqual(['c', 'x']);
     expect(actual.allCombinations[7]).toStrictEqual(['c', 'y']);
     expect(actual.allCombinations[8]).toStrictEqual(['c', 'z']);
+});
+
+test('longestCombination no exceptkeys', () => {
+    const c = new Combinations(['A', 'N']);
+    c.allCombinations.push(['a', '1']);
+    const actual = longestCombination([], [c]);
+    expect(actual.keys).toStrictEqual(c.keys);
+    expect(actual.allCombinations).toStrictEqual(c.allCombinations);
+});
+
+test('longestCombination exceptKeys', () => {
+    const c1 = new Combinations(['A', 'B']); // longest but except
+    c1.allCombinations.push(['a', 'b']);
+    c1.allCombinations.push(['a', 'b']);
+    c1.allCombinations.push(['a', 'b']);
+    const c2 = new Combinations(['A', 'C']); // longest
+    c2.allCombinations.push(['a', 'c']);
+    c2.allCombinations.push(['a', 'c']);
+    const c3 = new Combinations(['B', 'C']);
+    c3.allCombinations.push(['b', 'c']);
+    const actual = longestCombination(['A', 'B'], [c1, c2, c3]);
+    expect(actual.keys).toStrictEqual(c2.keys);
+    expect(actual.allCombinations).toStrictEqual(c2.allCombinations);
 });

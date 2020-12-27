@@ -8,8 +8,8 @@
 export function allCombinationsByMultipleArray(
     keys: string[],
     kvs: Map<string, string[]>
-): Combination {
-    const result = new Combination(keys);
+): Combinations {
+    const result = new Combinations(keys);
 
     // ex.[['a','b','c'],['x','y','z']]
     const params = keys.map((k) => {
@@ -23,7 +23,7 @@ function iCombinationsByMultipleArray(
     parameters: string[][],
     depth: number,
     tmp: string[],
-    result: Combination
+    result: Combinations
 ) {
     if (depth == parameters.length) {
         result.allCombinations.push(Array.from(tmp));
@@ -75,7 +75,29 @@ function iCombinationsBySingleArray(
     });
 }
 
-class Combination {
+/**
+ * Get longest size combinations.
+ *
+ * If combinations.keys and exceptKeys are same, it will skipped.
+ */
+export function longestCombination(
+    exceptKeys: string[],
+    cs: Combinations[]
+): Combinations {
+    let excepted = cs;
+    if (exceptKeys.length !== 0) {
+        excepted = cs.filter((c) => {
+            const result = c.keys.filter((k) => exceptKeys.indexOf(k) === -1)
+                .length;
+            return result !== 0;
+        });
+    }
+
+    return excepted.reduce((b, a) => {
+        return b.allCombinations.length >= a.allCombinations.length ? b : a;
+    });
+}
+export class Combinations {
     keys: string[];
     allCombinations: string[][];
     constructor(keys: string[]) {
@@ -83,21 +105,9 @@ class Combination {
         this.allCombinations = [];
     }
 
-    clone(): Combination {
-        const clone = new Combination(this.keys);
+    clone(): Combinations {
+        const clone = new Combinations(this.keys);
         clone.allCombinations = Array.from(this.allCombinations);
         return clone;
-    }
-
-    clear() {
-        this.keys = [];
-        this.allCombinations = [];
-    }
-
-    put(index: number, value: string) {
-        if (this.allCombinations[index] === undefined) {
-            this.allCombinations[index] = [];
-        }
-        this.allCombinations[index].push(value);
     }
 }
