@@ -1,12 +1,13 @@
 import * as T from './token';
 import * as E from './exception';
 import { Lexer } from './lexer';
+import { Key, Value } from './keyvalue';
 
 /**
  * Divide each sentence from token array.
  */
 export class SentenceParser {
-    private readonly tokens: Array<T.Token>;
+    private readonly tokens: T.Token[];
     private index = 0;
 
     constructor(input: string) {
@@ -20,7 +21,7 @@ export class SentenceParser {
      */
     nextSentence(): [Sentence, boolean] {
         let type: SentenceType | undefined = undefined;
-        const results = new Array<T.Token>();
+        const results: T.Token[] = [];
         let eof = false;
         for (; this.index < this.tokens.length; this.index++) {
             if (
@@ -61,37 +62,37 @@ export class SentenceParser {
 type SentenceType = 'parameters' | 'constraint';
 
 export abstract class Sentence {
-    readonly tokens: Array<T.Token>;
+    readonly tokens: T.Token[];
 
-    constructor(tokens: Array<T.Token>) {
+    constructor(tokens: T.Token[]) {
         this.tokens = tokens;
     }
 }
 
 export class ParametersSentence extends Sentence {
-    readonly key: string;
-    readonly parameters: Array<string>;
-    constructor(tokens: Array<T.Token>) {
+    readonly key: Key;
+    readonly parameters: Value[];
+    constructor(tokens: T.Token[]) {
         super(tokens);
         this.key = ParametersSentence.getKey(tokens);
         this.parameters = ParametersSentence.getParameters(tokens);
     }
 
-    private static getKey(tokens: Array<T.Token>): string {
+    private static getKey(tokens: T.Token[]): Key {
         const first = tokens[0];
         if (first instanceof T.IdentToken) {
-            return first.literal;
+            return Key.of(first.literal);
         }
         throw new E.ParseException(
             'parameters sentence first token requires identifier. but:' + first
         );
     }
 
-    private static getParameters(tokens: Array<T.Token>): Array<string> {
-        const parameters = new Array<string>();
+    private static getParameters(tokens: T.Token[]): Value[] {
+        const parameters: Value[] = [];
         tokens.slice(2).forEach((t) => {
             if (t instanceof T.IdentToken) {
-                parameters.push(t.literal);
+                parameters.push(Value.of(t.literal));
             }
         });
         return parameters;

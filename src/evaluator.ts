@@ -1,8 +1,9 @@
 import * as C from './combination';
+import { Key, Value } from './keyvalue';
 export class Pict {
-    readonly parameters: Map<string, Array<string>>;
+    readonly parameters: Map<Key, Value[]>;
     factorCount = 2;
-    constructor(parameters: Map<string, Array<string>>) {
+    constructor(parameters: Map<Key, Value[]>) {
         this.parameters = parameters;
     }
 
@@ -15,7 +16,7 @@ export class Pict {
      * Create all test case
      */
     testCases(): PictResult {
-        const keys: string[] = [];
+        const keys: Key[] = [];
         this.parameters.forEach((_, k) => {
             keys.push(k);
         });
@@ -75,21 +76,18 @@ export class Pict {
      * @param combinations
      * @param line
      */
-    nextSlot(
-        combinations: C.Combinations,
-        line: Map<string, string>
-    ): string[] {
+    nextSlot(combinations: C.Combinations, line: Map<Key, Value>): Value[] {
         if (combinations.allCombinations.length === 1) {
             combinations.done = true;
             return combinations.allCombinations[0];
         }
 
         if (line.size === 0) {
-            const a = combinations.allCombinations.shift() as string[];
+            const a = combinations.allCombinations.shift() as Value[];
             return a;
         }
 
-        const alreadyExistedKeys: string[] = [];
+        const alreadyExistedKeys: Key[] = [];
         combinations.keys.forEach((k) => {
             const v = line.get(k);
             if (v !== undefined) {
@@ -148,10 +146,10 @@ export class Pict {
 }
 
 class PictResult {
-    private readonly keys: string[];
-    result = new Array<Map<string, string>>();
+    private readonly keys: Key[];
+    result = new Array<Map<Key, Value>>();
 
-    constructor(keys: string[]) {
+    constructor(keys: Key[]) {
         this.keys = keys;
     }
 
@@ -165,19 +163,19 @@ class PictResult {
         return line.size === this.keys.length;
     }
 
-    nowKey(): string[] {
+    nowKey(): Key[] {
         return Array.from(this.nowLine().keys());
     }
 
-    nowLine(): Map<string, string> {
+    nowLine(): Map<Key, Value> {
         if (this.newLine()) {
-            this.result.push(new Map<string, string>());
+            this.result.push(new Map<Key, Value>());
         }
 
         return this.result[this.result.length - 1];
     }
 
-    contains(keys: string[], values: string[]) {
+    contains(keys: Key[], values: Value[]) {
         return (
             this.result.filter((r) => {
                 let contains = true;
@@ -197,14 +195,14 @@ class PictResult {
     }
 
     toString(delimiter = ','): string {
-        let result = this.keys.join(delimiter) + '\n';
+        let result = this.keys.map((k) => k.key).join(delimiter) + '\n';
 
         this.result.forEach((c) => {
-            const array: string[] = [];
+            const array: Value[] = [];
             this.keys.forEach((k) => {
-                array.push(c.get(k) as string);
+                array.push(c.get(k) as Value);
             });
-            result += array.join(delimiter) + '\n';
+            result += array.map((v) => v.value).join(delimiter) + '\n';
         });
         return result;
     }

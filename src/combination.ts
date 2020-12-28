@@ -1,3 +1,5 @@
+import { Key, Value } from './keyvalue';
+
 /**
  * All combination by multiple params.
  *
@@ -6,23 +8,23 @@
  * @param keys
  */
 export function allCombinationsByMultipleArray(
-    keys: string[],
-    kvs: Map<string, string[]>
+    keys: Key[],
+    kvs: Map<Key, Value[]>
 ): Combinations {
     const result = new Combinations(keys);
 
     // ex.[['a','b','c'],['x','y','z']]
     const params = keys.map((k) => {
-        return kvs.get(k) as string[];
+        return kvs.get(k) as Value[];
     });
     iCombinationsByMultipleArray(params, 0, [], result);
     return result;
 }
 
 function iCombinationsByMultipleArray(
-    parameters: string[][],
+    parameters: Value[][],
     depth: number,
-    tmp: string[],
+    tmp: Value[],
     result: Combinations
 ) {
     if (depth == parameters.length) {
@@ -43,20 +45,20 @@ function iCombinationsByMultipleArray(
  * @param factorCount
  */
 export function combinationsBySingleArray(
-    array: string[],
+    array: Key[],
     factorCount: number
-): string[][] {
-    const result = new Array<Array<string>>();
+): Key[][] {
+    const result = new Array<Array<Key>>();
     iCombinationsBySingleArray(array, [], factorCount, 0, result);
     return result;
 }
 
 function iCombinationsBySingleArray(
-    input: string[],
-    tmp: string[],
+    input: Key[],
+    tmp: Key[],
     factorCount: number,
     depth: number,
-    result: string[][]
+    result: Key[][]
 ) {
     input.forEach((v, i) => {
         tmp[depth] = v;
@@ -81,7 +83,7 @@ function iCombinationsBySingleArray(
  * If combinations.keys contains all exceptKeys, it will skipped.
  */
 export function longestCombination(
-    exceptKeys: string[],
+    exceptKeys: Key[],
     cs: Combinations[]
 ): Combinations {
     let excepted = cs;
@@ -105,10 +107,10 @@ export function longestCombination(
     });
 }
 export class Combinations {
-    keys: string[];
-    allCombinations: string[][];
+    keys: Key[];
+    allCombinations: Value[][];
     done = false;
-    constructor(keys: string[]) {
+    constructor(keys: Key[]) {
         this.keys = keys;
         this.allCombinations = [];
     }

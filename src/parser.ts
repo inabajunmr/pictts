@@ -1,5 +1,6 @@
 import * as S from './sentenceParser';
 import { Pict } from './evaluator';
+import { Key, Value } from './keyvalue';
 
 export class Parser {
     private sentences: S.SentenceParser;
@@ -9,7 +10,7 @@ export class Parser {
 
     parse(): Pict {
         let eof = false;
-        const result = new Map<string, Array<string>>();
+        const result = new Map<Key, Array<Value>>();
         do {
             // parse 1 sentence
             const s = this.sentences.nextSentence();
