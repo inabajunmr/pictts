@@ -5,6 +5,9 @@ export class Pict {
         this.parameters = parameters;
     }
 
+    /**
+     * Create all test case
+     */
     testCases(): PictResult {
         const keys: string[] = [];
         this.parameters.forEach((v, k) => {
@@ -111,7 +114,7 @@ export class Pict {
         return result;
     }
 
-    equalsAllElements(array1: any[], array2: any[]): boolean {
+    equalsAllElements<T>(array1: T[], array2: T[]): boolean {
         if (array1 === undefined || array2 === undefined) {
             return array2 === array1;
         }

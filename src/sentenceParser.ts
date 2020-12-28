@@ -2,6 +2,9 @@ import * as T from './token';
 import * as E from './exception';
 import { Lexer } from './lexer';
 
+/**
+ * Divide each sentence from token array.
+ */
 export class SentenceParser {
     private readonly tokens: Array<T.Token>;
     private index = 0;
@@ -10,6 +13,11 @@ export class SentenceParser {
         this.tokens = new Lexer(input).tokens();
     }
 
+    /**
+     * Get next sentence.
+     *
+     * If the sentence is last, second return value is true.
+     */
     nextSentence(): [Sentence, boolean] {
         let type: SentenceType | undefined = undefined;
         const results = new Array<T.Token>();
@@ -78,6 +86,7 @@ export class ParametersSentence extends Sentence {
             'parameters sentence first token requires identifier. but:' + first
         );
     }
+
     private static getParameters(tokens: Array<T.Token>): Array<string> {
         const parameters = new Array<string>();
         tokens.slice(2).forEach((t) => {

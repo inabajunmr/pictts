@@ -2,8 +2,6 @@ import * as P from './parser';
 
 test('pict 3factors', () => {
     const sut = new P.Parser('A:A1,A2\nB:B1,B2\nC:C1,C2').parse();
-    console.log(sut.testCases().toString());
-
     const actual = sut.testCases();
 
     // contains all combinations
@@ -25,8 +23,6 @@ test('pict 3factors', () => {
 
 test('pict 2factors', () => {
     const sut = new P.Parser('A:A1,A2\nB:B1,B2').parse();
-    console.log(sut.testCases().toString());
-
     const actual = sut.testCases();
 
     // contains all combinations
