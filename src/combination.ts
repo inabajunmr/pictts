@@ -93,6 +93,13 @@ export function longestCombination(
         });
     }
 
+    const ndone = excepted.filter((e) => !e.done);
+    if (ndone.length !== 0) {
+        return ndone.reduce((b, a) => {
+            return b.allCombinations.length >= a.allCombinations.length ? b : a;
+        });
+    }
+
     return excepted.reduce((b, a) => {
         return b.allCombinations.length >= a.allCombinations.length ? b : a;
     });
@@ -100,6 +107,7 @@ export function longestCombination(
 export class Combinations {
     keys: string[];
     allCombinations: string[][];
+    done = false;
     constructor(keys: string[]) {
         this.keys = keys;
         this.allCombinations = [];

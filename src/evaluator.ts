@@ -24,19 +24,26 @@ export class Pict {
         let a = true;
         const result = new PictResult(keys);
         while (a) {
-            const exceptKeys = result.nowKey();
-            const longest = C.longestCombination(exceptKeys, allCombinations);
-            if (longest.allCombinations.length === 0) {
-                // TODO longestが0だけど他の項目が残っているケースがある
-                // 全部0じゃないとbreakしちゃだめ
-                // Combinationsに完了フラグつける & nextSlotで1でとっといて全部完了フラグたってたらbreak
+            if (
+                allCombinations.filter((c) => {
+                    return !c.done;
+                }).length === 0
+            ) {
                 a = false;
                 break;
             }
+
+            const exceptKeys = result.nowKey();
+            const longest = C.longestCombination(exceptKeys, allCombinations);
             const suitable = this.nextSlot(longest, result.nowLine());
+            if (suitable === undefined) {
+                console.log();
+            }
 
             for (let index = 0; index < longest.keys.length; index++) {
-                result.nowLine().set(longest.keys[index], suitable[index]);
+                if (result.nowLine().get(longest.keys[index]) === undefined) {
+                    result.nowLine().set(longest.keys[index], suitable[index]);
+                }
             }
         }
         return result;
@@ -58,8 +65,16 @@ export class Pict {
         combinations: C.Combinations,
         line: Map<string, string>
     ): string[] {
+        if (combinations.allCombinations.length === 1) {
+            combinations.done = true;
+            return combinations.allCombinations[0];
+        }
+
         if (line.size === 0) {
             const a = combinations.allCombinations.shift() as string[];
+            if (a === undefined) {
+                console.log();
+            }
             return a;
         }
 
@@ -70,6 +85,7 @@ export class Pict {
                 alreadyExistedKeys.push(k);
             }
         });
+
         const suitables = combinations.allCombinations.filter((c) => {
             let all = true;
             alreadyExistedKeys.forEach((k) => {
@@ -81,12 +97,26 @@ export class Pict {
             return all;
         });
 
-        const result = suitables[0]; // TODO randomize
-        combinations.allCombinations = combinations.allCombinations.filter(
-            (c) => {
-                !this.equalsAllElements(c, result);
-            }
-        );
+        let result = suitables[0]; // TODO randomize
+        if (result === undefined) {
+            result = combinations.allCombinations[0];
+        }
+
+        // when other combinations are remaining after all combinations are used, any combination is used for others.
+        if (combinations.allCombinations.length === 1) {
+            combinations.done = true;
+            return result;
+        }
+
+        const cache = combinations.allCombinations.filter((c) => {
+            return !this.equalsAllElements(c, result);
+        });
+
+        if (cache.length === 0) {
+            console.log();
+        }
+
+        combinations.allCombinations = cache;
 
         return result;
     }
