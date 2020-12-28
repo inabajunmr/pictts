@@ -104,6 +104,8 @@ test('pict 3factors by 3', () => {
 test('pict 4factors by 3', () => {
     const sut = new P.Parser('A:A1,A2\nB:B1,B2\nC:C1,C2\nD:D1,D2,D3').parse();
     sut.setFactorCount(3);
+    sut.setSeed(11);
+
     const actual = sut.testCases();
 
     // contains all combinations
