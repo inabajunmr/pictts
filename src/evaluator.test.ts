@@ -1,7 +1,9 @@
+import { Key, Value } from './keyvalue';
 import * as P from './parser';
 
 test('pict 3factors by 2', () => {
     const sut = new P.Parser('A:A1,A2\nB:B1,B2\nC:C1,C2').parse();
+
     for (let index = 0; index < 100; index++) {
         const actual = sut.testCases();
         // contains all combinations
@@ -282,15 +284,10 @@ test('pict 4factors by 3', () => {
     ).toBe(true);
 });
 
-function map2(
-    k1: string,
-    v1: string,
-    k2: string,
-    v2: string
-): Map<string, string> {
-    const result = new Map<string, string>();
-    result.set(k1, v1);
-    result.set(k2, v2);
+function map2(k1: string, v1: string, k2: string, v2: string): Map<Key, Value> {
+    const result = new Map<Key, Value>();
+    result.set(Key.of(k1), Value.of(v1));
+    result.set(Key.of(k2), Value.of(v2));
     return result;
 }
 
@@ -301,17 +298,17 @@ function map3(
     v2: string,
     k3: string,
     v3: string
-): Map<string, string> {
-    const result = new Map<string, string>();
-    result.set(k1, v1);
-    result.set(k2, v2);
-    result.set(k3, v3);
+): Map<Key, Value> {
+    const result = new Map<Key, Value>();
+    result.set(Key.of(k1), Value.of(v1));
+    result.set(Key.of(k2), Value.of(v2));
+    result.set(Key.of(k3), Value.of(v3));
     return result;
 }
 
 function assertContains(
-    target: Map<string, string>,
-    result: Array<Map<string, string>>
+    target: Map<Key, Value>,
+    result: Array<Map<Key, Value>>
 ): boolean {
     return (
         result.filter((r) => {

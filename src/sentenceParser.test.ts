@@ -1,5 +1,6 @@
 import * as Token from './token';
 import { ParametersSentence, SentenceParser } from './sentenceParser';
+import { Key, Value } from './keyvalue';
 
 test('nextSentence', () => {
     const sut = new SentenceParser(
@@ -42,25 +43,25 @@ test('parametersSentence', () => {
     const actual1 = sut.nextSentence();
     expect(actual1[0]).toBeInstanceOf(ParametersSentence);
     const sentence1 = actual1[0] as ParametersSentence;
-    expect(sentence1.key).toBe('ABC X');
-    expect(sentence1.parameters[0]).toBe('one');
-    expect(sentence1.parameters[1]).toBe('two');
-    expect(sentence1.parameters[2]).toBe('three');
+    expect(sentence1.key).toBe(Key.of('ABC X'));
+    expect(sentence1.parameters[0]).toBe(Value.of('one'));
+    expect(sentence1.parameters[1]).toBe(Value.of('two'));
+    expect(sentence1.parameters[2]).toBe(Value.of('three'));
     expect(sentence1.parameters.length).toBe(3);
 
     const actual2 = sut.nextSentence();
     expect(actual2[0]).toBeInstanceOf(ParametersSentence);
     const sentence2 = actual2[0] as ParametersSentence;
-    expect(sentence2.key).toBe('C C');
-    expect(sentence2.parameters[0]).toBe('a');
-    expect(sentence2.parameters[1]).toBe('b');
+    expect(sentence2.key).toBe(Key.of('C C'));
+    expect(sentence2.parameters[0]).toBe(Value.of('a'));
+    expect(sentence2.parameters[1]).toBe(Value.of('b'));
     expect(sentence2.parameters.length).toBe(2);
 
     const actual3 = sut.nextSentence();
     expect(actual3[0]).toBeInstanceOf(ParametersSentence);
     const sentence3 = actual3[0] as ParametersSentence;
-    expect(sentence3.key).toBe('選択肢');
-    expect(sentence3.parameters[0]).toBe('甲');
-    expect(sentence3.parameters[1]).toBe('乙');
+    expect(sentence3.key).toBe(Key.of('選択肢'));
+    expect(sentence3.parameters[0]).toBe(Value.of('甲'));
+    expect(sentence3.parameters[1]).toBe(Value.of('乙'));
     expect(sentence3.parameters.length).toBe(2);
 });
