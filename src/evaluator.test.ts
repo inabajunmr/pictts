@@ -7,7 +7,7 @@ test('pict', () => {
     const actual = sut.testCases();
 
     // contains all combinations
-    expect(assertContains(map('A', 'A1', 'B', 'B1'), actual.result)).toBe(true);
+    expect(assertContains(map('A', 'A1', 'B', 'B1'), actual.result)).toBe(true); // TODO
     expect(assertContains(map('A', 'A1', 'B', 'B2'), actual.result)).toBe(true);
     expect(assertContains(map('A', 'A2', 'B', 'B1'), actual.result)).toBe(true);
     expect(assertContains(map('A', 'A2', 'B', 'B2'), actual.result)).toBe(true);
@@ -39,12 +39,15 @@ function assertContains(
     target: Map<string, string>,
     result: Array<Map<string, string>>
 ): boolean {
-    let assert = true;
-    result.forEach((r) => {
-        Array.from(target.keys()).forEach((k) => {
-            assert = target.get(k) === r.get(k);
-        });
-    });
-
-    return assert;
+    return (
+        result.filter((r) => {
+            let assert = true;
+            Array.from(target.keys()).forEach((k) => {
+                if (target.get(k) !== r.get(k)) {
+                    assert = false;
+                }
+            });
+            return assert;
+        }).length !== 0
+    );
 }
