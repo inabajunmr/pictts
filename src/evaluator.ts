@@ -1,6 +1,8 @@
 import * as C from './combination';
 import { Key, Value } from './keyvalue';
+import { Random } from './random';
 export class Pict {
+    random: Random = new Random();
     readonly parameters: Map<Key, Value[]>;
     factorCount = 2;
     constructor(parameters: Map<Key, Value[]>) {
@@ -10,6 +12,10 @@ export class Pict {
     setFactorCount(factorCount: number): Pict {
         this.factorCount = factorCount;
         return this;
+    }
+
+    setSeed(seed: number): void {
+        this.random = new Random(seed);
     }
 
     /**
@@ -106,7 +112,8 @@ export class Pict {
             return all;
         });
 
-        let result = suitables[Math.floor(Math.random() * suitables.length)];
+        let result = suitables[this.random.random(0, suitables.length - 1)];
+        // let result = suitables[Math.floor(Math.random() * suitables.length)];
         if (result === undefined) {
             result = combinations.allCombinations[0];
         }
