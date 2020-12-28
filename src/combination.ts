@@ -78,7 +78,7 @@ function iCombinationsBySingleArray(
 /**
  * Get longest size combinations.
  *
- * If combinations.keys and exceptKeys are same, it will skipped.
+ * If combinations.keys contains all exceptKeys, it will skipped.
  */
 export function longestCombination(
     exceptKeys: string[],

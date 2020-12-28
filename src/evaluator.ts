@@ -27,7 +27,8 @@ export class Pict {
             if (
                 allCombinations.filter((c) => {
                     return !c.done;
-                }).length === 0
+                }).length === 0 &&
+                result.nowKey().length === 0
             ) {
                 a = false;
                 break;
@@ -36,13 +37,11 @@ export class Pict {
             const exceptKeys = result.nowKey();
             const longest = C.longestCombination(exceptKeys, allCombinations);
             const suitable = this.nextSlot(longest, result.nowLine());
-            if (suitable === undefined) {
-                console.log();
-            }
 
+            const line = result.nowLine();
             for (let index = 0; index < longest.keys.length; index++) {
-                if (result.nowLine().get(longest.keys[index]) === undefined) {
-                    result.nowLine().set(longest.keys[index], suitable[index]);
+                if (line.get(longest.keys[index]) === undefined) {
+                    line.set(longest.keys[index], suitable[index]);
                 }
             }
         }
@@ -72,9 +71,6 @@ export class Pict {
 
         if (line.size === 0) {
             const a = combinations.allCombinations.shift() as string[];
-            if (a === undefined) {
-                console.log();
-            }
             return a;
         }
 
@@ -111,10 +107,6 @@ export class Pict {
         const cache = combinations.allCombinations.filter((c) => {
             return !this.equalsAllElements(c, result);
         });
-
-        if (cache.length === 0) {
-            console.log();
-        }
 
         combinations.allCombinations = cache;
 
@@ -171,7 +163,8 @@ class PictResult {
     }
 
     put(key: string, value: string) {
-        const line = this.nowLine();
-        line.set(key, value);
+        if (this.nowLine().get(key) === undefined) {
+            this.nowLine().set(key, value);
+        }
     }
 }
