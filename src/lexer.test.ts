@@ -24,6 +24,18 @@ test('ident token', () => {
     expect(actual.length).toBe(2);
 });
 
+test('ended with spaces', () => {
+    const sut = new Lexer('A:a1,a2,a3   ');
+    const actual = sut.tokens();
+    expect(actual[0]).toStrictEqual(new Token.IdentToken('A'));
+    expect(actual[1]).toStrictEqual(Token.ColonToken.TOKEN);
+    expect(actual[2]).toStrictEqual(new Token.IdentToken('a1'));
+    expect(actual[3]).toStrictEqual(Token.CommaToken.TOKEN);
+    expect(actual[4]).toStrictEqual(new Token.IdentToken('a2'));
+    expect(actual[5]).toStrictEqual(Token.CommaToken.TOKEN);
+    expect(actual[6]).toStrictEqual(new Token.IdentToken('a3'));
+});
+
 test('parameter line', () => {
     const sut = new Lexer(
         'ABC X : one,two, three \r\n C C:a,b\r\n\r\n  \r\n  選択肢:甲,乙\r\n'

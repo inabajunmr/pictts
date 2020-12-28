@@ -65,7 +65,7 @@ export class Lexer {
     }
 
     private isEOF(): boolean {
-        return this.index === this.input.length;
+        return this.index >= this.input.length;
     }
 
     private readString(): string {
