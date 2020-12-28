@@ -11,6 +11,7 @@ export class Parser {
         let eof = false;
         const result = new Map<string, Array<string>>();
         do {
+            // parse 1 sentence
             const s = this.sentences.nextSentence();
             eof = s[1];
             const sentence = s[0];
