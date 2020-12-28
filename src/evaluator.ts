@@ -5,7 +5,7 @@ export class Pict {
         this.parameters = parameters;
     }
 
-    combination() {
+    testCases() {
         const keys: string[] = [];
         this.parameters.forEach((v, k) => {
             keys.push(k);
@@ -21,19 +21,12 @@ export class Pict {
             allCombinations.push(combinations);
         });
 
-        let a = true;
         const result = new PictResult(keys);
-        while (a) {
-            if (
-                allCombinations.filter((c) => {
-                    return !c.done;
-                }).length === 0 &&
-                result.nowKey().length === 0
-            ) {
-                a = false;
-                break;
-            }
-
+        while (
+            (allCombinations.filter((c) => {
+                return !c.done;
+            }).length === 0 && result.nowKey().length === 0) === false
+        ) {
             const exceptKeys = result.nowKey();
             const longest = C.longestCombination(exceptKeys, allCombinations);
             const suitable = this.nextSlot(longest, result.nowLine());
@@ -45,7 +38,8 @@ export class Pict {
                 }
             }
         }
-        return result;
+
+        return result.clean();
     }
 
     /**
@@ -134,7 +128,7 @@ export class Pict {
 
 class PictResult {
     private readonly keys: string[];
-    private readonly result = new Array<Map<string, string>>();
+    private result = new Array<Map<string, string>>();
 
     constructor(keys: string[]) {
         this.keys = keys;
@@ -162,9 +156,8 @@ class PictResult {
         return this.result[this.result.length - 1];
     }
 
-    put(key: string, value: string) {
-        if (this.nowLine().get(key) === undefined) {
-            this.nowLine().set(key, value);
-        }
+    clean(): PictResult {
+        this.result = this.result.filter((v) => v.size !== 0);
+        return this;
     }
 }
