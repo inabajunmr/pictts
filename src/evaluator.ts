@@ -1,8 +1,14 @@
 import * as C from './combination';
 export class Pict {
     readonly parameters: Map<string, Array<string>>;
+    factorCount = 2;
     constructor(parameters: Map<string, Array<string>>) {
         this.parameters = parameters;
+    }
+
+    setFactorCount(factorCount: number): Pict {
+        this.factorCount = factorCount;
+        return this;
     }
 
     /**
@@ -15,7 +21,10 @@ export class Pict {
         });
 
         // create all slots for all key combination
-        const keyCombinations = C.combinationsBySingleArray(keys, 2); // TODO configuarize factor count
+        const keyCombinations = C.combinationsBySingleArray(
+            keys,
+            this.factorCount
+        );
         const allCombinations: C.Combinations[] = [];
         keyCombinations.forEach((kc) => {
             const combinations = C.allCombinationsByMultipleArray(
