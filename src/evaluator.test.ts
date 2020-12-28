@@ -4,7 +4,6 @@ test('pict 3factors by 2', () => {
     const sut = new P.Parser('A:A1,A2\nB:B1,B2\nC:C1,C2').parse();
     for (let index = 0; index < 100; index++) {
         const actual = sut.testCases();
-
         // contains all combinations
         expect(assertContains(map2('A', 'A1', 'B', 'B1'), actual.result)).toBe(
             true
@@ -72,7 +71,6 @@ test('pict 3factors by 3', () => {
     const sut = new P.Parser('A:A1,A2\nB:B1,B2\nC:C1,C2').parse();
     sut.setFactorCount(3);
     const actual = sut.testCases();
-    console.log(actual);
 
     // contains all combinations
     expect(

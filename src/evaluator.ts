@@ -196,15 +196,15 @@ class PictResult {
         return this;
     }
 
-    toString(): string {
-        let result = this.keys.join(',') + '\n';
+    toString(delimiter = ','): string {
+        let result = this.keys.join(delimiter) + '\n';
 
         this.result.forEach((c) => {
             const array: string[] = [];
             this.keys.forEach((k) => {
                 array.push(c.get(k) as string);
             });
-            result += array.join(',') + '\n';
+            result += array.join(delimiter) + '\n';
         });
         return result;
     }
