@@ -5,13 +5,14 @@ export class Pict {
         this.parameters = parameters;
     }
 
-    testCases() {
+    testCases(): PictResult {
         const keys: string[] = [];
         this.parameters.forEach((v, k) => {
             keys.push(k);
         });
 
-        const keyCombinations = C.combinationsBySingleArray(keys, 2);
+        // create all slots for all key combination
+        const keyCombinations = C.combinationsBySingleArray(keys, 2); // TODO configuarize factor count
         const allCombinations: C.Combinations[] = [];
         keyCombinations.forEach((kc) => {
             const combinations = C.allCombinationsByMultipleArray(
@@ -21,16 +22,19 @@ export class Pict {
             allCombinations.push(combinations);
         });
 
+        // consume slots and assemble results
         const result = new PictResult(keys);
         while (
             (allCombinations.filter((c) => {
                 return !c.done;
             }).length === 0 && result.nowKey().length === 0) === false
         ) {
+            // get next slot from longest combinations
             const exceptKeys = result.nowKey();
             const longest = C.longestCombination(exceptKeys, allCombinations);
             const suitable = this.nextSlot(longest, result.nowLine());
 
+            // set next slot to result
             const line = result.nowLine();
             for (let index = 0; index < longest.keys.length; index++) {
                 if (line.get(longest.keys[index]) === undefined) {
@@ -128,7 +132,7 @@ export class Pict {
 
 class PictResult {
     private readonly keys: string[];
-    private result = new Array<Map<string, string>>();
+    result = new Array<Map<string, string>>();
 
     constructor(keys: string[]) {
         this.keys = keys;
@@ -159,5 +163,18 @@ class PictResult {
     clean(): PictResult {
         this.result = this.result.filter((v) => v.size !== 0);
         return this;
+    }
+
+    toString(): string {
+        let result = this.keys.join(',') + '\n';
+
+        this.result.forEach((c) => {
+            const array: string[] = [];
+            this.keys.forEach((k) => {
+                array.push(c.get(k) as string);
+            });
+            result += array.join(',') + '\n';
+        });
+        return result;
     }
 }
