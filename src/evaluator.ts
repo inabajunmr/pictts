@@ -10,7 +10,7 @@ export class Pict {
      */
     testCases(): PictResult {
         const keys: string[] = [];
-        this.parameters.forEach((v, k) => {
+        this.parameters.forEach((_, k) => {
             keys.push(k);
         });
 
@@ -36,6 +36,11 @@ export class Pict {
             const exceptKeys = result.nowKey();
             const longest = C.longestCombination(exceptKeys, allCombinations);
             const suitable = this.nextSlot(longest, result.nowLine());
+
+            // if result already has suitable, skip it
+            if (result.contains(longest.keys, suitable)) {
+                continue;
+            }
 
             // set next slot to result
             const line = result.nowLine();
@@ -94,7 +99,7 @@ export class Pict {
             return all;
         });
 
-        let result = suitables[0]; // TODO randomize
+        let result = suitables[Math.floor(Math.random() * suitables.length)];
         if (result === undefined) {
             result = combinations.allCombinations[0];
         }
@@ -161,6 +166,20 @@ class PictResult {
         }
 
         return this.result[this.result.length - 1];
+    }
+
+    contains(keys: string[], values: string[]) {
+        return (
+            this.result.filter((r) => {
+                let contains = true;
+                keys.filter((k, i) => {
+                    if (r.get(k) !== values[i]) {
+                        contains = false;
+                    }
+                });
+                return contains;
+            }).length !== 0
+        );
     }
 
     clean(): PictResult {
