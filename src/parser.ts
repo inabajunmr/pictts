@@ -10,7 +10,7 @@ export class Parser {
 
     parse(): Pict {
         let eof = false;
-        const result = new Map<Key, Array<Value>>();
+        const result = new Map<Key, Value[]>();
         do {
             // parse 1 sentence
             const s = this.sentences.nextSentence();

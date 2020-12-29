@@ -120,4 +120,32 @@ export class Combinations {
         clone.allCombinations = Array.from(this.allCombinations);
         return clone;
     }
+
+    remove(target: Value[]): void {
+        if (this.allCombinations.length !== 1) {
+            const cache = this.allCombinations.filter((c) => {
+                return !this.equalsAllElements(c, target);
+            });
+
+            this.allCombinations = cache;
+        }
+    }
+
+    equalsAllElements<T>(array1: T[], array2: T[]): boolean {
+        if (array1 === undefined || array2 === undefined) {
+            return array2 === array1;
+        }
+
+        if (array1.length !== array2.length) {
+            return false;
+        }
+
+        for (let index = 0; index < array1.length; index++) {
+            if (array1[index] !== array2[index]) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }

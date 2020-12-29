@@ -53,7 +53,8 @@ export class Pict {
             const suitable = this.nextSlot(longest, result.nowLine());
 
             // if result already has suitable, skip it
-            if (result.contains(longest.keys, suitable)) {
+            if (result.contains(longest.keys, suitable) && !longest.done) {
+                longest.remove(suitable);
                 continue;
             }
 
@@ -119,10 +120,9 @@ export class Pict {
             return all;
         });
 
-        let result = suitables[this.random.random(0, suitables.length - 1)];
-        // let result = suitables[Math.floor(Math.random() * suitables.length)];
+        const result = suitables[this.random.random(0, suitables.length - 1)];
         if (result === undefined) {
-            result = combinations.allCombinations[0];
+            return combinations.allCombinations[0];
         }
 
         // when other combinations are remaining after all combinations are used, any combination is used for others.
@@ -131,37 +131,15 @@ export class Pict {
             return result;
         }
 
-        const cache = combinations.allCombinations.filter((c) => {
-            return !this.equalsAllElements(c, result);
-        });
-
-        combinations.allCombinations = cache;
+        combinations.remove(result);
 
         return result;
-    }
-
-    equalsAllElements<T>(array1: T[], array2: T[]): boolean {
-        if (array1 === undefined || array2 === undefined) {
-            return array2 === array1;
-        }
-
-        if (array1.length !== array2.length) {
-            return false;
-        }
-
-        for (let index = 0; index < array1.length; index++) {
-            if (array1[index] !== array2[index]) {
-                return false;
-            }
-        }
-
-        return true;
     }
 }
 
 class PictResult {
     private readonly keys: Key[];
-    result = new Array<Map<Key, Value>>();
+    result: Map<Key, Value>[] = [];
 
     constructor(keys: Key[]) {
         this.keys = keys;
@@ -190,6 +168,9 @@ class PictResult {
     }
 
     contains(keys: Key[], values: Value[]) {
+        if (values == undefined) {
+            console.log();
+        }
         return (
             this.result.filter((r) => {
                 let contains = true;
@@ -204,8 +185,31 @@ class PictResult {
     }
 
     clean(): PictResult {
+        // clean duplicated // TODO maybe it's not optimized
+        for (let i = 0; i < this.result.length; i++) {
+            const r1 = this.result[i];
+            for (let j = i + 1; j < this.result.length; j++) {
+                const r2 = this.result[j];
+                if (this.equalsMap(r1, r2)) {
+                    this.result[j] = new Map();
+                }
+            }
+        }
+        // clean no element map
         this.result = this.result.filter((v) => v.size !== 0);
+
         return this;
+    }
+
+    equalsMap<K, V>(m1: Map<K, V>, m2: Map<K, V>): boolean {
+        if (m1.size !== m2.size) {
+            return false;
+        }
+
+        return (
+            Array.from(m1.keys()).filter((k) => m1.get(k) !== m2.get(k))
+                .length === 0
+        );
     }
 
     toString(delimiter = ','): string {
