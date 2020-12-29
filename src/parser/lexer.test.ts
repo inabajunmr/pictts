@@ -33,7 +33,7 @@ test('string token', () => {
 });
 
 test('parameterName token', () => {
-    const sut = new Lexer('AAA]');
+    const sut = new Lexer('[AAA]');
     const actual = sut.tokens();
     expect(actual[0]).toStrictEqual(new Token.ParameterNameToken('AAA'));
     expect(actual[1]).toStrictEqual(new Token.EOFToken());

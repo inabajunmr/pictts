@@ -37,12 +37,32 @@ export class SentenceParser {
             if (this.tokens[this.index] instanceof T.ColonToken) {
                 type = 'parameters';
             }
+
+            if (this.tokens[this.index] instanceof T.SemicolonToken) {
+                type = 'constraint';
+            }
         }
 
         if (type === undefined) {
             throw new E.ParseException('Sentence type is undefined');
         }
+
+        if (type === 'constraint') {
+            return [
+                new ConstraintsSentence(this.parseAsConstraint(results)),
+                eof,
+            ];
+        }
+
         return [new ParametersSentence(results), eof];
+    }
+
+    parseAsConstraint(tokens: T.Token[]): T.Token[] {
+        return tokens.map((t) => {
+            if (t instanceof T.IdentToken) {
+                return t.asConstraint();
+            }
+        }) as T.Token[];
     }
 
     private isEOF(): boolean {
@@ -69,6 +89,7 @@ export abstract class Sentence {
     }
 }
 
+export class ConstraintsSentence extends Sentence {}
 export class ParametersSentence extends Sentence {
     readonly key: Key;
     readonly parameters: Value[];

@@ -29,6 +29,8 @@ export class Lexer {
             switch (this.now) {
                 case ':':
                     return T.ColonToken.TOKEN;
+                case ';':
+                    return T.SemicolonToken.TOKEN;
                 case ',':
                     return T.CommaToken.TOKEN;
                 case '\r':
