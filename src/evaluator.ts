@@ -54,12 +54,10 @@ export class Pict {
 
             // if result already has suitable, skip it
             if (result.contains(longest.keys, suitable) && !longest.done) {
-                // suitableはマッチしてないけどcontainsの場合はつぶす
                 longest.remove(suitable);
                 continue;
             }
 
-            // TODO nowLineにマッチしないスロットがsuitableで返ってくることがあるが、そのスロットが使用済みになってしまう
             // set next slot to result
             const line = result.nowLine();
             for (let index = 0; index < longest.keys.length; index++) {
@@ -137,24 +135,6 @@ export class Pict {
         combinations.remove(result);
 
         return result;
-    }
-
-    equalsAllElements<T>(array1: T[], array2: T[]): boolean {
-        if (array1 === undefined || array2 === undefined) {
-            return array2 === array1;
-        }
-
-        if (array1.length !== array2.length) {
-            return false;
-        }
-
-        for (let index = 0; index < array1.length; index++) {
-            if (array1[index] !== array2[index]) {
-                return false;
-            }
-        }
-
-        return true;
     }
 }
 
