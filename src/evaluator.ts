@@ -55,15 +55,7 @@ export class Pict {
             // if result already has suitable, skip it
             if (result.contains(longest.keys, suitable) && !longest.done) {
                 // suitableはマッチしてないけどcontainsの場合はつぶす
-
-                // TODO 0にしない
-                if (longest.allCombinations.length !== 1) {
-                    const cache = longest.allCombinations.filter((c) => {
-                        return !this.equalsAllElements(c, suitable);
-                    });
-
-                    longest.allCombinations = cache;
-                }
+                longest.remove(suitable);
                 continue;
             }
 
@@ -142,11 +134,7 @@ export class Pict {
             return result;
         }
 
-        const cache = combinations.allCombinations.filter((c) => {
-            return !this.equalsAllElements(c, result);
-        });
-
-        combinations.allCombinations = cache;
+        combinations.remove(result);
 
         return result;
     }
