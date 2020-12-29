@@ -94,7 +94,6 @@ export class ParametersSentence extends Sentence {
             return Key.of(first.literal);
         }
 
-        console.log(tokens);
         throw new E.ParseException(
             'parameters sentence first token requires identifier. but:' + first
         );

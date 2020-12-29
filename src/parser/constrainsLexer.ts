@@ -43,7 +43,7 @@ export class ConstraintsLexer {
                 case '[':
                     return new T.ParameterNameToken(this.readParameterName());
                 default: {
-                    return new T.IdentToken(this.readIdent());
+                    return new T.IdentToken(this.readIdent()).asConstraint();
                 }
             }
         } finally {
@@ -90,17 +90,6 @@ export class ConstraintsLexer {
         return result;
     }
 
-    private endIdent(): boolean {
-        switch (this.now) {
-            case '\n':
-            case '\r':
-            case ' ':
-                return true;
-            default:
-                return false;
-        }
-    }
-
     private readString(): string {
         let result = '';
         this.nextChar();
@@ -129,18 +118,6 @@ export class ConstraintsLexer {
         }
 
         return result;
-    }
-
-    private nextWithoutSpace(): string {
-        let next = this.now;
-        let index = this.index;
-        while (next === ' ') {
-            if (this.now.length == index) {
-                return '';
-            }
-            next = this.input.charAt(++index);
-        }
-        return next;
     }
 
     private skipWhitespace() {
