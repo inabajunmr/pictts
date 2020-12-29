@@ -121,7 +121,7 @@ export class Combinations {
         return clone;
     }
 
-    remove(target: Value[]) {
+    remove(target: Value[]): void {
         if (this.allCombinations.length !== 1) {
             const cache = this.allCombinations.filter((c) => {
                 return !this.equalsAllElements(c, target);
