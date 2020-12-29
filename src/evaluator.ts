@@ -53,10 +53,21 @@ export class Pict {
             const suitable = this.nextSlot(longest, result.nowLine());
 
             // if result already has suitable, skip it
-            if (result.contains(longest.keys, suitable)) {
+            if (result.contains(longest.keys, suitable) && !longest.done) {
+                // suitableはマッチしてないけどcontainsの場合はつぶす
+
+                // TODO 0にしない
+                if (longest.allCombinations.length !== 1) {
+                    const cache = longest.allCombinations.filter((c) => {
+                        return !this.equalsAllElements(c, suitable);
+                    });
+
+                    longest.allCombinations = cache;
+                }
                 continue;
             }
 
+            // TODO nowLineにマッチしないスロットがsuitableで返ってくることがあるが、そのスロットが使用済みになってしまう
             // set next slot to result
             const line = result.nowLine();
             for (let index = 0; index < longest.keys.length; index++) {
@@ -119,10 +130,10 @@ export class Pict {
             return all;
         });
 
-        let result = suitables[this.random.random(0, suitables.length - 1)];
+        const result = suitables[this.random.random(0, suitables.length - 1)];
         // let result = suitables[Math.floor(Math.random() * suitables.length)];
         if (result === undefined) {
-            result = combinations.allCombinations[0];
+            return combinations.allCombinations[0];
         }
 
         // when other combinations are remaining after all combinations are used, any combination is used for others.
@@ -190,6 +201,9 @@ class PictResult {
     }
 
     contains(keys: Key[], values: Value[]) {
+        if (values == undefined) {
+            console.log();
+        }
         return (
             this.result.filter((r) => {
                 let contains = true;
