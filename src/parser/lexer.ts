@@ -35,8 +35,12 @@ export class Lexer {
                 case '\n':
                     this.skipReturnAndWhitespace();
                     return T.ReturnToken.TOKEN;
+                case '"':
+                    return new T.StringToken(this.readString());
+                case '[':
+                    return new T.ParameterNameToken(this.readParameterName());
                 default: {
-                    return new T.IdentToken(this.readString());
+                    return new T.IdentToken(this.readIdent());
                 }
             }
         } finally {
@@ -68,10 +72,10 @@ export class Lexer {
         return this.index >= this.input.length;
     }
 
-    private readString(): string {
+    private readIdent(): string {
         let result = '';
 
-        while (!this.endString()) {
+        while (!this.endIdent()) {
             result += this.now;
             if (this.lastChar()) {
                 return result;
@@ -83,7 +87,7 @@ export class Lexer {
         return result;
     }
 
-    private endString(): boolean {
+    private endIdent(): boolean {
         const next = this.nextWithoutSpace();
         switch (next) {
             case ':':
@@ -95,6 +99,36 @@ export class Lexer {
             default:
                 return false;
         }
+    }
+
+    private readString(): string {
+        let result = '';
+        this.nextChar();
+
+        while (this.now !== '"') {
+            result += this.now;
+            if (this.lastChar()) {
+                return result;
+            }
+            this.nextChar();
+        }
+
+        return result;
+    }
+
+    private readParameterName(): string {
+        let result = '';
+        this.nextChar();
+
+        while (this.now !== ']') {
+            result += this.now;
+            if (this.lastChar()) {
+                return result;
+            }
+            this.nextChar();
+        }
+
+        return result;
     }
 
     private nextWithoutSpace(): string {

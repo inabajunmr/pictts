@@ -45,3 +45,25 @@ export class ReturnToken extends Token {
         super();
     }
 }
+
+/**
+ * [Xxxx]
+ */
+export class ParameterNameToken extends Token {
+    readonly literal: string;
+    constructor(literal: string) {
+        super();
+        this.literal = literal;
+    }
+}
+
+/**
+ * "Xxxx"
+ */
+export class StringToken extends Token {
+    readonly literal: string;
+    constructor(literal: string) {
+        super();
+        this.literal = literal;
+    }
+}

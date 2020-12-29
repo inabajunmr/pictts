@@ -24,6 +24,22 @@ test('ident token', () => {
     expect(actual.length).toBe(2);
 });
 
+test('string token', () => {
+    const sut = new Lexer('"AAA"');
+    const actual = sut.tokens();
+    expect(actual[0]).toStrictEqual(new Token.StringToken('AAA'));
+    expect(actual[1]).toStrictEqual(new Token.EOFToken());
+    expect(actual.length).toBe(2);
+});
+
+test('parameterName token', () => {
+    const sut = new Lexer('AAA]');
+    const actual = sut.tokens();
+    expect(actual[0]).toStrictEqual(new Token.ParameterNameToken('AAA'));
+    expect(actual[1]).toStrictEqual(new Token.EOFToken());
+    expect(actual.length).toBe(2);
+});
+
 test('ended with spaces', () => {
     const sut = new Lexer('A:a1,a2,a3   ');
     const actual = sut.tokens();
@@ -81,15 +97,15 @@ test('lastChar', () => {
 
 test('readString', () => {
     const sut1: any = new Lexer('abc:');
-    expect(sut1.readString()).toBe('abc');
+    expect(sut1.readIdent()).toBe('abc');
     const sut2: any = new Lexer('abc :');
-    expect(sut2.readString()).toBe('abc');
+    expect(sut2.readIdent()).toBe('abc');
     const sut3: any = new Lexer('abc');
-    expect(sut3.readString()).toBe('abc');
+    expect(sut3.readIdent()).toBe('abc');
 });
 
 test('skipWhitespace', () => {
     const sut: any = new Lexer('   abc:');
     sut.skipWhitespace();
-    expect(sut.readString()).toBe('abc');
+    expect(sut.readIdent()).toBe('abc');
 });
