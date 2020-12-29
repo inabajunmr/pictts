@@ -1,6 +1,6 @@
 import * as Token from './token';
 import { ParametersSentence, SentenceParser } from './sentenceParser';
-import { Key, Value } from './keyvalue';
+import { Key, Value } from '../keyvalue';
 
 test('nextSentence', () => {
     const sut = new SentenceParser(

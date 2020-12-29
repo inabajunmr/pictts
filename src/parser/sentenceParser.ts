@@ -1,7 +1,7 @@
 import * as T from './token';
-import * as E from './exception';
+import * as E from '../exception';
 import { Lexer } from './lexer';
-import { Key, Value } from './keyvalue';
+import { Key, Value } from '../keyvalue';
 
 /**
  * Divide each sentence from token array.

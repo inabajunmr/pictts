@@ -1,6 +1,6 @@
 import * as S from './sentenceParser';
-import { Pict } from './evaluator';
-import { Key, Value } from './keyvalue';
+import { Pict } from '../evaluator';
+import { Key, Value } from '../keyvalue';
 
 export class Parser {
     private sentences: S.SentenceParser;

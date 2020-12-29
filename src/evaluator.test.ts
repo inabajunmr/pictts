@@ -1,5 +1,5 @@
 import { Key, Value } from './keyvalue';
-import * as P from './parser';
+import * as P from './parser/parser';
 
 test('pict 3factors by 2', () => {
     const sut = new P.Parser('A:A1,A2\nB:B1,B2\nC:C1,C2').parse();

@@ -1,4 +1,4 @@
-import { Key, Value } from './keyvalue';
+import { Key, Value } from '../keyvalue';
 import * as P from './parser';
 
 test('parse', () => {
