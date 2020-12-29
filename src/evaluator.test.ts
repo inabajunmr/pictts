@@ -317,7 +317,7 @@ function map3(
 
 function assertContains(
     target: Map<Key, Value>,
-    result: Array<Map<Key, Value>>
+    result: Map<Key, Value>[]
 ): boolean {
     return (
         result.filter((r) => {

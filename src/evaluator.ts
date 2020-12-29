@@ -140,7 +140,7 @@ export class Pict {
 
 class PictResult {
     private readonly keys: Key[];
-    result = new Array<Map<Key, Value>>();
+    result: Map<Key, Value>[] = [];
 
     constructor(keys: Key[]) {
         this.keys = keys;

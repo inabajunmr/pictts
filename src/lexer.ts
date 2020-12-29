@@ -9,9 +9,9 @@ export class Lexer {
         this.now = input.charAt(0);
     }
 
-    tokens(): Array<T.Token> {
+    tokens(): T.Token[] {
         let t = T.ReturnToken.TOKEN;
-        const r = new Array<T.Token>();
+        const r: T.Token[] = [];
         while (t instanceof T.EOFToken == false) {
             t = this.nextToken();
             r.push(t);
