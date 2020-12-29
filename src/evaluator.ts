@@ -44,9 +44,8 @@ export class Pict {
         // consume slots and assemble results
         const result = new PictResult(keys);
         while (
-            (allCombinations.filter((c) => {
-                return !c.done;
-            }).length === 0 && result.nowKey().length === 0) === false
+            (this.allDone(allCombinations) && result.nowKey().length === 0) ===
+            false
         ) {
             // get next slot from longest combinations
             const exceptKeys = result.nowKey();
@@ -68,6 +67,14 @@ export class Pict {
         }
 
         return result.clean();
+    }
+
+    allDone(c: C.Combinations[]): boolean {
+        return (
+            c.filter((c) => {
+                return !c.done;
+            }).length === 0
+        );
     }
 
     /**
