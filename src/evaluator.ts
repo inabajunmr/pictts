@@ -121,7 +121,6 @@ export class Pict {
         });
 
         const result = suitables[this.random.random(0, suitables.length - 1)];
-        // let result = suitables[Math.floor(Math.random() * suitables.length)];
         if (result === undefined) {
             return combinations.allCombinations[0];
         }
@@ -186,8 +185,31 @@ class PictResult {
     }
 
     clean(): PictResult {
+        // clean duplicated // TODO maybe it's not optimized
+        for (let i = 0; i < this.result.length; i++) {
+            const r1 = this.result[i];
+            for (let j = i + 1; j < this.result.length; j++) {
+                const r2 = this.result[j];
+                if (this.equalsMap(r1, r2)) {
+                    this.result[j] = new Map();
+                }
+            }
+        }
+        // clean no element map
         this.result = this.result.filter((v) => v.size !== 0);
+
         return this;
+    }
+
+    equalsMap<K, V>(m1: Map<K, V>, m2: Map<K, V>): boolean {
+        if (m1.size !== m2.size) {
+            return false;
+        }
+
+        return (
+            Array.from(m1.keys()).filter((k) => m1.get(k) !== m2.get(k))
+                .length === 0
+        );
     }
 
     toString(delimiter = ','): string {

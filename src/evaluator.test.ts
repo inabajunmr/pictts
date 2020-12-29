@@ -5,7 +5,7 @@ test('pict 3factors by 2', () => {
     const sut = new P.Parser('A:A1,A2\nB:B1,B2\nC:C1,C2').parse();
 
     for (let index = 0; index < 100; index++) {
-        sut.setSeed(Math.random());
+        sut.setSeed(Math.floor(Math.random() * 10000));
         const actual = sut.testCases();
 
         // contains all combinations
@@ -53,7 +53,7 @@ test('pict 3factors by 2', () => {
 test('pict 2factors by 2', () => {
     const sut = new P.Parser('A:A1,A2\nB:B1,B2').parse();
     for (let index = 0; index < 100; index++) {
-        sut.setSeed(Math.random());
+        sut.setSeed(Math.floor(Math.random() * 10000));
         const actual = sut.testCases();
 
         // contains all combinations
@@ -76,7 +76,7 @@ test('pict 3factors by 3', () => {
     const sut = new P.Parser('A:A1,A2\nB:B1,B2\nC:C1,C2').parse();
     sut.setFactorCount(3);
     for (let index = 0; index < 100; index++) {
-        sut.setSeed(Math.random());
+        sut.setSeed(Math.floor(Math.random() * 10000));
         const actual = sut.testCases();
 
         // contains all combinations
@@ -111,7 +111,7 @@ test('pict 4factors by 3', () => {
     const sut = new P.Parser('A:A1,A2\nB:B1,B2\nC:C1,C2\nD:D1,D2,D3').parse();
     sut.setFactorCount(3);
     for (let index = 0; index < 100; index++) {
-        sut.setSeed(Math.random());
+        sut.setSeed(Math.floor(Math.random() * 10000));
         const actual = sut.testCases();
 
         // contains all combinations
