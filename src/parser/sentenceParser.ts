@@ -11,7 +11,7 @@ export class SentenceParser {
     private index = 0;
 
     constructor(input: string) {
-        this.tokens = new Lexer(input).tokens();
+        this.tokens = new Lexer(input).parametersTokens();
     }
 
     /**
@@ -37,21 +37,10 @@ export class SentenceParser {
             if (this.tokens[this.index] instanceof T.ColonToken) {
                 type = 'parameters';
             }
-
-            if (this.tokens[this.index] instanceof T.SemicolonToken) {
-                type = 'constraint';
-            }
         }
 
         if (type === undefined) {
             throw new E.ParseException('Sentence type is undefined');
-        }
-
-        if (type === 'constraint') {
-            return [
-                new ConstraintsSentence(this.parseAsConstraint(results)),
-                eof,
-            ];
         }
 
         return [new ParametersSentence(results), eof];
@@ -104,6 +93,8 @@ export class ParametersSentence extends Sentence {
         if (first instanceof T.IdentToken) {
             return Key.of(first.literal);
         }
+
+        console.log(tokens);
         throw new E.ParseException(
             'parameters sentence first token requires identifier. but:' + first
         );

@@ -70,18 +70,18 @@ test('parametersSentence', () => {
     expect(sentence3.parameters.length).toBe(2);
 });
 
-test('constraints', () => {
-    const sut = new SentenceParser('IF [A] = "a1";');
-    const actual = sut.nextSentence();
-    expect(actual[0]).toBeInstanceOf(ConstraintsSentence);
-    expect(actual[1]).toBe(true);
-    expect(actual[0].tokens[0]).toBe(Token.IfToken.TOKEN);
-    expect(actual[0].tokens[1]).toBeInstanceOf(Token.ParameterNameToken);
-    expect(actual[0].tokens[2]).toBe(Token.EqualToken.TOKEN);
-    expect(actual[0].tokens[3]).toBeInstanceOf(Token.StringToken);
-    expect(actual[0].tokens[4]).toBe(Token.SemicolonToken.TOKEN);
-    expect(actual[0].tokens.length).toBe(5);
-});
+// test('constraints', () => {
+//     const sut = new SentenceParser('IF [A] = "a1";');
+//     const actual = sut.nextSentence();
+//     expect(actual[0]).toBeInstanceOf(ConstraintsSentence);
+//     expect(actual[1]).toBe(true);
+//     expect(actual[0].tokens[0]).toBe(Token.IfToken.TOKEN);
+//     expect(actual[0].tokens[1]).toBeInstanceOf(Token.ParameterNameToken);
+//     expect(actual[0].tokens[2]).toBe(Token.EqualToken.TOKEN);
+//     expect(actual[0].tokens[3]).toBeInstanceOf(Token.StringToken);
+//     expect(actual[0].tokens[4]).toBe(Token.SemicolonToken.TOKEN);
+//     expect(actual[0].tokens.length).toBe(5);
+// });
 
 // test('parametersSentence with constraints', () => {
 //     const sut = new SentenceParser(
