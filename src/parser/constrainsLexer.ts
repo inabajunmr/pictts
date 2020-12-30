@@ -116,12 +116,6 @@ export class ConstraintsLexer {
         return result;
     }
 
-    private skipWhitespace() {
-        while (this.now === ' ') {
-            this.nextChar();
-        }
-    }
-
     private skipReturnAndWhitespace() {
         while (this.now === ' ' || this.now === '\r' || this.now === '\n') {
             this.nextChar();

@@ -16,17 +16,17 @@ export class IdentToken extends Token {
      *
      */
     asConstraint(): Token {
-        if (this.literal.startsWith('[') && this.literal.endsWith(']')) {
-            return new ParameterNameToken(
-                this.literal.substring(1, this.literal.length - 1)
-            );
-        }
+        // if (this.literal.startsWith('[') && this.literal.endsWith(']')) {
+        //     return new ParameterNameToken(
+        //         this.literal.substring(1, this.literal.length - 1)
+        //     );
+        // }
 
-        if (this.literal.startsWith('"') && this.literal.endsWith('"')) {
-            return new StringToken(
-                this.literal.substring(1, this.literal.length - 1)
-            );
-        }
+        // if (this.literal.startsWith('"') && this.literal.endsWith('"')) {
+        //     return new StringToken(
+        //         this.literal.substring(1, this.literal.length - 1)
+        //     );
+        // }
 
         switch (this.literal) {
             case 'IF':
