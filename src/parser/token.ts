@@ -136,7 +136,7 @@ export class ElseToken extends Token {
 }
 
 /**
- * Then
+ * THEN
  */
 export class ThenToken extends Token {
     static readonly TOKEN = new ThenToken();
@@ -146,7 +146,7 @@ export class ThenToken extends Token {
 }
 
 /**
- * and
+ * AND
  */
 export class AndToken extends Token {
     static readonly TOKEN = new AndToken();
@@ -156,7 +156,7 @@ export class AndToken extends Token {
 }
 
 /**
- * or
+ * OR
  */
 export class OrToken extends Token {
     static readonly TOKEN = new OrToken();
