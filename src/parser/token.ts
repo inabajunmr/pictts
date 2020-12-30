@@ -42,6 +42,8 @@ export class IdentToken extends Token {
                 return LikeToken.TOKEN;
             case 'IN':
                 return InToken.TOKEN;
+            case 'NOT':
+                return NotToken.TOKEN;
             default:
                 throw new ParseException(`${this.literal} is undefined.`);
         }
@@ -160,6 +162,16 @@ export class AndToken extends Token {
  */
 export class OrToken extends Token {
     static readonly TOKEN = new OrToken();
+    constructor() {
+        super();
+    }
+}
+
+/**
+ * OR
+ */
+export class NotToken extends Token {
+    static readonly TOKEN = new NotToken();
     constructor() {
         super();
     }
