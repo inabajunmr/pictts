@@ -21,25 +21,22 @@ export class ConstraintsLexer {
     }
 
     private nextToken(): T.Token {
-        this.skipWhitespace();
+        this.skipReturnAndWhitespace();
+
         if (this.isEOF()) {
             return new T.EOFToken();
         }
 
         try {
             switch (this.now) {
-                case ':':
-                    return T.ColonToken.TOKEN;
+                case '=':
+                    return T.EqualToken.TOKEN;
                 case ';':
                     return T.SemicolonToken.TOKEN;
-                case ',':
-                    return T.CommaToken.TOKEN;
-                case '\r':
-                case '\n':
-                    this.skipReturnAndWhitespace();
-                    return T.ReturnToken.TOKEN;
                 case '"':
                     return new T.StringToken(this.readString());
+                case '(':
+                    return T.LParenthesesToken.TOKEN;
                 case '[':
                     return new T.ParameterNameToken(this.readParameterName());
                 default: {
@@ -77,7 +74,6 @@ export class ConstraintsLexer {
 
     private readIdent(): string {
         let result = '';
-        this.nextChar();
 
         while (this.now !== ' ' && this.now !== '\n' && this.now != '\r') {
             result += this.now;
@@ -127,11 +123,7 @@ export class ConstraintsLexer {
     }
 
     private skipReturnAndWhitespace() {
-        while (
-            this.peekChar() === '\r' ||
-            this.peekChar() === '\n' ||
-            this.peekChar() === ' '
-        ) {
+        while (this.now === ' ' || this.now === '\r' || this.now === '\n') {
             this.nextChar();
         }
     }
