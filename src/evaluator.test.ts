@@ -1,4 +1,4 @@
-import { Key, Value } from './keyvalue';
+import { Key, Value, map2, map3 } from './keyvalue';
 import * as P from './parser/parser';
 
 test('pict 3factors by 2', () => {
@@ -292,28 +292,6 @@ test('pict 4factors by 3', () => {
         ).toBe(true);
     }
 });
-
-function map2(k1: string, v1: string, k2: string, v2: string): Map<Key, Value> {
-    const result = new Map<Key, Value>();
-    result.set(Key.of(k1), Value.of(v1));
-    result.set(Key.of(k2), Value.of(v2));
-    return result;
-}
-
-function map3(
-    k1: string,
-    v1: string,
-    k2: string,
-    v2: string,
-    k3: string,
-    v3: string
-): Map<Key, Value> {
-    const result = new Map<Key, Value>();
-    result.set(Key.of(k1), Value.of(v1));
-    result.set(Key.of(k2), Value.of(v2));
-    result.set(Key.of(k3), Value.of(v3));
-    return result;
-}
 
 function assertContains(
     target: Map<Key, Value>,

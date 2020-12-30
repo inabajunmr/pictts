@@ -1,4 +1,4 @@
-import { Key, Value } from '../keyvalue';
+import { map, map2, map3 } from '../keyvalue';
 import { ConstraintsLexer } from '../parser/constrainsLexer';
 import { Predicate } from './predicate';
 
@@ -39,28 +39,4 @@ test('(term and term) or term', () => {
     expect(sut.ioperate(map('A', 'a1'))).toBe(true); // no key matched, true
 });
 
-function map(key: string, value: string): Map<Key, Value> {
-    return new Map().set(Key.of(key), Value.of(value));
-}
-
-function map2(k1: string, v1: string, k2: string, v2: string): Map<Key, Value> {
-    const result = new Map<Key, Value>();
-    result.set(Key.of(k1), Value.of(v1));
-    result.set(Key.of(k2), Value.of(v2));
-    return result;
-}
-
-function map3(
-    k1: string,
-    v1: string,
-    k2: string,
-    v2: string,
-    k3: string,
-    v3: string
-): Map<Key, Value> {
-    const result = new Map<Key, Value>();
-    result.set(Key.of(k1), Value.of(v1));
-    result.set(Key.of(k2), Value.of(v2));
-    result.set(Key.of(k3), Value.of(v3));
-    return result;
-}
+// TODO 入れ子
