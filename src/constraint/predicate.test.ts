@@ -48,4 +48,3 @@ test('(term and (term or term))', () => {
     expect(sut.ioperate(map3('A', 'a1', 'B', 'b2', 'C', 'c2'))).toBe(false);
     expect(sut.ioperate(map('A', 'a1'))).toBe(true); // no key matched, true
 });
-// TODO 入れ子
