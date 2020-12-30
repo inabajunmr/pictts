@@ -7,58 +7,69 @@ import { Key, Value } from '../keyvalue';
  * Divide each sentence from token array.
  */
 export class SentenceParser {
-    private readonly tokens: T.Token[];
+    private readonly parametersTokens: T.Token[];
+    private readonly constraintsTokens: T.Token[];
     private index = 0;
 
     constructor(input: string) {
-        this.tokens = new Lexer(input).parametersTokens();
+        const l = new Lexer(input);
+        this.parametersTokens = l.parametersTokens();
+        this.constraintsTokens = l.constraintsTokens();
     }
 
     /**
-     * Get next sentence.
+     * Get next parameters sentence.
      *
      * If the sentence is last, second return value is true.
      */
-    nextSentence(): [Sentence, boolean] {
-        let type: SentenceType | undefined = undefined;
+    nextParametersSentence(): [ParametersSentence, boolean] {
         const results: T.Token[] = [];
         let eof = false;
-        for (; this.index < this.tokens.length; this.index++) {
+        for (; this.index < this.parametersTokens.length; this.index++) {
             if (
-                type === 'parameters' &&
-                (this.tokens[this.index] instanceof T.ReturnToken ||
-                    this.tokens[this.index] instanceof T.EOFToken)
+                this.parametersTokens[this.index] instanceof T.ReturnToken ||
+                this.parametersTokens[this.index] instanceof T.EOFToken
             ) {
                 eof = this.isEOF();
                 break;
             }
 
-            results.push(this.tokens[this.index]);
-            if (this.tokens[this.index] instanceof T.ColonToken) {
-                type = 'parameters';
-            }
-        }
-
-        if (type === undefined) {
-            throw new E.ParseException('Sentence type is undefined');
+            results.push(this.parametersTokens[this.index]);
         }
 
         return [new ParametersSentence(results), eof];
     }
 
-    parseAsConstraint(tokens: T.Token[]): T.Token[] {
-        return tokens.map((t) => {
-            if (t instanceof T.IdentToken) {
-                return t.asConstraint();
+    /**
+     * Get next constraints sentence.
+     *
+     * If the sentence is last, second return value is true.
+     */
+    nextConstraintsSentence(): [ConstraintsSentence, boolean] {
+        const results: T.Token[] = [];
+        let eof = false;
+        for (; this.index < this.constraintsTokens.length; this.index++) {
+            if (
+                this.constraintsTokens[this.index] instanceof
+                    T.SemicolonToken ||
+                this.constraintsTokens[this.index] instanceof T.EOFToken
+            ) {
+                eof = this.isEOF();
+                break;
             }
-        }) as T.Token[];
+
+            results.push(this.constraintsTokens[this.index]);
+        }
+
+        return [new ConstraintsSentence(results), eof];
     }
 
     private isEOF(): boolean {
-        for (; this.index < this.tokens.length; this.index++) {
+        for (; this.index < this.parametersTokens.length; this.index++) {
             if (
-                this.tokens[this.index] instanceof T.ReturnToken == false &&
-                this.tokens[this.index] instanceof T.EOFToken == false
+                this.parametersTokens[this.index] instanceof T.ReturnToken ==
+                    false &&
+                this.parametersTokens[this.index] instanceof T.EOFToken == false
             ) {
                 return false;
             }
@@ -68,22 +79,17 @@ export class SentenceParser {
     }
 }
 
-type SentenceType = 'parameters' | 'constraint';
-
-export abstract class Sentence {
+export class ConstraintsSentence {
     readonly tokens: T.Token[];
 
     constructor(tokens: T.Token[]) {
         this.tokens = tokens;
     }
 }
-
-export class ConstraintsSentence extends Sentence {}
-export class ParametersSentence extends Sentence {
+export class ParametersSentence {
     readonly key: Key;
     readonly parameters: Value[];
     constructor(tokens: T.Token[]) {
-        super(tokens);
         this.key = ParametersSentence.getKey(tokens);
         this.parameters = ParametersSentence.getParameters(tokens);
     }

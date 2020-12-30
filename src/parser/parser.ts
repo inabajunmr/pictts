@@ -9,18 +9,21 @@ export class Parser {
     }
 
     parse(): Pict {
+        const parameters = this.parseParameters();
+
+        return new Pict(parameters);
+    }
+
+    parseParameters(): Map<Key, Value[]> {
         let eof = false;
         const result = new Map<Key, Value[]>();
         do {
             // parse 1 sentence
-            const s = this.sentences.nextSentence();
+            const s = this.sentences.nextParametersSentence();
             eof = s[1];
             const sentence = s[0];
-            if (sentence instanceof S.ParametersSentence) {
-                result.set(sentence.key, sentence.parameters);
-            }
+            result.set(sentence.key, sentence.parameters);
         } while (!eof);
-
-        return new Pict(result);
+        return result;
     }
 }
