@@ -1,26 +1,57 @@
+import { ParseException } from '../exception';
 import { Key, Value } from '../keyvalue';
+import {
+    EqualToken,
+    GreaterThanEqualToken,
+    GreaterThanToken,
+    InToken,
+    LessThanEqualToken,
+    LessThanToken,
+    LikeToken,
+    NotEqualToken,
+    ParameterNameToken,
+    LCurlyBraceToken,
+    RCurlyBraceToken,
+    StringToken,
+    Token,
+} from '../parser/token';
 import { Clause } from './constraint';
 
 export class Term extends Clause {
     private readonly left: Key;
-    private readonly rightValues: Value[];
-    private readonly rightKeys: Key[];
+    private readonly rightValues: Value[] = [];
+    private readonly rightKeys: Key[] = [];
     private readonly relationOperator: Relation;
 
-    constructor(
-        left: Key,
-        rightValues: Value[],
-        rightKeys: Key[],
-        relation: Relation
-    ) {
-        super(true);
-        this.left = left;
-        this.rightValues = rightValues;
-        this.rightKeys = rightKeys;
-        this.relationOperator = relation;
+    constructor(input: Token[]) {
+        super(false);
+        const first = input.shift();
+        this.left = Key.of((first as ParameterNameToken).literal);
+        const second = input.shift() as Token;
+        this.relationOperator = relationTokenToRelation(second);
+        const third = input.shift();
+        if (third instanceof LCurlyBraceToken) {
+            for (let index = 0; index < input.length; index++) {
+                const t = input.shift();
+                if (t instanceof RCurlyBraceToken) {
+                    break;
+                }
+                if (t instanceof StringToken) {
+                    this.rightValues.push(Value.of(t.literal));
+                }
+
+                // TODO IN allow keys?
+            }
+        } else {
+            if (third instanceof ParameterNameToken) {
+                this.rightKeys = [Key.of(third.literal)];
+            } else {
+                this.rightValues = [Value.of((third as StringToken).literal)];
+            }
+        }
     }
 
-    operate(record: Map<Key, Value>): boolean {
+    ioperate(record: Map<Key, Value>): boolean {
         switch (this.relationOperator) {
             case '=': {
                 const l = this.getLeftValue(record);
@@ -119,3 +150,28 @@ export class Term extends Clause {
 }
 
 type Relation = '=' | '<>' | '>' | '>=' | '<' | '<=' | 'LIKE' | 'IN';
+
+function relationTokenToRelation(t: Token): Relation {
+    switch (true) {
+        case t instanceof EqualToken:
+            return '=';
+        case t instanceof NotEqualToken:
+            return '<>';
+        case t instanceof GreaterThanToken:
+            return '>';
+        case t instanceof GreaterThanEqualToken:
+            return '>=';
+        case t instanceof LessThanToken:
+            return '<';
+        case t instanceof LessThanEqualToken:
+            return '<=';
+        case t instanceof LikeToken:
+            return 'LIKE';
+        case t instanceof InToken:
+            return 'IN';
+        default:
+            throw new ParseException(
+                `Relation operator ${t.toString()} is not defined`
+            );
+    }
+}

@@ -6,6 +6,10 @@ export abstract class Token {}
  * Identifier
  */
 export class IdentToken extends Token {
+    toString(): string {
+        return `Ident: ${this.literal}`;
+    }
+
     readonly literal: string;
     constructor(literal: string) {
         super();
@@ -54,6 +58,10 @@ export class IdentToken extends Token {
  * :
  */
 export class ColonToken extends Token {
+    toString(): string {
+        return `Colon`;
+    }
+
     static readonly TOKEN = new ColonToken();
     private constructor() {
         super();
@@ -64,6 +72,10 @@ export class ColonToken extends Token {
  * ;
  */
 export class SemicolonToken extends Token {
+    toString(): string {
+        return `Semicolon`;
+    }
+
     static readonly TOKEN = new SemicolonToken();
     private constructor() {
         super();
@@ -74,6 +86,10 @@ export class SemicolonToken extends Token {
  * ,
  */
 export class CommaToken extends Token {
+    toString(): string {
+        return `Comma`;
+    }
+
     static readonly TOKEN = new CommaToken();
     private constructor() {
         super();
@@ -83,12 +99,20 @@ export class CommaToken extends Token {
 /**
  * EOF
  */
-export class EOFToken extends Token {}
+export class EOFToken extends Token {
+    toString(): string {
+        return `EOF`;
+    }
+}
 
 /**
  * \r\n
  */
 export class ReturnToken extends Token {
+    toString(): string {
+        return `Return`;
+    }
+
     static readonly TOKEN = new ReturnToken();
     private constructor() {
         super();
@@ -99,6 +123,10 @@ export class ReturnToken extends Token {
  * [Xxxx]
  */
 export class ParameterNameToken extends Token {
+    toString(): string {
+        return `ParameterName: ${this.literal}`;
+    }
+
     readonly literal: string;
     constructor(literal: string) {
         super();
@@ -110,6 +138,10 @@ export class ParameterNameToken extends Token {
  * "Xxxx"
  */
 export class StringToken extends Token {
+    toString(): string {
+        return `String: ${this.literal}`;
+    }
+
     readonly literal: string;
     constructor(literal: string) {
         super();
@@ -121,6 +153,10 @@ export class StringToken extends Token {
  * IF
  */
 export class IfToken extends Token {
+    toString(): string {
+        return `IF`;
+    }
+
     static readonly TOKEN = new IfToken();
     constructor() {
         super();
@@ -131,6 +167,10 @@ export class IfToken extends Token {
  * ELSE
  */
 export class ElseToken extends Token {
+    toString(): string {
+        return `ELSE`;
+    }
+
     static readonly TOKEN = new ElseToken();
     constructor() {
         super();
@@ -141,6 +181,10 @@ export class ElseToken extends Token {
  * THEN
  */
 export class ThenToken extends Token {
+    toString(): string {
+        return `THEN`;
+    }
+
     static readonly TOKEN = new ThenToken();
     constructor() {
         super();
@@ -151,6 +195,10 @@ export class ThenToken extends Token {
  * AND
  */
 export class AndToken extends Token {
+    toString(): string {
+        return `AND`;
+    }
+
     static readonly TOKEN = new AndToken();
     constructor() {
         super();
@@ -161,6 +209,10 @@ export class AndToken extends Token {
  * OR
  */
 export class OrToken extends Token {
+    toString(): string {
+        return `OR`;
+    }
+
     static readonly TOKEN = new OrToken();
     constructor() {
         super();
@@ -168,9 +220,13 @@ export class OrToken extends Token {
 }
 
 /**
- * OR
+ * NOT
  */
 export class NotToken extends Token {
+    toString(): string {
+        return `NOT`;
+    }
+
     static readonly TOKEN = new NotToken();
     constructor() {
         super();
@@ -181,6 +237,10 @@ export class NotToken extends Token {
  * LIKE
  */
 export class LikeToken extends Token {
+    toString(): string {
+        return `LIKE`;
+    }
+
     static readonly TOKEN = new LikeToken();
     constructor() {
         super();
@@ -191,6 +251,10 @@ export class LikeToken extends Token {
  * IN
  */
 export class InToken extends Token {
+    toString(): string {
+        return `IN`;
+    }
+
     static readonly TOKEN = new InToken();
     constructor() {
         super();
@@ -201,6 +265,10 @@ export class InToken extends Token {
  * (
  */
 export class LParenthesesToken extends Token {
+    toString(): string {
+        return `(`;
+    }
+
     static readonly TOKEN = new LParenthesesToken();
     constructor() {
         super();
@@ -211,6 +279,10 @@ export class LParenthesesToken extends Token {
  * )
  */
 export class RParenthesesToken extends Token {
+    toString(): string {
+        return `)`;
+    }
+
     static readonly TOKEN = new RParenthesesToken();
     constructor() {
         super();
@@ -221,6 +293,10 @@ export class RParenthesesToken extends Token {
  * {
  */
 export class LCurlyBraceToken extends Token {
+    toString(): string {
+        return `{`;
+    }
+
     static readonly TOKEN = new LCurlyBraceToken();
     constructor() {
         super();
@@ -231,6 +307,10 @@ export class LCurlyBraceToken extends Token {
  * }
  */
 export class RCurlyBraceToken extends Token {
+    toString(): string {
+        return `}`;
+    }
+
     static readonly TOKEN = new RCurlyBraceToken();
     constructor() {
         super();
@@ -241,15 +321,26 @@ export class RCurlyBraceToken extends Token {
  * =
  */
 export class EqualToken extends Token {
+    toString(): string {
+        return `=`;
+    }
+
     static readonly TOKEN = new EqualToken();
     constructor() {
         super();
     }
 }
+
+export class RelationToken extends Token {}
+
 /**
  * >
  */
-export class GreaterThanToken extends Token {
+export class GreaterThanToken extends RelationToken {
+    toString(): string {
+        return `>`;
+    }
+
     static readonly TOKEN = new GreaterThanToken();
     constructor() {
         super();
@@ -259,8 +350,12 @@ export class GreaterThanToken extends Token {
 /**
  * >=
  */
-export class GreaterThanEqualToken extends Token {
-    static readonly TOKEN = new GreaterThanToken();
+export class GreaterThanEqualToken extends RelationToken {
+    toString(): string {
+        return `>=`;
+    }
+
+    static readonly TOKEN = new GreaterThanEqualToken();
     constructor() {
         super();
     }
@@ -269,7 +364,11 @@ export class GreaterThanEqualToken extends Token {
 /**
  * <
  */
-export class LessThanToken extends Token {
+export class LessThanToken extends RelationToken {
+    toString(): string {
+        return `<`;
+    }
+
     static readonly TOKEN = new LessThanToken();
     constructor() {
         super();
@@ -277,9 +376,13 @@ export class LessThanToken extends Token {
 }
 
 /**
- * <
+ * <=
  */
-export class LessThanEqualToken extends Token {
+export class LessThanEqualToken extends RelationToken {
+    toString(): string {
+        return `<=`;
+    }
+
     static readonly TOKEN = new LessThanEqualToken();
     constructor() {
         super();
@@ -289,7 +392,11 @@ export class LessThanEqualToken extends Token {
 /**
  * <>
  */
-export class NotEqualToken extends Token {
+export class NotEqualToken extends RelationToken {
+    toString(): string {
+        return `<>`;
+    }
+
     static readonly TOKEN = new NotEqualToken();
     constructor() {
         super();
