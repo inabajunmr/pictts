@@ -1,5 +1,5 @@
-import { Key, Value } from './keyvalue';
-import { ConstraintsSentence } from './parser/sentenceParser';
+import { Key, Value } from '../keyvalue';
+import { ConstraintsSentence } from '../parser/sentenceParser';
 
 class Constraint {
     constructor(sentence: ConstraintsSentence) {
@@ -11,7 +11,7 @@ class Constraint {
     }
 }
 
-class Clause {
+export class Clause {
     private readonly not: boolean;
 
     constructor(not: boolean) {
