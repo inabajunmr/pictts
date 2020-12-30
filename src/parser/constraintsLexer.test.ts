@@ -17,7 +17,7 @@ test('constraints', () => {
 
 test('constraints2', () => {
     const sut = new ConstraintsLexer(
-        `IF ([A] = "a1") and [B] > "b1" or [A] >= "a2" and [B] < "b2" or [B] <= "b1" [A] <> "a1"
+        `IF ([A] = "a1") AND [B] > "b1" OR [A] >= "a2" AND [B] < "b2" OR [B] <= "b1" [A] <> "a1"
         THEN [B] = "b1"
         ELSE [A] = "a1";`
     );
@@ -60,4 +60,32 @@ test('constraints2', () => {
     expect(actual[33]).toBe(T.SemicolonToken.TOKEN);
     expect(actual[34]).toStrictEqual(new T.EOFToken());
     expect(actual.length).toBe(35);
+});
+
+test('constraints3', () => {
+    const sut = new ConstraintsLexer(
+        'IF [A] IN {"a1","a2"} AND [B] LIKE "b1" THEN [C] = "c1";'
+    );
+
+    const actual = sut.tokens();
+
+    expect(actual[0]).toBe(T.IfToken.TOKEN);
+    expect(actual[1]).toBeInstanceOf(T.ParameterNameToken);
+    expect(actual[2]).toBe(T.InToken.TOKEN);
+    expect(actual[3]).toBe(T.LCurlyBraceToken.TOKEN);
+    expect(actual[4]).toBeInstanceOf(T.StringToken);
+    expect(actual[5]).toBe(T.CommaToken.TOKEN);
+    expect(actual[6]).toBeInstanceOf(T.StringToken);
+    expect(actual[7]).toBe(T.RCurlyBraceToken.TOKEN);
+    expect(actual[8]).toBe(T.AndToken.TOKEN);
+    expect(actual[9]).toBeInstanceOf(T.ParameterNameToken);
+    expect(actual[10]).toBe(T.LikeToken.TOKEN);
+    expect(actual[11]).toBeInstanceOf(T.StringToken);
+    expect(actual[12]).toBe(T.ThenToken.TOKEN);
+    expect(actual[13]).toBeInstanceOf(T.ParameterNameToken);
+    expect(actual[14]).toBe(T.EqualToken.TOKEN);
+    expect(actual[15]).toBeInstanceOf(T.StringToken);
+    expect(actual[16]).toBeInstanceOf(T.SemicolonToken);
+    expect(actual[17]).toBeInstanceOf(T.EOFToken);
+    expect(actual.length).toBe(18);
 });

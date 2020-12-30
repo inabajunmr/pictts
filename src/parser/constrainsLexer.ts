@@ -37,6 +37,14 @@ export class ConstraintsLexer {
                     return new T.StringToken(this.readString());
                 case '(':
                     return T.LParenthesesToken.TOKEN;
+                case ')':
+                    return T.RParenthesesToken.TOKEN;
+                case '{':
+                    return T.LCurlyBraceToken.TOKEN;
+                case '}':
+                    return T.RCurlyBraceToken.TOKEN;
+                case ',':
+                    return T.CommaToken.TOKEN;
                 case '[':
                     return new T.ParameterNameToken(this.readParameterName());
                 default: {

@@ -34,10 +34,14 @@ export class IdentToken extends Token {
                 return ElseToken.TOKEN;
             case 'THEN':
                 return ThenToken.TOKEN;
-            case 'and':
+            case 'AND':
                 return AndToken.TOKEN;
-            case 'or':
+            case 'OR':
                 return OrToken.TOKEN;
+            case 'LIKE':
+                return LikeToken.TOKEN;
+            case 'IN':
+                return InToken.TOKEN;
             default:
                 throw new ParseException(`${this.literal} is undefined.`);
         }
@@ -162,6 +166,26 @@ export class OrToken extends Token {
 }
 
 /**
+ * LIKE
+ */
+export class LikeToken extends Token {
+    static readonly TOKEN = new LikeToken();
+    constructor() {
+        super();
+    }
+}
+
+/**
+ * IN
+ */
+export class InToken extends Token {
+    static readonly TOKEN = new InToken();
+    constructor() {
+        super();
+    }
+}
+
+/**
  * (
  */
 export class LParenthesesToken extends Token {
@@ -176,6 +200,26 @@ export class LParenthesesToken extends Token {
  */
 export class RParenthesesToken extends Token {
     static readonly TOKEN = new RParenthesesToken();
+    constructor() {
+        super();
+    }
+}
+
+/**
+ * {
+ */
+export class LCurlyBraceToken extends Token {
+    static readonly TOKEN = new LCurlyBraceToken();
+    constructor() {
+        super();
+    }
+}
+
+/**
+ * }
+ */
+export class RCurlyBraceToken extends Token {
+    static readonly TOKEN = new RCurlyBraceToken();
     constructor() {
         super();
     }
