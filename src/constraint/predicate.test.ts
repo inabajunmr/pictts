@@ -28,6 +28,17 @@ test('term and (term or term)', () => {
     expect(sut.ioperate(map('A', 'a1'))).toBe(true); // no key matched, true
 });
 
+test('(term and term) or term', () => {
+    const t = new ConstraintsLexer(
+        '([A] = "a1" AND [B] = "b1") OR [C] = "c1"'
+    ).tokens();
+    const sut = new Predicate(false, t);
+    expect(sut.ioperate(map3('A', 'a1', 'B', 'b1', 'C', 'c2'))).toBe(true);
+    expect(sut.ioperate(map3('A', 'a2', 'B', 'b2', 'C', 'c1'))).toBe(true);
+    expect(sut.ioperate(map3('A', 'a1', 'B', 'b2', 'C', 'c2'))).toBe(false);
+    expect(sut.ioperate(map('A', 'a1'))).toBe(true); // no key matched, true
+});
+
 function map(key: string, value: string): Map<Key, Value> {
     return new Map().set(Key.of(key), Value.of(value));
 }

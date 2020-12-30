@@ -23,7 +23,7 @@ export class Predicate extends Clause {
         if (input[0] instanceof LParenthesesToken) {
             input.shift(); // remove '('
             this.left = new Predicate(not, input);
-            input.shift; // remove ')'
+            input.shift(); // remove ')'
         }
 
         if (
