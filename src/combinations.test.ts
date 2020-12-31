@@ -43,47 +43,48 @@ test('allCombinationsByMultipleArray', () => {
         map
     );
     expect(actual.keys).toStrictEqual([Key.of('A'), Key.of('X')]);
-    expect(actual.allCombinations[0].get(Key.of('A'))?.value).toBe('a');
-    expect(actual.allCombinations[0].get(Key.of('X'))?.value).toBe('x');
-    expect(actual.allCombinations[1].get(Key.of('A'))?.value).toBe('a');
-    expect(actual.allCombinations[1].get(Key.of('X'))?.value).toBe('y');
-    expect(actual.allCombinations[2].get(Key.of('A'))?.value).toBe('a');
-    expect(actual.allCombinations[2].get(Key.of('X'))?.value).toBe('z');
-    expect(actual.allCombinations[3].get(Key.of('A'))?.value).toBe('b');
-    expect(actual.allCombinations[3].get(Key.of('X'))?.value).toBe('x');
-    expect(actual.allCombinations[4].get(Key.of('A'))?.value).toBe('b');
-    expect(actual.allCombinations[4].get(Key.of('X'))?.value).toBe('y');
-    expect(actual.allCombinations[5].get(Key.of('A'))?.value).toBe('b');
-    expect(actual.allCombinations[5].get(Key.of('X'))?.value).toBe('z');
-    expect(actual.allCombinations[6].get(Key.of('A'))?.value).toBe('c');
-    expect(actual.allCombinations[6].get(Key.of('X'))?.value).toBe('x');
-    expect(actual.allCombinations[7].get(Key.of('A'))?.value).toBe('c');
-    expect(actual.allCombinations[7].get(Key.of('X'))?.value).toBe('y');
-    expect(actual.allCombinations[8].get(Key.of('A'))?.value).toBe('c');
-    expect(actual.allCombinations[8].get(Key.of('X'))?.value).toBe('z');
-    expect(actual.allCombinations.length).toBe(9);
+
+    expect(actual.workingCombinations[0].get(Key.of('A'))?.value).toBe('a');
+    expect(actual.workingCombinations[0].get(Key.of('X'))?.value).toBe('x');
+    expect(actual.workingCombinations[1].get(Key.of('A'))?.value).toBe('a');
+    expect(actual.workingCombinations[1].get(Key.of('X'))?.value).toBe('y');
+    expect(actual.workingCombinations[2].get(Key.of('A'))?.value).toBe('a');
+    expect(actual.workingCombinations[2].get(Key.of('X'))?.value).toBe('z');
+    expect(actual.workingCombinations[3].get(Key.of('A'))?.value).toBe('b');
+    expect(actual.workingCombinations[3].get(Key.of('X'))?.value).toBe('x');
+    expect(actual.workingCombinations[4].get(Key.of('A'))?.value).toBe('b');
+    expect(actual.workingCombinations[4].get(Key.of('X'))?.value).toBe('y');
+    expect(actual.workingCombinations[5].get(Key.of('A'))?.value).toBe('b');
+    expect(actual.workingCombinations[5].get(Key.of('X'))?.value).toBe('z');
+    expect(actual.workingCombinations[6].get(Key.of('A'))?.value).toBe('c');
+    expect(actual.workingCombinations[6].get(Key.of('X'))?.value).toBe('x');
+    expect(actual.workingCombinations[7].get(Key.of('A'))?.value).toBe('c');
+    expect(actual.workingCombinations[7].get(Key.of('X'))?.value).toBe('y');
+    expect(actual.workingCombinations[8].get(Key.of('A'))?.value).toBe('c');
+    expect(actual.workingCombinations[8].get(Key.of('X'))?.value).toBe('z');
+    expect(actual.workingCombinations.length).toBe(9);
 });
 
 test('longestCombination no exceptkeys', () => {
     const c = new Combinations([Key.of('A'), Key.of('N')]);
-    c.allCombinations.push(map2('A', 'a', 'N', '1'));
+    c.workingCombinations.push(map2('A', 'a', 'N', '1'));
     const actual = longestCombination([], [c]);
     expect(actual.keys).toStrictEqual(c.keys);
-    expect(actual.allCombinations).toStrictEqual(c.allCombinations);
+    expect(actual.workingCombinations).toStrictEqual(c.workingCombinations);
 });
 
 test('longestCombination exceptKeys', () => {
     const c1 = new Combinations([Key.of('A'), Key.of('B')]); // longest but except
 
-    c1.allCombinations.push(map2('A', 'a', 'B', 'b'));
-    c1.allCombinations.push(map2('A', 'a', 'B', 'b'));
-    c1.allCombinations.push(map2('A', 'a', 'B', 'b'));
+    c1.workingCombinations.push(map2('A', 'a', 'B', 'b'));
+    c1.workingCombinations.push(map2('A', 'a', 'B', 'b'));
+    c1.workingCombinations.push(map2('A', 'a', 'B', 'b'));
     const c2 = new Combinations([Key.of('A'), Key.of('C')]); // longest
-    c2.allCombinations.push(map2('A', 'a', 'C', 'c'));
-    c2.allCombinations.push(map2('A', 'a', 'C', 'c'));
+    c2.workingCombinations.push(map2('A', 'a', 'C', 'c'));
+    c2.workingCombinations.push(map2('A', 'a', 'C', 'c'));
     const c3 = new Combinations([Key.of('B'), Key.of('C')]);
-    c3.allCombinations.push(map2('B', 'b', 'C', 'c'));
+    c3.workingCombinations.push(map2('B', 'b', 'C', 'c'));
     const actual = longestCombination([Key.of('A'), Key.of('B')], [c1, c2, c3]);
     expect(actual.keys).toStrictEqual(c2.keys);
-    expect(actual.allCombinations).toStrictEqual(c2.allCombinations);
+    expect(actual.workingCombinations).toStrictEqual(c2.workingCombinations);
 });

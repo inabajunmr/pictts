@@ -29,7 +29,7 @@ function iCombinationsByMultipleArray(
     result: Combinations
 ) {
     if (depth == parameters.length) {
-        result.allCombinations.push(
+        result.workingCombinations.push(
             // temp to map
             tmp.reduce((acc, v, i) => {
                 return acc.set(keys[i], v);
@@ -104,30 +104,34 @@ export function longestCombination(
     const ndone = excepted.filter((e) => !e.done);
     if (ndone.length !== 0) {
         return ndone.reduce((b, a) => {
-            return b.allCombinations.length >= a.allCombinations.length ? b : a;
+            return b.workingCombinations.length >= a.workingCombinations.length
+                ? b
+                : a;
         });
     }
 
     return excepted.reduce((b, a) => {
-        return b.allCombinations.length >= a.allCombinations.length ? b : a;
+        return b.workingCombinations.length >= a.workingCombinations.length
+            ? b
+            : a;
     });
 }
 export class Combinations {
     keys: Key[];
-    allCombinations: Map<Key, Value>[];
+    workingCombinations: Map<Key, Value>[] = [];
+    allCombinations: Map<Key, Value>[] = [];
     done = false;
     constructor(keys: Key[]) {
         this.keys = keys;
-        this.allCombinations = [];
     }
 
     remove(target: Map<Key, Value>): void {
-        if (this.allCombinations.length !== 1) {
-            const cache = this.allCombinations.filter((c) => {
+        if (this.workingCombinations.length !== 1) {
+            const cache = this.workingCombinations.filter((c) => {
                 return !this.equalsAllElements(c, target);
             });
 
-            this.allCombinations = cache;
+            this.workingCombinations = cache;
         }
     }
 
