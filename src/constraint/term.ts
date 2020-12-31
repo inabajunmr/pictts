@@ -16,6 +16,7 @@ import {
     Token,
 } from '../parser/token';
 import { Clause } from './constraint';
+import { ForceBoolean } from './forceBool';
 
 export class Term extends Clause {
     private readonly left: Key;
@@ -23,8 +24,8 @@ export class Term extends Clause {
     private readonly rightKeys: Key[] = [];
     private readonly relationOperator: Relation;
 
-    constructor(input: Token[]) {
-        super(false);
+    constructor(not: boolean, input: Token[]) {
+        super(not);
         const first = input.shift();
         this.left = Key.of((first as ParameterNameToken).literal);
         const second = input.shift() as Token;
@@ -51,88 +52,106 @@ export class Term extends Clause {
         }
     }
 
-    ioperate(record: Map<Key, Value>): boolean {
+    ioperate(record: Map<Key, Value>): ForceBoolean {
         switch (this.relationOperator) {
             case '=': {
                 const l = this.getLeftValue(record);
                 const r = this.getRightValue(record);
 
                 if (l === undefined || r === undefined) {
-                    return true;
+                    return new ForceBoolean(true, true);
                 }
 
-                return l === r;
+                return !this.not
+                    ? new ForceBoolean(l === r, false)
+                    : new ForceBoolean(l === r, false).flip();
             }
             case '<>': {
                 const l = this.getLeftValue(record);
                 const r = this.getRightValue(record);
 
                 if (l === undefined || r === undefined) {
-                    return true;
+                    return new ForceBoolean(true, true);
                 }
 
-                return l !== r;
+                return !this.not
+                    ? new ForceBoolean(l !== r, false)
+                    : new ForceBoolean(l !== r, false).flip();
             }
             case '>': {
                 const l = this.getLeftValue(record);
                 const r = this.getRightValue(record);
 
                 if (l === undefined || r === undefined) {
-                    return true;
+                    return new ForceBoolean(true, true);
                 }
 
-                return l > r;
+                return !this.not
+                    ? new ForceBoolean(l > r, false)
+                    : new ForceBoolean(l > r, false).flip();
             }
             case '>=': {
                 const l = this.getLeftValue(record);
                 const r = this.getRightValue(record);
 
                 if (l === undefined || r === undefined) {
-                    return true;
+                    return new ForceBoolean(true, true);
                 }
 
-                return l >= r;
+                return !this.not
+                    ? new ForceBoolean(l >= r, false)
+                    : new ForceBoolean(l >= r, false).flip();
             }
             case '<': {
                 const l = this.getLeftValue(record);
                 const r = this.getRightValue(record);
 
                 if (l === undefined || r === undefined) {
-                    return true;
+                    return new ForceBoolean(true, true);
                 }
 
-                return l < r;
+                return !this.not
+                    ? new ForceBoolean(l < r, false)
+                    : new ForceBoolean(l < r, false).flip();
             }
             case '<=': {
                 const l = this.getLeftValue(record);
                 const r = this.getRightValue(record);
 
                 if (l === undefined || r === undefined) {
-                    return true;
+                    return new ForceBoolean(true, true);
                 }
 
-                return l <= r;
+                return !this.not
+                    ? new ForceBoolean(l <= r, false)
+                    : new ForceBoolean(l <= r, false).flip();
             }
             case 'LIKE': {
                 const l = this.getLeftValue(record);
                 const pattern = this.rightValues[0];
 
                 if (l === undefined) {
-                    return true;
+                    return new ForceBoolean(true, true);
                 }
 
                 // TODO PICT pattern is not same as js regex
-                return l.match(pattern.value) !== null;
+                return !this.not
+                    ? new ForceBoolean(l.match(pattern.value) !== null, false)
+                    : new ForceBoolean(
+                          l.match(pattern.value) !== null,
+                          false
+                      ).flip();
             }
             case 'IN': {
                 const l = this.getLeftValue(record);
 
                 if (l === undefined) {
-                    return true;
+                    return new ForceBoolean(true, true);
                 }
 
-                return (
-                    this.rightValues.filter((v) => v.value === l).length !== 0
+                return new ForceBoolean(
+                    this.rightValues.filter((v) => v.value === l).length !== 0,
+                    false
                 );
             }
         }
