@@ -147,8 +147,17 @@ export class Pict {
             return all;
         });
 
-        const result = suitables[this.random.random(0, suitables.length - 1)];
+        const constraintsApplied = suitables.filter(
+            (s) => this.constraints.filter((c) => !c.match(s)).length === 0
+        );
+
+        const result =
+            constraintsApplied[
+                this.random.random(0, constraintsApplied.length - 1)
+            ];
         if (result === undefined) {
+            // TODO return constraints matched from all(not first)
+            // if all are not matched? exception?
             return combinations.allCombinations[0];
         }
 
