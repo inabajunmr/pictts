@@ -1,5 +1,6 @@
 import * as C from './combination';
 import { Key, Value } from './keyvalue';
+import { LikeToken } from './parser/token';
 import { Random } from './random';
 export class Pict {
     random: Random = new Random();
@@ -60,11 +61,12 @@ export class Pict {
 
             // set next slot to result
             const line = result.nowLine();
-            for (let index = 0; index < longest.keys.length; index++) {
-                if (line.get(longest.keys[index]) === undefined) {
-                    line.set(longest.keys[index], suitable[index]);
+
+            Array.from(suitable.keys()).forEach((k) => {
+                if (line.get(k) === undefined) {
+                    line.set(k, suitable.get(k) as Value);
                 }
-            }
+            });
         }
 
         return result.clean();
@@ -90,15 +92,17 @@ export class Pict {
      * @param combinations
      * @param line
      */
-    nextSlot(combinations: C.Combinations, line: Map<Key, Value>): Value[] {
+    nextSlot(
+        combinations: C.Combinations,
+        line: Map<Key, Value>
+    ): Map<Key, Value> {
         if (combinations.allCombinations.length === 1) {
             combinations.done = true;
             return combinations.allCombinations[0];
         }
 
         if (line.size === 0) {
-            const a = combinations.allCombinations.shift() as Value[];
-            return a;
+            return combinations.allCombinations.shift() as Map<Key, Value>;
         }
 
         const alreadyExistedKeys: Key[] = [];
@@ -113,7 +117,7 @@ export class Pict {
             let all = true;
             alreadyExistedKeys.forEach((k) => {
                 const v = line.get(k);
-                if (v !== c[combinations.keys.indexOf(k)]) {
+                if (v !== c.get(k)) {
                     all = false;
                 }
             });
@@ -167,15 +171,15 @@ class PictResult {
         return this.result[this.result.length - 1];
     }
 
-    contains(keys: Key[], values: Value[]) {
+    contains(keys: Key[], values: Map<Key, Value>) {
         if (values == undefined) {
             console.log();
         }
         return (
             this.result.filter((r) => {
                 let contains = true;
-                keys.filter((k, i) => {
-                    if (r.get(k) !== values[i]) {
+                keys.filter((k) => {
+                    if (r.get(k) !== values.get(k)) {
                         contains = false;
                     }
                 });

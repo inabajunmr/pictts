@@ -17,24 +17,30 @@ export function allCombinationsByMultipleArray(
     const params = keys.map((k) => {
         return kvs.get(k) as Value[];
     });
-    iCombinationsByMultipleArray(params, 0, [], result);
+    iCombinationsByMultipleArray(keys, params, 0, [], result);
     return result;
 }
 
 function iCombinationsByMultipleArray(
+    keys: Key[],
     parameters: Value[][],
     depth: number,
     tmp: Value[],
     result: Combinations
 ) {
     if (depth == parameters.length) {
-        result.allCombinations.push(Array.from(tmp));
+        result.allCombinations.push(
+            // temp to map
+            tmp.reduce((acc, v, i) => {
+                return acc.set(keys[i], v);
+            }, new Map<Key, Value>())
+        );
         return;
     }
 
     parameters[depth].forEach((p) => {
         tmp[depth] = p;
-        iCombinationsByMultipleArray(parameters, depth + 1, tmp, result);
+        iCombinationsByMultipleArray(keys, parameters, depth + 1, tmp, result);
     });
 }
 
@@ -108,20 +114,14 @@ export function longestCombination(
 }
 export class Combinations {
     keys: Key[];
-    allCombinations: Value[][];
+    allCombinations: Map<Key, Value>[];
     done = false;
     constructor(keys: Key[]) {
         this.keys = keys;
         this.allCombinations = [];
     }
 
-    clone(): Combinations {
-        const clone = new Combinations(this.keys);
-        clone.allCombinations = Array.from(this.allCombinations);
-        return clone;
-    }
-
-    remove(target: Value[]): void {
+    remove(target: Map<Key, Value>): void {
         if (this.allCombinations.length !== 1) {
             const cache = this.allCombinations.filter((c) => {
                 return !this.equalsAllElements(c, target);
@@ -131,21 +131,24 @@ export class Combinations {
         }
     }
 
-    equalsAllElements<T>(array1: T[], array2: T[]): boolean {
-        if (array1 === undefined || array2 === undefined) {
-            return array2 === array1;
+    equalsAllElements(
+        target1: Map<Key, Value>,
+        target2: Map<Key, Value>
+    ): boolean {
+        if (target1 === undefined || target2 === undefined) {
+            return target1 === target2;
         }
 
-        if (array1.length !== array2.length) {
+        if (target1.size !== target2.size) {
             return false;
         }
 
-        for (let index = 0; index < array1.length; index++) {
-            if (array1[index] !== array2[index]) {
-                return false;
-            }
-        }
+        const keys = Array.from(target1.keys());
 
-        return true;
+        return (
+            keys.filter((k) => {
+                return target1.get(k) !== target2.get(k);
+            }).length === 0
+        );
     }
 }
