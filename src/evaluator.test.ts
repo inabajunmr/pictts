@@ -293,6 +293,29 @@ test('pict 4factors by 3', () => {
     }
 });
 
+test('pict 2factors with 1 constraints', () => {
+    const sut = new P.Parser(
+        'A:A1,A2\nB:B1,B2\nIF [A] = "A1" THEN [B] = "B1";'
+    ).parse();
+    for (let index = 0; index < 100; index++) {
+        sut.setSeed(Math.floor(Math.random() * 10000));
+        const actual = sut.testCases();
+
+        // contains all combinations
+        expect(assertContains(map2('A', 'A1', 'B', 'B1'), actual.result)).toBe(
+            true
+        );
+        expect(assertContains(map2('A', 'A1', 'B', 'B2'), actual.result)).toBe(
+            false // matched but constraints violation
+        );
+        expect(assertContains(map2('A', 'A2', 'B', 'B1'), actual.result)).toBe(
+            true
+        );
+        expect(assertContains(map2('A', 'A2', 'B', 'B2'), actual.result)).toBe(
+            true
+        );
+    }
+});
 function assertContains(
     target: Map<Key, Value>,
     result: Map<Key, Value>[]

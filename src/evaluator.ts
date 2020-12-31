@@ -90,6 +90,7 @@ export class Pict {
 
             // use only constraints matched combinations
             if (this.constraints.length !== 0) {
+                // TODO something wrong
                 combinations.workingCombinations = combinations.workingCombinations.filter(
                     (v) => {
                         return (

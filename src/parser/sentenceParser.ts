@@ -9,7 +9,8 @@ import { Key, Value } from '../keyvalue';
 export class SentenceParser {
     private readonly parametersTokens: T.Token[];
     private readonly constraintsTokens: T.Token[];
-    private index = 0;
+    private pindex = 0;
+    private cindex = 0;
 
     constructor(input: string) {
         const l = new Lexer(input);
@@ -25,16 +26,16 @@ export class SentenceParser {
     nextParametersSentence(): [ParametersSentence, boolean] {
         const results: T.Token[] = [];
         let eof = false;
-        for (; this.index < this.parametersTokens.length; this.index++) {
+        for (; this.pindex < this.parametersTokens.length; this.pindex++) {
             if (
-                this.parametersTokens[this.index] instanceof T.ReturnToken ||
-                this.parametersTokens[this.index] instanceof T.EOFToken
+                this.parametersTokens[this.pindex] instanceof T.ReturnToken ||
+                this.parametersTokens[this.pindex] instanceof T.EOFToken
             ) {
-                eof = this.isEOF();
+                eof = this.pisEOF();
                 break;
             }
 
-            results.push(this.parametersTokens[this.index]);
+            results.push(this.parametersTokens[this.pindex]);
         }
 
         return [new ParametersSentence(results), eof];
@@ -47,18 +48,19 @@ export class SentenceParser {
      */
     nextConstraintsSentence(): [ConstraintsSentence, boolean] {
         const results: T.Token[] = [];
+
         let eof = false;
-        for (; this.index < this.constraintsTokens.length; this.index++) {
+        for (; this.cindex < this.constraintsTokens.length; this.cindex++) {
             if (
-                this.constraintsTokens[this.index] instanceof
+                this.constraintsTokens[this.cindex] instanceof
                     T.SemicolonToken ||
-                this.constraintsTokens[this.index] instanceof T.EOFToken
+                this.constraintsTokens[this.cindex] instanceof T.EOFToken
             ) {
-                eof = this.isEOF();
+                eof = this.cisEOF();
                 break;
             }
 
-            results.push(this.constraintsTokens[this.index]);
+            results.push(this.constraintsTokens[this.cindex]);
         }
 
         // no sentence
@@ -69,12 +71,28 @@ export class SentenceParser {
         return [new ConstraintsSentence(results), eof];
     }
 
-    private isEOF(): boolean {
-        for (; this.index < this.parametersTokens.length; this.index++) {
+    private cisEOF(): boolean {
+        for (; this.cindex < this.parametersTokens.length; this.cindex++) {
             if (
-                this.parametersTokens[this.index] instanceof T.ReturnToken ==
+                this.parametersTokens[this.cindex] instanceof T.ReturnToken ==
                     false &&
-                this.parametersTokens[this.index] instanceof T.EOFToken == false
+                this.parametersTokens[this.cindex] instanceof T.EOFToken ==
+                    false
+            ) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private pisEOF(): boolean {
+        for (; this.pindex < this.parametersTokens.length; this.pindex++) {
+            if (
+                this.parametersTokens[this.pindex] instanceof T.ReturnToken ==
+                    false &&
+                this.parametersTokens[this.pindex] instanceof T.EOFToken ==
+                    false
             ) {
                 return false;
             }
