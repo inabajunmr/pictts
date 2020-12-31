@@ -15,7 +15,7 @@ import {
     StringToken,
     Token,
 } from '../parser/token';
-import { Clause } from './constraint';
+import { Clause } from './clause';
 import { ForceBoolean } from './forceBool';
 
 export class Term extends Clause {

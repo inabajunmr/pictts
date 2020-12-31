@@ -8,7 +8,7 @@ import {
     RParenthesesToken,
     Token,
 } from '../parser/token';
-import { Clause } from './constraint';
+import { Clause } from './clause';
 import { ForceBoolean } from './forceBool';
 import { Term } from './term';
 
