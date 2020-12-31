@@ -10,9 +10,7 @@ export class Parser {
     }
 
     parse(): Pict {
-        const parameters = this.parseParameters();
-
-        return new Pict(parameters);
+        return new Pict(this.parseParameters(), this.parseConstraints());
     }
 
     parseParameters(): Map<Key, Value[]> {
@@ -36,7 +34,9 @@ export class Parser {
             const s = this.sentences.nextConstraintsSentence();
             eof = s[1];
             const sentence = s[0];
-            result.push(new Constraint(sentence));
+            if (sentence.tokens.length !== 0) {
+                result.push(new Constraint(sentence));
+            }
         } while (!eof);
         return result;
     }

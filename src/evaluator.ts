@@ -1,13 +1,15 @@
 import * as C from './combination';
+import { Constraint } from './constraint/constraint';
 import { Key, Value } from './keyvalue';
-import { LikeToken } from './parser/token';
 import { Random } from './random';
 export class Pict {
     random: Random = new Random();
     readonly parameters: Map<Key, Value[]>;
+    readonly constraints: Constraint[];
     factorCount = 2;
-    constructor(parameters: Map<Key, Value[]>) {
+    constructor(parameters: Map<Key, Value[]>, constraints: Constraint[]) {
         this.parameters = parameters;
+        this.constraints = constraints;
     }
 
     setFactorCount(factorCount: number): Pict {
@@ -33,14 +35,9 @@ export class Pict {
             keys,
             this.factorCount
         );
-        const allCombinations: C.Combinations[] = [];
-        keyCombinations.forEach((kc) => {
-            const combinations = C.allCombinationsByMultipleArray(
-                kc,
-                this.parameters
-            );
-            allCombinations.push(combinations);
-        });
+        const allCombinations: C.Combinations[] = this.buildAllCombinations(
+            keyCombinations
+        );
 
         // consume slots and assemble results
         const result = new PictResult(keys);
@@ -51,6 +48,8 @@ export class Pict {
             // get next slot from longest combinations
             const exceptKeys = result.nowKey();
             const longest = C.longestCombination(exceptKeys, allCombinations);
+
+            // TODO constraints for nextSlot
             const suitable = this.nextSlot(longest, result.nowLine());
 
             // if result already has suitable, skip it
@@ -70,6 +69,30 @@ export class Pict {
         }
 
         return result.clean();
+    }
+
+    buildAllCombinations(keyCombinations: Key[][]): C.Combinations[] {
+        const allCombinations: C.Combinations[] = [];
+        keyCombinations.forEach((kc) => {
+            const combinations = C.allCombinationsByMultipleArray(
+                kc,
+                this.parameters
+            );
+
+            // use only constraints matched combinations
+            if (this.constraints.length !== 0) {
+                combinations.allCombinations = combinations.allCombinations.filter(
+                    (v) => {
+                        return (
+                            this.constraints.filter((c) => !c.match(v))
+                                .length === 0
+                        );
+                    }
+                );
+            }
+            allCombinations.push(combinations);
+        });
+        return allCombinations;
     }
 
     allDone(c: C.Combinations[]): boolean {

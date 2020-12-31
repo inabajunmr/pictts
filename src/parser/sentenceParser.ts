@@ -61,6 +61,11 @@ export class SentenceParser {
             results.push(this.constraintsTokens[this.index]);
         }
 
+        // no sentence
+        if (results.length === 0) {
+            return [new ConstraintsSentence(results), true];
+        }
+
         return [new ConstraintsSentence(results), eof];
     }
 
