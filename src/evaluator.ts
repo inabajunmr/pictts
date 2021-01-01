@@ -47,6 +47,7 @@ export class Pict {
             this.factorCount
         );
 
+        // create all combinations(by factor count)
         const allCombinations: C.Combinations[] = this.buildAllCombinations(
             keyCombinations
         );
