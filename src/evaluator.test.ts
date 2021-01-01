@@ -399,8 +399,6 @@ test('pict 3factors by 2 with nested constraints', () => {
     }
 });
 
-// TODO add constraint test
-
 function assertContains(
     target: Map<Key, Value>,
     result: Map<Key, Value>[]

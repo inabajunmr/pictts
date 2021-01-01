@@ -1,10 +1,4 @@
-import * as Token from './token';
-import {
-    ConstraintsSentence,
-    ParametersSentence,
-    SentenceParser,
-} from './sentenceParser';
-import { Key, Value } from '../keyvalue';
+import { SentenceParser } from './sentenceParser';
 
 test('nextParametersSentence', () => {
     const sut = new SentenceParser(
