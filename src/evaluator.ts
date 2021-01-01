@@ -115,8 +115,8 @@ export class Pict {
     allDone(c: C.Combinations[]): boolean {
         return (
             c.filter((c) => {
-                return !c.done;
-            }).length === 0
+                return c.done;
+            }).length === c.length
         );
     }
 
