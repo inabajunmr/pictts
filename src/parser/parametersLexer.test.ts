@@ -1,15 +1,15 @@
 import * as Token from './token';
-import { Lexer } from './lexer';
+import { ParametersLexer } from './parametersLexer';
 
 test('colon token', () => {
-    const sut = new Lexer(':');
+    const sut = new ParametersLexer(':');
     const actual = sut.tokens();
     expect(actual[0]).toBe(Token.ColonToken.TOKEN);
     expect(actual[1]).toStrictEqual(new Token.EOFToken());
 });
 
 test('comma token', () => {
-    const sut = new Lexer(',');
+    const sut = new ParametersLexer(',');
     const actual = sut.tokens();
     expect(actual[0]).toBe(Token.CommaToken.TOKEN);
     expect(actual[1]).toStrictEqual(new Token.EOFToken());
@@ -17,7 +17,7 @@ test('comma token', () => {
 });
 
 test('ident token', () => {
-    const sut = new Lexer('AAA');
+    const sut = new ParametersLexer('AAA');
     const actual = sut.tokens();
     expect(actual[0]).toStrictEqual(new Token.IdentToken('AAA'));
     expect(actual[1]).toStrictEqual(new Token.EOFToken());
@@ -25,7 +25,7 @@ test('ident token', () => {
 });
 
 test('ended with spaces', () => {
-    const sut = new Lexer('A:a1,a2,a3   ');
+    const sut = new ParametersLexer('A:a1,a2,a3   ');
     const actual = sut.tokens();
     expect(actual[0]).toStrictEqual(new Token.IdentToken('A'));
     expect(actual[1]).toStrictEqual(Token.ColonToken.TOKEN);
@@ -37,7 +37,7 @@ test('ended with spaces', () => {
 });
 
 test('parameter line', () => {
-    const sut = new Lexer(
+    const sut = new ParametersLexer(
         'ABC X : one,two, three \r\n C C:a,b\r\n\r\n  \r\n  選択肢:甲,乙\r\n'
     );
     const actual = sut.tokens();
@@ -68,7 +68,7 @@ test('parameter line', () => {
 // private
 
 test('lastChar', () => {
-    const sut: any = new Lexer('abc');
+    const sut: any = new ParametersLexer('abc');
     expect(sut.lastChar()).toBe(false);
     expect(sut.now).toBe('a');
     sut.nextChar();
@@ -80,16 +80,16 @@ test('lastChar', () => {
 });
 
 test('readString', () => {
-    const sut1: any = new Lexer('abc:');
-    expect(sut1.readString()).toBe('abc');
-    const sut2: any = new Lexer('abc :');
-    expect(sut2.readString()).toBe('abc');
-    const sut3: any = new Lexer('abc');
-    expect(sut3.readString()).toBe('abc');
+    const sut1: any = new ParametersLexer('abc:');
+    expect(sut1.readIdent()).toBe('abc');
+    const sut2: any = new ParametersLexer('abc :');
+    expect(sut2.readIdent()).toBe('abc');
+    const sut3: any = new ParametersLexer('abc');
+    expect(sut3.readIdent()).toBe('abc');
 });
 
 test('skipWhitespace', () => {
-    const sut: any = new Lexer('   abc:');
+    const sut: any = new ParametersLexer('   abc:');
     sut.skipWhitespace();
-    expect(sut.readString()).toBe('abc');
+    expect(sut.readIdent()).toBe('abc');
 });

@@ -31,3 +31,34 @@ export class Value {
         return k;
     }
 }
+
+export function map(key: string, value: string): Map<Key, Value> {
+    return new Map().set(Key.of(key), Value.of(value));
+}
+
+export function map2(
+    k1: string,
+    v1: string,
+    k2: string,
+    v2: string
+): Map<Key, Value> {
+    const result = new Map<Key, Value>();
+    result.set(Key.of(k1), Value.of(v1));
+    result.set(Key.of(k2), Value.of(v2));
+    return result;
+}
+
+export function map3(
+    k1: string,
+    v1: string,
+    k2: string,
+    v2: string,
+    k3: string,
+    v3: string
+): Map<Key, Value> {
+    const result = new Map<Key, Value>();
+    result.set(Key.of(k1), Value.of(v1));
+    result.set(Key.of(k2), Value.of(v2));
+    result.set(Key.of(k3), Value.of(v3));
+    return result;
+}

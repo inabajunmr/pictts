@@ -7,49 +7,93 @@ import { Key, Value } from '../keyvalue';
  * Divide each sentence from token array.
  */
 export class SentenceParser {
-    private readonly tokens: T.Token[];
-    private index = 0;
+    private readonly parametersTokens: T.Token[];
+    private readonly constraintsTokens: T.Token[];
+    private pindex = 0;
+    private cindex = 0;
 
     constructor(input: string) {
-        this.tokens = new Lexer(input).tokens();
+        const l = new Lexer(input);
+        this.parametersTokens = l.parametersTokens();
+        this.constraintsTokens = l.constraintsTokens();
     }
 
     /**
-     * Get next sentence.
+     * Get next parameters sentence.
      *
      * If the sentence is last, second return value is true.
      */
-    nextSentence(): [Sentence, boolean] {
-        let type: SentenceType | undefined = undefined;
+    nextParametersSentence(): [ParametersSentence, boolean] {
         const results: T.Token[] = [];
         let eof = false;
-        for (; this.index < this.tokens.length; this.index++) {
+        for (; this.pindex < this.parametersTokens.length; this.pindex++) {
             if (
-                type === 'parameters' &&
-                (this.tokens[this.index] instanceof T.ReturnToken ||
-                    this.tokens[this.index] instanceof T.EOFToken)
+                this.parametersTokens[this.pindex] instanceof T.ReturnToken ||
+                this.parametersTokens[this.pindex] instanceof T.EOFToken
             ) {
-                eof = this.isEOF();
+                eof = this.pisEOF();
                 break;
             }
 
-            results.push(this.tokens[this.index]);
-            if (this.tokens[this.index] instanceof T.ColonToken) {
-                type = 'parameters';
-            }
+            results.push(this.parametersTokens[this.pindex]);
         }
 
-        if (type === undefined) {
-            throw new E.ParseException('Sentence type is undefined');
-        }
         return [new ParametersSentence(results), eof];
     }
 
-    private isEOF(): boolean {
-        for (; this.index < this.tokens.length; this.index++) {
+    /**
+     * Get next constraints sentence.
+     *
+     * If the sentence is last, second return value is true.
+     */
+    nextConstraintsSentence(): [ConstraintsSentence, boolean] {
+        const results: T.Token[] = [];
+
+        let eof = false;
+        for (; this.cindex < this.constraintsTokens.length; this.cindex++) {
             if (
-                this.tokens[this.index] instanceof T.ReturnToken == false &&
-                this.tokens[this.index] instanceof T.EOFToken == false
+                this.constraintsTokens[this.cindex] instanceof
+                    T.SemicolonToken ||
+                this.constraintsTokens[this.cindex] instanceof T.EOFToken
+            ) {
+                this.cindex++;
+                eof = this.cisEOF();
+                break;
+            }
+
+            results.push(this.constraintsTokens[this.cindex]);
+        }
+
+        // no sentence
+        if (results.length === 0) {
+            return [new ConstraintsSentence(results), true];
+        }
+
+        return [new ConstraintsSentence(results), eof];
+    }
+
+    private cisEOF(): boolean {
+        for (; this.cindex < this.parametersTokens.length; this.cindex++) {
+            if (
+                this.parametersTokens[this.cindex] instanceof T.ReturnToken ==
+                    false &&
+                this.parametersTokens[this.cindex] instanceof T.EOFToken ==
+                    false
+            ) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private pisEOF(): boolean {
+        for (; this.pindex < this.parametersTokens.length; this.pindex++) {
+            if (
+                this.parametersTokens[this.pindex] instanceof T.ReturnToken ==
+                    false &&
+                this.parametersTokens[this.pindex] instanceof T.EOFToken ==
+                    false
             ) {
                 return false;
             }
@@ -59,21 +103,17 @@ export class SentenceParser {
     }
 }
 
-type SentenceType = 'parameters' | 'constraint';
-
-export abstract class Sentence {
+export class ConstraintsSentence {
     readonly tokens: T.Token[];
 
     constructor(tokens: T.Token[]) {
         this.tokens = tokens;
     }
 }
-
-export class ParametersSentence extends Sentence {
+export class ParametersSentence {
     readonly key: Key;
     readonly parameters: Value[];
     constructor(tokens: T.Token[]) {
-        super(tokens);
         this.key = ParametersSentence.getKey(tokens);
         this.parameters = ParametersSentence.getParameters(tokens);
     }
@@ -83,6 +123,7 @@ export class ParametersSentence extends Sentence {
         if (first instanceof T.IdentToken) {
             return Key.of(first.literal);
         }
+
         throw new E.ParseException(
             'parameters sentence first token requires identifier. but:' + first
         );

@@ -17,24 +17,30 @@ export function allCombinationsByMultipleArray(
     const params = keys.map((k) => {
         return kvs.get(k) as Value[];
     });
-    iCombinationsByMultipleArray(params, 0, [], result);
+    iCombinationsByMultipleArray(keys, params, 0, [], result);
     return result;
 }
 
 function iCombinationsByMultipleArray(
+    keys: Key[],
     parameters: Value[][],
     depth: number,
     tmp: Value[],
     result: Combinations
 ) {
     if (depth == parameters.length) {
-        result.allCombinations.push(Array.from(tmp));
+        result.workingCombinations.push(
+            // temp to map
+            tmp.reduce((acc, v, i) => {
+                return acc.set(keys[i], v);
+            }, new Map<Key, Value>())
+        );
         return;
     }
 
     parameters[depth].forEach((p) => {
         tmp[depth] = p;
-        iCombinationsByMultipleArray(parameters, depth + 1, tmp, result);
+        iCombinationsByMultipleArray(keys, parameters, depth + 1, tmp, result);
     });
 }
 
@@ -84,6 +90,7 @@ function iCombinationsBySingleArray(
  */
 export function longestCombination(
     exceptKeys: Key[],
+    usedKeyCombinations: Key[][],
     cs: Combinations[]
 ): Combinations {
     let excepted = cs;
@@ -95,33 +102,69 @@ export function longestCombination(
         });
     }
 
-    const ndone = excepted.filter((e) => !e.done);
-    if (ndone.length !== 0) {
-        return ndone.reduce((b, a) => {
-            return b.allCombinations.length >= a.allCombinations.length ? b : a;
+    const equalsKeys = (key1: Key[], key2: Key[]): boolean => {
+        if (key1.length !== key2.length) {
+            return false;
+        }
+
+        for (let index = 0; index < key1.length; index++) {
+            if (key1[index] !== key2[index]) {
+                return false;
+            }
+        }
+
+        return true;
+    };
+
+    // skip nonused
+    const contains = (target: Key[], keyList: Key[][]): boolean => {
+        return keyList.filter((k) => equalsKeys(target, k)).length !== 0;
+    };
+    let nonUsed = excepted;
+    if (usedKeyCombinations.length !== 0) {
+        nonUsed = excepted.filter((c) => {
+            return !contains(c.keys, usedKeyCombinations);
         });
     }
 
-    return excepted.reduce((b, a) => {
-        return b.allCombinations.length >= a.allCombinations.length ? b : a;
+    const ndone = nonUsed.filter((e) => !e.done);
+    if (ndone.length !== 0) {
+        return ndone.reduce((b, a) => {
+            return b.workingCombinations.length >= a.workingCombinations.length
+                ? b
+                : a;
+        });
+    }
+
+    if (nonUsed.length === 0) {
+        console.log();
+    }
+    return nonUsed.reduce((b, a) => {
+        return b.workingCombinations.length >= a.workingCombinations.length
+            ? b
+            : a;
     });
 }
 export class Combinations {
     keys: Key[];
-    allCombinations: Value[][];
+    workingCombinations: Map<Key, Value>[] = [];
+    allCombinations: Map<Key, Value>[] = [];
     done = false;
     constructor(keys: Key[]) {
         this.keys = keys;
-        this.allCombinations = [];
     }
 
-    clone(): Combinations {
-        const clone = new Combinations(this.keys);
-        clone.allCombinations = Array.from(this.allCombinations);
-        return clone;
+    removeFromWorking(target: Map<Key, Value>): void {
+        if (this.workingCombinations.length !== 1) {
+            const cache = this.workingCombinations.filter((c) => {
+                return !this.equalsAllElements(c, target);
+            });
+
+            this.workingCombinations = cache;
+        }
     }
 
-    remove(target: Value[]): void {
+    removeFromAll(target: Map<Key, Value>): void {
         if (this.allCombinations.length !== 1) {
             const cache = this.allCombinations.filter((c) => {
                 return !this.equalsAllElements(c, target);
@@ -131,21 +174,24 @@ export class Combinations {
         }
     }
 
-    equalsAllElements<T>(array1: T[], array2: T[]): boolean {
-        if (array1 === undefined || array2 === undefined) {
-            return array2 === array1;
+    equalsAllElements(
+        target1: Map<Key, Value>,
+        target2: Map<Key, Value>
+    ): boolean {
+        if (target1 === undefined || target2 === undefined) {
+            return target1 === target2;
         }
 
-        if (array1.length !== array2.length) {
+        if (target1.size !== target2.size) {
             return false;
         }
 
-        for (let index = 0; index < array1.length; index++) {
-            if (array1[index] !== array2[index]) {
-                return false;
-            }
-        }
+        const keys = Array.from(target1.keys());
 
-        return true;
+        return (
+            keys.filter((k) => {
+                return target1.get(k) !== target2.get(k);
+            }).length === 0
+        );
     }
 }
