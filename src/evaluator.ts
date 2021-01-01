@@ -2,8 +2,6 @@ import * as C from './combination';
 import { Constraint } from './constraint/constraint';
 import { Key, Value } from './keyvalue';
 import { Random } from './random';
-import { EvaluatorException } from './exception';
-import { ConstraintsLexer } from './parser/constrainsLexer';
 import { PictResult } from './pictResult';
 export class Pict {
     random: Random = new Random();
