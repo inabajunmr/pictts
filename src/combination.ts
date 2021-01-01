@@ -1,11 +1,12 @@
-import { Key, Value } from './keyvalue';
+import { Key, KeyValueMap, Value } from './keyvalue';
 
 /**
  * All combination by multiple params.
  *
  * Ex. Values is `{'A':['a','b','c'], 'X':['x','y','z'], 'N':['1','2','3']}` and keys is ['A', 'X'],
  * return [['a','x'],['a','y'],['a','z'],['b','x'],['b','y'],['b','z'],['c','x'],['c','y'],['c','z']]
- * @param keys
+ * @param keys this method build combination by only this keys
+ * @param kvs origin
  */
 export function allCombinationsByMultipleArray(
     keys: Key[],
@@ -13,34 +14,49 @@ export function allCombinationsByMultipleArray(
 ): Combinations {
     const result = new Combinations(keys);
 
-    // ex.[['a','b','c'],['x','y','z']]
+    // keys to values. ex.[['a','b','c'],['x','y','z']]
     const params = keys.map((k) => {
         return kvs.get(k) as Value[];
     });
-    iCombinationsByMultipleArray(keys, params, 0, [], result);
+    iAllCombinationsByMultipleArray(keys, params, 0, [], result);
     return result;
 }
 
-function iCombinationsByMultipleArray(
+/**
+ * Internal method for allCombinationsByMultipleArray
+ * @param keys
+ * @param parameters all parameters. This parameters index is same as keys.
+ * @param keyIndex depth of recursive call
+ * @param tmp building combination
+ * @param result final result
+ */
+function iAllCombinationsByMultipleArray(
     keys: Key[],
     parameters: Value[][],
-    depth: number,
+    keyIndex: number,
     tmp: Value[],
     result: Combinations
 ) {
-    if (depth == parameters.length) {
-        result.workingCombinations.push(
-            // temp to map
+    // it means tmp has all values of keys
+    if (keyIndex == keys.length) {
+        result.push(
+            // temp lost key information so rebuild map
             tmp.reduce((acc, v, i) => {
                 return acc.set(keys[i], v);
-            }, new Map<Key, Value>())
+            }, new KeyValueMap())
         );
         return;
     }
 
-    parameters[depth].forEach((p) => {
-        tmp[depth] = p;
-        iCombinationsByMultipleArray(keys, parameters, depth + 1, tmp, result);
+    parameters[keyIndex].forEach((p) => {
+        tmp[keyIndex] = p;
+        iAllCombinationsByMultipleArray(
+            keys,
+            parameters,
+            keyIndex + 1,
+            tmp,
+            result
+        );
     });
 }
 
@@ -48,6 +64,7 @@ function iCombinationsByMultipleArray(
  * Return all values combination.
  *
  * ex. values is `['a','b','c']` and factorCount is 2, return `[['a','b'],['a','c'],['b','c']]`.
+ * @param array
  * @param factorCount
  */
 export function combinationsBySingleArray(
@@ -84,24 +101,16 @@ function iCombinationsBySingleArray(
 }
 
 /**
- * Get longest size combinations.
+ * Get longest size combinations(but done is low primary).
+ * Result never contains excludeList.
  *
- * If combinations.keys contains all exceptKeys, it will skipped.
+ * @param excludeList
+ * @param cs has key and value list
  */
 export function longestCombination(
-    exceptKeys: Key[],
-    usedKeyCombinations: Key[][],
+    excludeList: Key[][],
     cs: Combinations[]
 ): Combinations {
-    let excepted = cs;
-    if (exceptKeys.length !== 0) {
-        excepted = cs.filter((c) => {
-            const result = c.keys.filter((k) => exceptKeys.indexOf(k) === -1)
-                .length;
-            return result !== 0;
-        });
-    }
-
     const equalsKeys = (key1: Key[], key2: Key[]): boolean => {
         if (key1.length !== key2.length) {
             return false;
@@ -116,29 +125,28 @@ export function longestCombination(
         return true;
     };
 
-    // skip nonused
+    // filter excludeList
     const contains = (target: Key[], keyList: Key[][]): boolean => {
         return keyList.filter((k) => equalsKeys(target, k)).length !== 0;
     };
-    let nonUsed = excepted;
-    if (usedKeyCombinations.length !== 0) {
-        nonUsed = excepted.filter((c) => {
-            return !contains(c.keys, usedKeyCombinations);
+    let nonUsed = cs;
+    if (excludeList.length !== 0) {
+        nonUsed = cs.filter((c) => {
+            return !contains(c.keys, excludeList);
         });
     }
 
-    const ndone = nonUsed.filter((e) => !e.done);
-    if (ndone.length !== 0) {
-        return ndone.reduce((b, a) => {
+    const withoutDone = nonUsed.filter((e) => !e.done);
+    if (withoutDone.length !== 0) {
+        // if there are not done combinations, return it
+        return withoutDone.reduce((b, a) => {
             return b.workingCombinations.length >= a.workingCombinations.length
                 ? b
                 : a;
         });
     }
 
-    if (nonUsed.length === 0) {
-        console.log();
-    }
+    // if there are no not done combinations, return done it.
     return nonUsed.reduce((b, a) => {
         return b.workingCombinations.length >= a.workingCombinations.length
             ? b
@@ -147,51 +155,69 @@ export function longestCombination(
 }
 export class Combinations {
     keys: Key[];
-    workingCombinations: Map<Key, Value>[] = [];
-    allCombinations: Map<Key, Value>[] = [];
+    workingCombinations: KeyValueMap[] = [];
+    allCombinations: KeyValueMap[] = [];
+
+    // all combinations already applied, true
     done = false;
     constructor(keys: Key[]) {
         this.keys = keys;
     }
 
-    removeFromWorking(target: Map<Key, Value>): void {
-        if (this.workingCombinations.length !== 1) {
-            const cache = this.workingCombinations.filter((c) => {
-                return !this.equalsAllElements(c, target);
-            });
+    set(combinations: KeyValueMap[]): void {
+        this.workingCombinations = combinations;
+        this.allCombinations = combinations;
+    }
 
-            this.workingCombinations = cache;
+    push(combination: KeyValueMap): void {
+        this.workingCombinations.push(combination);
+        this.allCombinations.push(combination);
+    }
+
+    markAsImpossible(target: KeyValueMap): void {
+        const cache1 = this.workingCombinations.filter((c) => {
+            return !this.equalsAllElements(c, target);
+        });
+
+        this.workingCombinations = cache1;
+        if (this.workingCombinations.length == 0) {
+            this.done = true;
+        }
+
+        const cache2 = this.allCombinations.filter((c) => {
+            return !this.equalsAllElements(c, target);
+        });
+
+        this.allCombinations = cache2;
+    }
+
+    removeFromWorking(target: KeyValueMap): void {
+        const cache = this.workingCombinations.filter((c) => {
+            return !this.equalsAllElements(c, target);
+        });
+
+        this.workingCombinations = cache;
+        if (this.workingCombinations.length === 0) {
+            this.done = true;
         }
     }
 
-    removeFromAll(target: Map<Key, Value>): void {
-        if (this.allCombinations.length !== 1) {
-            const cache = this.allCombinations.filter((c) => {
-                return !this.equalsAllElements(c, target);
-            });
+    removeFromAll(target: KeyValueMap): void {
+        const cache = this.allCombinations.filter((c) => {
+            return !this.equalsAllElements(c, target);
+        });
 
-            this.allCombinations = cache;
-        }
+        this.allCombinations = cache;
     }
 
-    equalsAllElements(
-        target1: Map<Key, Value>,
-        target2: Map<Key, Value>
+    private equalsAllElements(
+        target1: KeyValueMap,
+        target2: KeyValueMap
     ): boolean {
         if (target1 === undefined || target2 === undefined) {
             return target1 === target2;
         }
 
-        if (target1.size !== target2.size) {
-            return false;
-        }
-
-        const keys = Array.from(target1.keys());
-
-        return (
-            keys.filter((k) => {
-                return target1.get(k) !== target2.get(k);
-            }).length === 0
-        );
+        return target1.equals(target2);
     }
 }

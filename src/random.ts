@@ -1,4 +1,4 @@
-// xorshirt sbfl.net/blog/2017/06/01/javascript-reproducible-random/
+// xorshift sbfl.net/blog/2017/06/01/javascript-reproducible-random/
 export class Random {
     private x: number;
     private y: number;

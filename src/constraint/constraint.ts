@@ -1,4 +1,4 @@
-import { Key, Value } from '../keyvalue';
+import { Key, KeyValueMap, Value } from '../keyvalue';
 import { ConstraintsSentence } from '../parser/sentenceParser';
 import { ElseToken, ThenToken } from '../parser/token';
 import { Predicate } from './predicate';
@@ -36,17 +36,17 @@ export class Constraint {
         }
     }
 
-    match(kv: Map<Key, Value>): boolean {
-        const ifResult = this.if.ioperate(kv);
+    match(kv: KeyValueMap): boolean {
+        const ifResult = this.if.operate(kv);
         if (ifResult.isForce()) {
             return true;
         }
 
-        if (this.if.ioperate(kv).isTrue()) {
-            return this.then.ioperate(kv).isTrue();
+        if (this.if.operate(kv).isTrue()) {
+            return this.then.operate(kv).isTrue();
         } else {
             if (this.else !== null) {
-                return this.else.ioperate(kv).isTrue();
+                return this.else.operate(kv).isTrue();
             }
         }
 

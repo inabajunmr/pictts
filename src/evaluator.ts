@@ -1,14 +1,23 @@
 import * as C from './combination';
 import { Constraint } from './constraint/constraint';
-import { Key, Value } from './keyvalue';
+import { equalsKeys, Key, KeyValueMap, Value } from './keyvalue';
 import { Random } from './random';
 import { PictResult } from './pictResult';
 export class Pict {
     random: Random = new Random();
+
+    // like `A:A1,A2\nB:B1,B2`
     readonly parameters: Map<Key, Value[]>;
+    // like `IF [A] = "A1" THEN [B] = "B1";`
     readonly constraints: Constraint[];
-    readonly impossibles: Map<Key, Value>[] = [];
+
+    // constraints sometimes never allows the combination.
+    // impossibles has disallowed combinations.
+    readonly impossibles: KeyValueMap[] = [];
+
+    // If PAIRwise, 2. If TRIOwise, 3
     factorCount = 2;
+
     constructor(parameters: Map<Key, Value[]>, constraints: Constraint[]) {
         this.parameters = parameters;
         this.constraints = constraints;
@@ -19,7 +28,7 @@ export class Pict {
         return this;
     }
 
-    setSeed(seed: number): void {
+    setRandomSeed(seed: number): void {
         this.random = new Random(seed);
     }
 
@@ -38,6 +47,7 @@ export class Pict {
             this.factorCount
         );
 
+        // create all combinations(by factor count)
         const allCombinations: C.Combinations[] = this.buildAllCombinations(
             keyCombinations
         );
@@ -52,7 +62,6 @@ export class Pict {
             const exceptKeys = result.nowKey(); // if longest combinations is the same as result, it will be skipped.
             const [suitable, longest, fromAll] = this.nextSlot(
                 allCombinations,
-                exceptKeys,
                 [exceptKeys],
                 result.nowLine(),
                 result
@@ -64,7 +73,6 @@ export class Pict {
 
             // if result already has suitable, skip it
             if (result.contains(suitable) && !longest.done && !fromAll) {
-                longest.removeFromWorking(suitable);
                 continue;
             }
 
@@ -76,38 +84,42 @@ export class Pict {
     }
 
     buildAllCombinations(keyCombinations: Key[][]): C.Combinations[] {
-        const allCombinations: C.Combinations[] = [];
-        keyCombinations.forEach((kc) => {
+        return keyCombinations.reduce((acc, kc) => {
             const combinations = C.allCombinationsByMultipleArray(
                 kc,
                 this.parameters
             );
 
-            // use only constraints matched combinations
+            // filter only constraints matched combinations
             if (this.constraints.length !== 0) {
-                combinations.workingCombinations = combinations.workingCombinations.filter(
-                    (v) => {
-                        return (
-                            this.constraints.filter((c) => !c.match(v))
-                                .length === 0
-                        );
-                    }
+                combinations.set(
+                    combinations.allCombinations.filter((v) =>
+                        this.matchAllConstraints(v)
+                    )
                 );
             }
 
-            combinations.allCombinations = Array.from(
-                combinations.workingCombinations
-            );
-            allCombinations.push(combinations);
-        });
-        return allCombinations;
+            if (combinations.workingCombinations.length === 0) {
+                combinations.done = true;
+            }
+
+            acc.push(combinations);
+            return acc;
+        }, [] as C.Combinations[]);
+    }
+
+    matchAllConstraints(record: KeyValueMap): boolean {
+        return (
+            this.constraints.filter((c) => c.match(record)).length ===
+            this.constraints.length
+        );
     }
 
     allDone(c: C.Combinations[]): boolean {
         return (
             c.filter((c) => {
-                return !c.done;
-            }).length === 0
+                return c.done;
+            }).length === c.length
         );
     }
 
@@ -121,65 +133,49 @@ export class Pict {
      * and line={A:'a',X:'x'},
      * return ['a','1'] because combinations.A and line.A are matched.
      * @param combinations
+     * @param usedKeyCombinations
      * @param line
+     * @param result
      */
     nextSlot(
         allCombinations: C.Combinations[],
-        exceptKeys: Key[],
         usedKeyCombinations: Key[][],
-        line: Map<Key, Value>,
+        line: KeyValueMap,
         result: PictResult
-    ): [Map<Key, Value>, C.Combinations, boolean] {
+    ): [KeyValueMap, C.Combinations, boolean] {
+        // choice next keys combination
         const combinations = C.longestCombination(
-            exceptKeys,
             usedKeyCombinations,
             allCombinations
         );
         usedKeyCombinations.push(combinations.keys);
 
-        if (combinations.workingCombinations.length === 1) {
-            combinations.done = true;
-            return [combinations.workingCombinations[0], combinations, false];
-        }
-
         if (line.size === 0) {
-            return [
-                combinations.workingCombinations.shift() as Map<Key, Value>,
-                combinations,
-                false,
-            ];
+            // next line equals combinations.workingCombinations[0]
+            // workingCombinations already omitted constraints violation
+            const result = combinations.workingCombinations[0]; // TODO should be random but something wrong
+            combinations.removeFromWorking(result);
+            return [result, combinations, false];
         }
 
-        const alreadyExistedKeys: Key[] = [];
-        combinations.keys.forEach((k) => {
-            const v = line.get(k);
-            if (v !== undefined) {
-                alreadyExistedKeys.push(k);
-            }
-        });
-
+        // from working
         let suitables = this.matchedSlot(
             combinations.workingCombinations,
-            line,
-            alreadyExistedKeys
+            line
         );
 
         let fromAll = false;
         if (suitables.length === 0) {
+            // if all working aren't matched, from all
             fromAll = true;
-            suitables = this.matchedSlot(
-                combinations.allCombinations,
-                line,
-                alreadyExistedKeys
-            );
+            suitables = this.matchedSlot(combinations.allCombinations, line);
         }
 
         if (suitables.length === 0) {
             if (allCombinations.length !== usedKeyCombinations.length) {
-                // using next combinations
+                // find other combinations
                 return this.nextSlot(
                     allCombinations,
-                    exceptKeys,
                     usedKeyCombinations,
                     line,
                     result
@@ -190,99 +186,74 @@ export class Pict {
             // TODO impossibleの重複は消したい
             this.impossibles.push(line);
 
-            // reput revert to matched combination
+            // pop latest
             const revert = result.revert();
-            allCombinations
-                .filter((c) => {
-                    return c.keys.filter((k) => !revert.has(k)).length === 0;
-                })[0]
-                .allCombinations.push(revert);
+            // find keys matched combinations(revert target)
+            const revertTargetCombinations = allCombinations.filter((c) => {
+                return equalsKeys(c.keys, Array.from(revert.keys()));
+            })[0];
 
             if (this.factorCount === line.size) {
-                const revertTarget = allCombinations.filter((c) => {
-                    return (
-                        c.keys.filter((k) => {
-                            return revert.has(k) === false;
-                        }).length === 0
-                    );
-                })[0];
-
-                revertTarget.removeFromWorking(line);
-                revertTarget.removeFromAll(line);
+                // minimum slot doesn't revert because it's impossible
+                // mark as impossible
+                revertTargetCombinations.markAsImpossible(line);
+            } else {
+                // revert to combinations
+                revertTargetCombinations.allCombinations.push(revert);
             }
 
-            return [new Map<Key, Value>(), combinations, false];
+            return [new KeyValueMap(), combinations, false];
         }
 
-        let nextSlot = suitables[this.random.random(0, suitables.length - 1)];
-        if (nextSlot === undefined) {
-            nextSlot = combinations.workingCombinations[0];
-        }
+        const nextSlot = suitables[this.random.random(0, suitables.length - 1)];
 
-        // when other combinations are remaining after all combinations are used, any combination is used for others.
-        if (combinations.workingCombinations.length === 1) {
-            combinations.done = true;
-            return [nextSlot, combinations, fromAll];
-        }
-
+        // mark as used
         combinations.removeFromWorking(nextSlot);
-
         return [nextSlot, combinations, fromAll];
     }
 
-    matchedSlot(
-        combinations: Map<Key, Value>[],
-        line: Map<Key, Value>,
-        alreadyExistedKeys: Key[]
-    ): Map<Key, Value>[] {
-        const suitables = combinations.filter((c) => {
-            let all = true;
-            alreadyExistedKeys.forEach((k) => {
-                const v = line.get(k);
-                if (v !== c.get(k)) {
-                    all = false;
+    matchedSlot(combinations: KeyValueMap[], line: KeyValueMap): KeyValueMap[] {
+        if (combinations.length === 0) {
+            return [];
+        }
+        // if line has keys['A', 'B', 'C'] and combinations has keys ['A', 'C', 'D'], mutualKeys are ['A', 'C']
+        // mutualKeys matched value need to be same between combinations and line
+        const mutualKeys = Array.from(combinations[0].keys()).filter((k) =>
+            line.has(k)
+        );
+
+        // combinations values and lines values matched in a range of mutual keys
+        const valueMatched = combinations.filter((c) => {
+            const allMatched = mutualKeys.reduce((acc, k) => {
+                if (line.get(k) !== c.get(k)) {
+                    // if at least one value don't match, this combinations is invalid
+                    return false;
                 }
-            });
-            return all;
+                return acc;
+            }, true);
+            return allMatched;
         });
 
         if (this.constraints.length === 0) {
-            return suitables;
+            return valueMatched;
         }
 
-        const constraintsFiltered = suitables.filter((s) => {
-            const merge = new Map(s);
+        // filtering by constraints
+        const constraintsFiltered = valueMatched.filter((s) => {
+            const merge = new KeyValueMap(s);
 
             Array.from(line).forEach((k) => {
                 merge.set(k[0], k[1]);
             });
-            return this.constraints.filter((c) => !c.match(merge)).length === 0;
+            return this.matchAllConstraints(merge);
         });
 
-        if (this.impossibles.length === 0) {
-            return constraintsFiltered;
-        }
-
-        const mapEquals = (
-            m1: Map<Key, Value>,
-            m2: Map<Key, Value>
-        ): boolean => {
-            if (m1.size !== m2.size) {
+        // filtering by impossibles
+        const contains = (target: KeyValueMap, maps: KeyValueMap[]) => {
+            if (maps.length === 0) {
                 return false;
             }
-
-            let result = true;
-            Array.from(m1.keys()).forEach((k) => {
-                if (m1.get(k) !== m2.get(k)) {
-                    result = false;
-                }
-            });
-
-            return result;
-        };
-
-        const contains = (target: Map<Key, Value>, maps: Map<Key, Value>[]) => {
-            return maps.filter((m) => mapEquals(m, target)).length !== 0;
+            return maps.filter((m) => m.equals(target)).length !== 0;
         };
 
         return constraintsFiltered.filter((c) => {

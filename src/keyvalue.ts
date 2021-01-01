@@ -32,8 +32,40 @@ export class Value {
     }
 }
 
-export function map(key: string, value: string): Map<Key, Value> {
-    return new Map().set(Key.of(key), Value.of(value));
+export class KeyValueMap extends Map<Key, Value> {
+    equals(m: KeyValueMap): boolean {
+        if (this.size !== m.size) {
+            return false;
+        }
+
+        const result = Array.from(this.keys()).reduce(
+            (acc, key) => acc && this.get(key) == m.get(key),
+            true
+        );
+
+        return result;
+    }
+}
+
+export function equalsKeys(keys1: Key[], keys2: Key[]): boolean {
+    if (keys1.length !== keys2.length) {
+        return false;
+    }
+
+    for (let index = 0; index < keys1.length; index++) {
+        if (keys1[index] !== keys2[index]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+export function map(key: string, value: string): KeyValueMap {
+    new Map();
+    const result = new KeyValueMap();
+    result.set(Key.of(key), Value.of(value));
+    return result;
 }
 
 export function map2(
@@ -41,8 +73,8 @@ export function map2(
     v1: string,
     k2: string,
     v2: string
-): Map<Key, Value> {
-    const result = new Map<Key, Value>();
+): KeyValueMap {
+    const result = new KeyValueMap();
     result.set(Key.of(k1), Value.of(v1));
     result.set(Key.of(k2), Value.of(v2));
     return result;
@@ -55,8 +87,8 @@ export function map3(
     v2: string,
     k3: string,
     v3: string
-): Map<Key, Value> {
-    const result = new Map<Key, Value>();
+): KeyValueMap {
+    const result = new KeyValueMap();
     result.set(Key.of(k1), Value.of(v1));
     result.set(Key.of(k2), Value.of(v2));
     result.set(Key.of(k3), Value.of(v3));

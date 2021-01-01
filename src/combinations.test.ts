@@ -68,7 +68,7 @@ test('allCombinationsByMultipleArray', () => {
 test('longestCombination no exceptkeys', () => {
     const c = new Combinations([Key.of('A'), Key.of('N')]);
     c.workingCombinations.push(map2('A', 'a', 'N', '1'));
-    const actual = longestCombination([], [], [c]);
+    const actual = longestCombination([], [c]);
     expect(actual.keys).toStrictEqual(c.keys);
     expect(actual.workingCombinations).toStrictEqual(c.workingCombinations);
 });
@@ -85,8 +85,7 @@ test('longestCombination exceptKeys', () => {
     const c3 = new Combinations([Key.of('B'), Key.of('C')]);
     c3.workingCombinations.push(map2('B', 'b', 'C', 'c'));
     const actual = longestCombination(
-        [Key.of('A'), Key.of('B')],
-        [],
+        [[Key.of('A'), Key.of('B')]],
         [c1, c2, c3]
     );
     expect(actual.keys).toStrictEqual(c2.keys);

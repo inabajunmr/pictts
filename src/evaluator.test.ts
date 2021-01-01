@@ -1,11 +1,11 @@
-import { Key, Value, map2, map3 } from './keyvalue';
+import { map2, map3, KeyValueMap, map } from './keyvalue';
 import * as P from './parser/parser';
 
 test('pict 3factors by 2', () => {
     const sut = new P.Parser('A:A1,A2\nB:B1,B2\nC:C1,C2').parse();
 
     for (let index = 0; index < 100; index++) {
-        sut.setSeed(Math.floor(Math.random() * 10000));
+        sut.setRandomSeed(Math.floor(Math.random() * 10000));
         const actual = sut.testCases();
 
         // contains all combinations
@@ -21,7 +21,6 @@ test('pict 3factors by 2', () => {
         expect(assertContains(map2('A', 'A2', 'B', 'B2'), actual.result)).toBe(
             true
         );
-
         expect(assertContains(map2('A', 'A1', 'C', 'C1'), actual.result)).toBe(
             true
         );
@@ -53,7 +52,7 @@ test('pict 3factors by 2', () => {
 test('pict 2factors by 2', () => {
     const sut = new P.Parser('A:A1,A2\nB:B1,B2').parse();
     for (let index = 0; index < 100; index++) {
-        sut.setSeed(Math.floor(Math.random() * 10000));
+        sut.setRandomSeed(Math.floor(Math.random() * 10000));
         const actual = sut.testCases();
 
         // contains all combinations
@@ -76,7 +75,7 @@ test('pict 3factors by 3', () => {
     const sut = new P.Parser('A:A1,A2\nB:B1,B2\nC:C1,C2').parse();
     sut.setFactorCount(3);
     for (let index = 0; index < 100; index++) {
-        sut.setSeed(Math.floor(Math.random() * 10000));
+        sut.setRandomSeed(Math.floor(Math.random() * 10000));
         const actual = sut.testCases();
 
         // contains all combinations
@@ -111,7 +110,7 @@ test('pict 4factors by 3', () => {
     const sut = new P.Parser('A:A1,A2\nB:B1,B2\nC:C1,C2\nD:D1,D2,D3').parse();
     sut.setFactorCount(3);
     for (let index = 0; index < 100; index++) {
-        sut.setSeed(Math.floor(Math.random() * 10000));
+        sut.setRandomSeed(Math.floor(Math.random() * 10000));
         const actual = sut.testCases();
 
         // contains all combinations
@@ -298,7 +297,7 @@ test('pict 2factors with 1 constraints(no else)', () => {
         'A:A1,A2\nB:B1,B2\nIF [A] = "A1" THEN [B] = "B1";'
     ).parse();
     for (let index = 0; index < 100; index++) {
-        sut.setSeed(Math.floor(Math.random() * 10000));
+        sut.setRandomSeed(Math.floor(Math.random() * 10000));
         const actual = sut.testCases();
 
         // contains all combinations
@@ -319,10 +318,13 @@ test('pict 2factors with 1 constraints(no else)', () => {
 
 test('pict 2factors with 2 constraints(no else)', () => {
     const sut = new P.Parser(
-        'A:A1,A2\nB:B1,B2\nIF [A] = "A1" THEN [B] = "B1";\nIF [A] = "A2" THEN [B] = "B2";'
+        `A:A1,A2
+        B:B1,B2
+        IF [A] = "A1" THEN [B] = "B1";
+        IF [A] = "A2" THEN [B] = "B2";`
     ).parse();
     for (let index = 0; index < 100; index++) {
-        sut.setSeed(Math.floor(Math.random() * 10000));
+        sut.setRandomSeed(Math.floor(Math.random() * 10000));
         const actual = sut.testCases();
 
         // contains all combinations
@@ -348,7 +350,7 @@ test('pict 3factors by 2 with nested constraints', () => {
     C:C1,C2
     IF [A] = "A1" AND ([B] = "B1" OR [B] = "B2" ) THEN [C] = "C1";`).parse();
     for (let index = 0; index < 100; index++) {
-        sut.setSeed(Math.floor(Math.random() * 10000));
+        sut.setRandomSeed(Math.floor(Math.random() * 10000));
         const actual = sut.testCases();
 
         // contains all combinations
@@ -399,10 +401,46 @@ test('pict 3factors by 2 with nested constraints', () => {
     }
 });
 
-function assertContains(
-    target: Map<Key, Value>,
-    result: Map<Key, Value>[]
-): boolean {
+test('pict 1factor 1parameters all invalid', () => {
+    const sut = new P.Parser('A:A1\nIF [A]="A1" THEN [A]="A2";').parse();
+    sut.setFactorCount(1);
+    for (let index = 0; index < 100; index++) {
+        sut.setRandomSeed(Math.floor(Math.random() * 10000));
+        const actual = sut.testCases();
+        expect(actual.result.length).toBe(0);
+    }
+});
+
+test('pict 2factor 2parameters all invalid', () => {
+    const sut = new P.Parser(
+        `A:A1,A2
+        B:B1,B2
+        IF [A]="A1" THEN [A]="A2";
+        IF [A]="A2" THEN [A]="A1";`
+    ).parse();
+    sut.setFactorCount(1);
+    for (let index = 0; index < 100; index++) {
+        sut.setRandomSeed(Math.floor(Math.random() * 10000));
+        const actual = sut.testCases();
+        expect(actual.result.length).toBe(0);
+    }
+});
+
+test('pict 2factor all invalid', () => {
+    const sut = new P.Parser(
+        `A:A1,A2
+        B:B1,B2
+        IF [A]="A1" THEN [A]="A2";
+        IF [A]="A2" THEN [A]="A1";`
+    ).parse();
+    for (let index = 0; index < 100; index++) {
+        sut.setRandomSeed(Math.floor(Math.random() * 10000));
+        const actual = sut.testCases();
+        expect(actual.result.length).toBe(0);
+    }
+});
+
+function assertContains(target: KeyValueMap, result: KeyValueMap[]): boolean {
     return (
         result.filter((r) => {
             let assert = true;
