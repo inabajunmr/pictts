@@ -53,78 +53,52 @@ export class Term extends Clause {
     }
 
     operate(record: Map<Key, Value>): ForceBoolean {
+        const buildForceBoolean = (
+            record: Map<Key, Value>,
+            operate: (l: string, r: string) => boolean
+        ): ForceBoolean => {
+            const l = this.getLeftValue(record);
+            const r = this.getRightValue(record);
+
+            if (l === undefined || r === undefined) {
+                return new ForceBoolean(true, true);
+            }
+
+            return !this.not
+                ? new ForceBoolean(operate(l, r), false)
+                : new ForceBoolean(operate(l, r), false).flip();
+        };
+
         switch (this.relationOperator) {
             case '=': {
-                const l = this.getLeftValue(record);
-                const r = this.getRightValue(record);
-
-                if (l === undefined || r === undefined) {
-                    return new ForceBoolean(true, true);
-                }
-
-                return !this.not
-                    ? new ForceBoolean(l === r, false)
-                    : new ForceBoolean(l === r, false).flip();
+                return buildForceBoolean(record, (l: string, r: string) => {
+                    return l === r;
+                });
             }
             case '<>': {
-                const l = this.getLeftValue(record);
-                const r = this.getRightValue(record);
-
-                if (l === undefined || r === undefined) {
-                    return new ForceBoolean(true, true);
-                }
-
-                return !this.not
-                    ? new ForceBoolean(l !== r, false)
-                    : new ForceBoolean(l !== r, false).flip();
+                return buildForceBoolean(record, (l: string, r: string) => {
+                    return l !== r;
+                });
             }
             case '>': {
-                const l = this.getLeftValue(record);
-                const r = this.getRightValue(record);
-
-                if (l === undefined || r === undefined) {
-                    return new ForceBoolean(true, true);
-                }
-
-                return !this.not
-                    ? new ForceBoolean(l > r, false)
-                    : new ForceBoolean(l > r, false).flip();
+                return buildForceBoolean(record, (l: string, r: string) => {
+                    return l > r;
+                });
             }
             case '>=': {
-                const l = this.getLeftValue(record);
-                const r = this.getRightValue(record);
-
-                if (l === undefined || r === undefined) {
-                    return new ForceBoolean(true, true);
-                }
-
-                return !this.not
-                    ? new ForceBoolean(l >= r, false)
-                    : new ForceBoolean(l >= r, false).flip();
+                return buildForceBoolean(record, (l: string, r: string) => {
+                    return l >= r;
+                });
             }
             case '<': {
-                const l = this.getLeftValue(record);
-                const r = this.getRightValue(record);
-
-                if (l === undefined || r === undefined) {
-                    return new ForceBoolean(true, true);
-                }
-
-                return !this.not
-                    ? new ForceBoolean(l < r, false)
-                    : new ForceBoolean(l < r, false).flip();
+                return buildForceBoolean(record, (l: string, r: string) => {
+                    return l < r;
+                });
             }
             case '<=': {
-                const l = this.getLeftValue(record);
-                const r = this.getRightValue(record);
-
-                if (l === undefined || r === undefined) {
-                    return new ForceBoolean(true, true);
-                }
-
-                return !this.not
-                    ? new ForceBoolean(l <= r, false)
-                    : new ForceBoolean(l <= r, false).flip();
+                return buildForceBoolean(record, (l: string, r: string) => {
+                    return l <= r;
+                });
             }
             case 'LIKE': {
                 const l = this.getLeftValue(record);
