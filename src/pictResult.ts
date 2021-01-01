@@ -3,7 +3,6 @@ import { Key, Value } from './keyvalue';
 export class PictResult {
     private readonly keys: Key[];
 
-    // latest result
     result: Map<Key, Value>[] = [];
 
     // result snapshots
@@ -58,7 +57,7 @@ export class PictResult {
         this.resultHistory.push(newHistory);
     }
 
-    newLine(): boolean {
+    nowIsFull(): boolean {
         const line = this.result[this.result.length - 1];
 
         if (line === undefined) {
@@ -73,17 +72,15 @@ export class PictResult {
     }
 
     nowLine(): Map<Key, Value> {
-        if (this.newLine()) {
+        if (this.nowIsFull()) {
             this.result.push(new Map<Key, Value>());
         }
 
         return this.result[this.result.length - 1];
     }
 
-    contains(keys: Key[], values: Map<Key, Value>) {
-        if (values == undefined) {
-            console.log();
-        }
+    contains(values: Map<Key, Value>): boolean {
+        const keys = Array.from(values.keys());
         return (
             this.result.filter((r) => {
                 let contains = true;

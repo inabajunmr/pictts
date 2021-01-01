@@ -65,11 +65,7 @@ export class Pict {
             }
 
             // if result already has suitable, skip it
-            if (
-                result.contains(longest.keys, suitable) &&
-                !longest.done &&
-                !fromAll
-            ) {
+            if (result.contains(suitable) && !longest.done && !fromAll) {
                 longest.removeFromWorking(suitable);
                 continue;
             }
