@@ -5,7 +5,8 @@ import { Key, Value } from './keyvalue';
  *
  * Ex. Values is `{'A':['a','b','c'], 'X':['x','y','z'], 'N':['1','2','3']}` and keys is ['A', 'X'],
  * return [['a','x'],['a','y'],['a','z'],['b','x'],['b','y'],['b','z'],['c','x'],['c','y'],['c','z']]
- * @param keys
+ * @param keys this method build combination by only this keys
+ * @param kvs origin
  */
 export function allCombinationsByMultipleArray(
     keys: Key[],
@@ -13,24 +14,33 @@ export function allCombinationsByMultipleArray(
 ): Combinations {
     const result = new Combinations(keys);
 
-    // ex.[['a','b','c'],['x','y','z']]
+    // keys to values. ex.[['a','b','c'],['x','y','z']]
     const params = keys.map((k) => {
         return kvs.get(k) as Value[];
     });
-    iCombinationsByMultipleArray(keys, params, 0, [], result);
+    iAllCombinationsByMultipleArray(keys, params, 0, [], result);
     return result;
 }
 
-function iCombinationsByMultipleArray(
+/**
+ * Internal method for allCombinationsByMultipleArray
+ * @param keys
+ * @param parameters all parameters. This parameters index is same as keys.
+ * @param keyIndex depth of recursive call
+ * @param tmp building combination
+ * @param result final result
+ */
+function iAllCombinationsByMultipleArray(
     keys: Key[],
     parameters: Value[][],
-    depth: number,
+    keyIndex: number,
     tmp: Value[],
     result: Combinations
 ) {
-    if (depth == parameters.length) {
+    // it means tmp has all values of keys
+    if (keyIndex == keys.length) {
         result.workingCombinations.push(
-            // temp to map
+            // temp lost key information so rebuild map
             tmp.reduce((acc, v, i) => {
                 return acc.set(keys[i], v);
             }, new Map<Key, Value>())
@@ -38,9 +48,15 @@ function iCombinationsByMultipleArray(
         return;
     }
 
-    parameters[depth].forEach((p) => {
-        tmp[depth] = p;
-        iCombinationsByMultipleArray(keys, parameters, depth + 1, tmp, result);
+    parameters[keyIndex].forEach((p) => {
+        tmp[keyIndex] = p;
+        iAllCombinationsByMultipleArray(
+            keys,
+            parameters,
+            keyIndex + 1,
+            tmp,
+            result
+        );
     });
 }
 
@@ -48,6 +64,7 @@ function iCombinationsByMultipleArray(
  * Return all values combination.
  *
  * ex. values is `['a','b','c']` and factorCount is 2, return `[['a','b'],['a','c'],['b','c']]`.
+ * @param array
  * @param factorCount
  */
 export function combinationsBySingleArray(
@@ -85,23 +102,15 @@ function iCombinationsBySingleArray(
 
 /**
  * Get longest size combinations.
+ * Result never contains excludeList.
  *
- * If combinations.keys contains all exceptKeys, it will skipped.
+ * @param excludeList
+ * @param cs has key and value list
  */
 export function longestCombination(
-    exceptKeys: Key[],
-    usedKeyCombinations: Key[][],
+    excludeList: Key[][],
     cs: Combinations[]
 ): Combinations {
-    let excepted = cs;
-    if (exceptKeys.length !== 0) {
-        excepted = cs.filter((c) => {
-            const result = c.keys.filter((k) => exceptKeys.indexOf(k) === -1)
-                .length;
-            return result !== 0;
-        });
-    }
-
     const equalsKeys = (key1: Key[], key2: Key[]): boolean => {
         if (key1.length !== key2.length) {
             return false;
@@ -116,14 +125,14 @@ export function longestCombination(
         return true;
     };
 
-    // skip nonused
+    // filter excludeList
     const contains = (target: Key[], keyList: Key[][]): boolean => {
         return keyList.filter((k) => equalsKeys(target, k)).length !== 0;
     };
-    let nonUsed = excepted;
-    if (usedKeyCombinations.length !== 0) {
-        nonUsed = excepted.filter((c) => {
-            return !contains(c.keys, usedKeyCombinations);
+    let nonUsed = cs;
+    if (excludeList.length !== 0) {
+        nonUsed = cs.filter((c) => {
+            return !contains(c.keys, excludeList);
         });
     }
 

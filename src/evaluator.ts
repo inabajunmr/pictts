@@ -52,7 +52,6 @@ export class Pict {
             const exceptKeys = result.nowKey(); // if longest combinations is the same as result, it will be skipped.
             const [suitable, longest, fromAll] = this.nextSlot(
                 allCombinations,
-                exceptKeys,
                 [exceptKeys],
                 result.nowLine(),
                 result
@@ -125,13 +124,11 @@ export class Pict {
      */
     nextSlot(
         allCombinations: C.Combinations[],
-        exceptKeys: Key[],
         usedKeyCombinations: Key[][],
         line: Map<Key, Value>,
         result: PictResult
     ): [Map<Key, Value>, C.Combinations, boolean] {
         const combinations = C.longestCombination(
-            exceptKeys,
             usedKeyCombinations,
             allCombinations
         );
@@ -179,7 +176,6 @@ export class Pict {
                 // using next combinations
                 return this.nextSlot(
                     allCombinations,
-                    exceptKeys,
                     usedKeyCombinations,
                     line,
                     result
