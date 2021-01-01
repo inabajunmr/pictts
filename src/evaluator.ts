@@ -5,10 +5,19 @@ import { Random } from './random';
 import { PictResult } from './pictResult';
 export class Pict {
     random: Random = new Random();
+
+    // like `A:A1,A2\nB:B1,B2`
     readonly parameters: Map<Key, Value[]>;
+    // like `IF [A] = "A1" THEN [B] = "B1";`
     readonly constraints: Constraint[];
+
+    // constraints sometimes never allows the combination.
+    // impossibles has disallowed combinations.
     readonly impossibles: Map<Key, Value>[] = [];
+
+    // If PAIRwise, 2. If TRIOwise, 3
     factorCount = 2;
+
     constructor(parameters: Map<Key, Value[]>, constraints: Constraint[]) {
         this.parameters = parameters;
         this.constraints = constraints;
@@ -19,7 +28,7 @@ export class Pict {
         return this;
     }
 
-    setSeed(seed: number): void {
+    setRandomSeed(seed: number): void {
         this.random = new Random(seed);
     }
 

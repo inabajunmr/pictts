@@ -101,7 +101,7 @@ function iCombinationsBySingleArray(
 }
 
 /**
- * Get longest size combinations.
+ * Get longest size combinations(but done is low primary).
  * Result never contains excludeList.
  *
  * @param excludeList
@@ -136,18 +136,17 @@ export function longestCombination(
         });
     }
 
-    const ndone = nonUsed.filter((e) => !e.done);
-    if (ndone.length !== 0) {
-        return ndone.reduce((b, a) => {
+    const withoutDone = nonUsed.filter((e) => !e.done);
+    if (withoutDone.length !== 0) {
+        // if there are not done combinations, return it
+        return withoutDone.reduce((b, a) => {
             return b.workingCombinations.length >= a.workingCombinations.length
                 ? b
                 : a;
         });
     }
 
-    if (nonUsed.length === 0) {
-        console.log();
-    }
+    // if there are no not done combinations, return done it.
     return nonUsed.reduce((b, a) => {
         return b.workingCombinations.length >= a.workingCombinations.length
             ? b
