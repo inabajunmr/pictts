@@ -52,7 +52,7 @@ export class Term extends Clause {
         }
     }
 
-    ioperate(record: Map<Key, Value>): ForceBoolean {
+    operate(record: Map<Key, Value>): ForceBoolean {
         switch (this.relationOperator) {
             case '=': {
                 const l = this.getLeftValue(record);

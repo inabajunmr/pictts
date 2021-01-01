@@ -8,5 +8,5 @@ export abstract class Clause {
         this.not = not;
     }
 
-    abstract ioperate(record: Map<Key, Value>): ForceBoolean;
+    abstract operate(record: Map<Key, Value>): ForceBoolean;
 }
