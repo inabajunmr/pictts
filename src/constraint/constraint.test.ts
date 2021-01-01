@@ -78,10 +78,26 @@ test('constraints5', () => {
         ).nextConstraintsSentence()[0]
     );
 
-    expect(sut.match(map2('A', '1', 'C', 'C2'))).toBe(true);
-    expect(sut.match(map2('A', '2', 'D', 'D1'))).toBe(true);
-    expect(sut.match(map2('A', '2', 'D', 'D2'))).toBe(true);
-    expect(sut.match(map2('A', '2', 'B', 'B1'))).toBe(true);
+    // IF matched but no related THEN
+    expect(sut.match(map2('A', 'A1', 'B', 'B1'))).toBe(true);
+    // IF matched and THEN matched
+    expect(sut.match(map3('A', 'A1', 'B', 'B1', 'C', 'C1'))).toBe(true);
+    // IF matched and THEN unmatched
+    expect(sut.match(map3('A', 'A1', 'B', 'B1', 'C', 'C2'))).toBe(false);
+    // IF unmatched and not related ELSE
+    expect(sut.match(map3('A', 'A2', 'B', 'B1', 'C', 'C2'))).toBe(true);
+    // IF unmatched and related ELSE
+    expect(sut.match(map3('A', 'A2', 'B', 'B1', 'D', 'D1'))).toBe(true);
+    // IF unmatched and related ELSE(but false)
+    expect(sut.match(map3('A', 'A2', 'B', 'B1', 'D', 'D2'))).toBe(false);
+    // can't fix ([B] = "B1" OR [B] = "B2" )
+    expect(sut.match(map2('A', 'A1', 'C', 'C2'))).toBe(true);
+    // can't fix ([A] = "A1")
+    expect(sut.match(map2('B', 'B1', 'C', 'C2'))).toBe(true);
+    // can't fix ([B] = "B1" OR [B] = "B2" ) but [A] = "A1" is false(fixed false if)
+    expect(sut.match(map2('A', 'A2', 'D', 'D1'))).toBe(true);
+    expect(sut.match(map2('A', 'A2', 'D', 'D2'))).toBe(false);
+    // can't fix ([A] = "A1") but [B] = "B1" OR [B] = "B2" is false(fixed false if)
+    expect(sut.match(map2('B', 'B3', 'D', 'D1'))).toBe(true);
+    expect(sut.match(map2('B', 'B3', 'D', 'D2'))).toBe(false);
 });
-
-// TODO ORのテスト

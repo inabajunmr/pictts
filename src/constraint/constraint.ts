@@ -26,7 +26,7 @@ export class Constraint {
             );
             this.else = new Predicate(
                 false,
-                tokens.slice(tokens.indexOf(ThenToken.TOKEN) + 1, tokens.length)
+                tokens.slice(tokens.indexOf(ElseToken.TOKEN) + 1, tokens.length)
             );
         } else {
             this.then = new Predicate(

@@ -21,7 +21,8 @@ export class ForceBoolean {
     and(b: ForceBoolean): ForceBoolean {
         return new ForceBoolean(
             this.isTrue() && b.isTrue(),
-            this.isForce() || b.isForce()
+            // if either this or b is false, this bool is always false so force is disabled.
+            (this.isForce() || b.isForce()) && this.isTrue() && b.isTrue()
         );
     }
 
