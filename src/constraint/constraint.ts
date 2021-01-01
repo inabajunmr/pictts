@@ -37,6 +37,11 @@ export class Constraint {
     }
 
     match(kv: Map<Key, Value>): boolean {
+        const ifResult = this.if.ioperate(kv);
+        if (ifResult.isForce()) {
+            return true;
+        }
+
         if (this.if.ioperate(kv).isTrue()) {
             return this.then.ioperate(kv).isTrue();
         } else {

@@ -293,7 +293,7 @@ test('pict 4factors by 3', () => {
     }
 });
 
-test('pict 2factors with 1 constraints', () => {
+test('pict 2factors with 1 constraints(no else)', () => {
     const sut = new P.Parser(
         'A:A1,A2\nB:B1,B2\nIF [A] = "A1" THEN [B] = "B1";'
     ).parse();
@@ -306,7 +306,7 @@ test('pict 2factors with 1 constraints', () => {
             true
         );
         expect(assertContains(map2('A', 'A1', 'B', 'B2'), actual.result)).toBe(
-            false // matched but constraints violation
+            false // constraints violation
         );
         expect(assertContains(map2('A', 'A2', 'B', 'B1'), actual.result)).toBe(
             true
@@ -316,6 +316,91 @@ test('pict 2factors with 1 constraints', () => {
         );
     }
 });
+
+test('pict 2factors with 2 constraints(no else)', () => {
+    const sut = new P.Parser(
+        'A:A1,A2\nB:B1,B2\nIF [A] = "A1" THEN [B] = "B1";\nIF [A] = "A2" THEN [B] = "B2";'
+    ).parse();
+    for (let index = 0; index < 100; index++) {
+        sut.setSeed(Math.floor(Math.random() * 10000));
+        const actual = sut.testCases();
+
+        // contains all combinations
+        expect(assertContains(map2('A', 'A1', 'B', 'B1'), actual.result)).toBe(
+            true
+        );
+        expect(assertContains(map2('A', 'A1', 'B', 'B2'), actual.result)).toBe(
+            false // constraints violation
+        );
+        expect(assertContains(map2('A', 'A2', 'B', 'B1'), actual.result)).toBe(
+            false // constraints violation
+        );
+        expect(assertContains(map2('A', 'A2', 'B', 'B2'), actual.result)).toBe(
+            true
+        );
+    }
+});
+
+test('pict 3factors by 2 with nested constraints', () => {
+    const sut = new P.Parser(`
+    A:A1,A2
+    B:B1,B2
+    C:C1,C2
+    IF [A] = "A1" AND ([B] = "B1" OR [B] = "B2" ) THEN [C] = "C1";`).parse();
+    for (let index = 0; index < 100; index++) {
+        sut.setSeed(Math.floor(Math.random() * 10000));
+        const actual = sut.testCases();
+
+        // contains all combinations
+        expect(assertContains(map2('A', 'A1', 'B', 'B1'), actual.result)).toBe(
+            true
+        );
+        expect(assertContains(map2('A', 'A1', 'B', 'B2'), actual.result)).toBe(
+            true
+        );
+        expect(assertContains(map2('A', 'A2', 'B', 'B1'), actual.result)).toBe(
+            true
+        );
+        expect(assertContains(map2('A', 'A2', 'B', 'B2'), actual.result)).toBe(
+            true
+        );
+
+        expect(assertContains(map2('A', 'A1', 'C', 'C1'), actual.result)).toBe(
+            true
+        );
+        expect(assertContains(map2('A', 'A1', 'C', 'C2'), actual.result)).toBe(
+            false // constraints violation
+        );
+        expect(assertContains(map2('A', 'A2', 'C', 'C1'), actual.result)).toBe(
+            true
+        );
+        expect(assertContains(map2('A', 'A2', 'C', 'C2'), actual.result)).toBe(
+            true
+        );
+
+        expect(assertContains(map2('B', 'B1', 'C', 'C1'), actual.result)).toBe(
+            true
+        );
+        expect(assertContains(map2('B', 'B1', 'C', 'C2'), actual.result)).toBe(
+            true
+        );
+        expect(assertContains(map2('B', 'B2', 'C', 'C1'), actual.result)).toBe(
+            true
+        );
+        expect(assertContains(map2('B', 'B2', 'C', 'C2'), actual.result)).toBe(
+            true
+        );
+        expect(
+            assertContains(map3('A', 'A1', 'B', 'B2', 'C', 'C2'), actual.result)
+        ).toBe(false); // constraints violation
+        expect(
+            assertContains(map3('A', 'A1', 'B', 'B1', 'C', 'C2'), actual.result)
+        ).toBe(false); // constraints violation
+    }
+});
+
+// TODO add constraint test
+
 function assertContains(
     target: Map<Key, Value>,
     result: Map<Key, Value>[]

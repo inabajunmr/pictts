@@ -24,9 +24,6 @@ test('NOT (term)', () => {
     expect(sut.ioperate(map('A', 'a1')).isTrue()).toBe(false);
     expect(sut.ioperate(map('A', 'a2')).isTrue()).toBe(true);
     expect(sut.ioperate(map('B', 'B1')).isTrue()).toBe(true); // no key matched, true
-    // TODO NOTの場合キーが存在しないケースで逆転しちゃう
-    // TODO 実際の挙動を確認
-    // TODO マッチしないパラメーターが1つでも存在したらもう常にtrueでいいのでは
 });
 
 test('term and term', () => {

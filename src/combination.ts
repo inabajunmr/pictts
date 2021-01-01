@@ -90,6 +90,7 @@ function iCombinationsBySingleArray(
  */
 export function longestCombination(
     exceptKeys: Key[],
+    usedKeyCombinations: Key[][],
     cs: Combinations[]
 ): Combinations {
     let excepted = cs;
@@ -101,7 +102,32 @@ export function longestCombination(
         });
     }
 
-    const ndone = excepted.filter((e) => !e.done);
+    const equalsKeys = (key1: Key[], key2: Key[]): boolean => {
+        if (key1.length !== key2.length) {
+            return false;
+        }
+
+        for (let index = 0; index < key1.length; index++) {
+            if (key1[index] !== key2[index]) {
+                return false;
+            }
+        }
+
+        return true;
+    };
+
+    // skip nonused
+    const contains = (target: Key[], keyList: Key[][]): boolean => {
+        return keyList.filter((k) => equalsKeys(target, k)).length !== 0;
+    };
+    let nonUsed = excepted;
+    if (usedKeyCombinations.length !== 0) {
+        nonUsed = excepted.filter((c) => {
+            return !contains(c.keys, usedKeyCombinations);
+        });
+    }
+
+    const ndone = nonUsed.filter((e) => !e.done);
     if (ndone.length !== 0) {
         return ndone.reduce((b, a) => {
             return b.workingCombinations.length >= a.workingCombinations.length
@@ -110,7 +136,10 @@ export function longestCombination(
         });
     }
 
-    return excepted.reduce((b, a) => {
+    if (nonUsed.length === 0) {
+        console.log();
+    }
+    return nonUsed.reduce((b, a) => {
         return b.workingCombinations.length >= a.workingCombinations.length
             ? b
             : a;
@@ -125,13 +154,23 @@ export class Combinations {
         this.keys = keys;
     }
 
-    remove(target: Map<Key, Value>): void {
+    removeFromWorking(target: Map<Key, Value>): void {
         if (this.workingCombinations.length !== 1) {
             const cache = this.workingCombinations.filter((c) => {
                 return !this.equalsAllElements(c, target);
             });
 
             this.workingCombinations = cache;
+        }
+    }
+
+    removeFromAll(target: Map<Key, Value>): void {
+        if (this.allCombinations.length !== 1) {
+            const cache = this.allCombinations.filter((c) => {
+                return !this.equalsAllElements(c, target);
+            });
+
+            this.allCombinations = cache;
         }
     }
 

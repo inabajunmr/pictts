@@ -56,6 +56,7 @@ export class SentenceParser {
                     T.SemicolonToken ||
                 this.constraintsTokens[this.cindex] instanceof T.EOFToken
             ) {
+                this.cindex++;
                 eof = this.cisEOF();
                 break;
             }
