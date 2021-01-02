@@ -16,21 +16,35 @@ export class Key {
 }
 
 export class Value {
+    type: ValueType;
     value: string;
-    private static cache = new Map<string, Value>();
-    private constructor(value: string) {
+    private static stringCache = new Map<string, Value>();
+    private static numberCache = new Map<string, Value>();
+    private constructor(value: string, type: ValueType = 'string') {
         this.value = value;
+        this.type = type;
     }
 
-    static of(value: string): Value {
-        if (this.cache.has(value)) {
-            return this.cache.get(value) as Value;
+    static of(value: string, type: ValueType = 'string'): Value {
+        if (type === 'string') {
+            if (this.stringCache.has(value)) {
+                return this.stringCache.get(value) as Value;
+            }
+            const k = new Value(value);
+            this.stringCache.set(value, k);
+            return k;
+        } else {
+            if (this.numberCache.has(value)) {
+                return this.numberCache.get(value) as Value;
+            }
+            const k = new Value(value, 'number');
+            this.numberCache.set(value, k);
+            return k;
         }
-        const k = new Value(value);
-        this.cache.set(value, k);
-        return k;
     }
 }
+
+export type ValueType = 'string' | 'number';
 
 export class KeyValueMap extends Map<Key, Value> {
     equals(m: KeyValueMap): boolean {

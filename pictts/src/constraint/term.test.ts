@@ -31,6 +31,7 @@ test('>', () => {
     const sut = new Term(false, t);
     expect(sut.operate(map('A', '3')).isTrue()).toBe(false);
     expect(sut.operate(map('A', '4')).isTrue()).toBe(true);
+    expect(sut.operate(map('A', '10')).isTrue()).toBe(false);
     expect(sut.operate(map('B', 'B1')).isTrue()).toBe(true); // no key matched, true
 });
 
@@ -72,5 +73,14 @@ test('IN', () => {
     expect(sut.operate(map('A', 'aaa')).isTrue()).toBe(true);
     expect(sut.operate(map('A', 'bbb')).isTrue()).toBe(true);
     expect(sut.operate(map('A', 'ccc')).isTrue()).toBe(false);
+    expect(sut.operate(map('B', 'B1')).isTrue()).toBe(true); // no key matched, true
+});
+
+test('number', () => {
+    const t = new ConstraintsLexer('[A] > 3').tokens();
+    const sut = new Term(false, t);
+    expect(sut.operate(map('A', '3')).isTrue()).toBe(false);
+    expect(sut.operate(map('A', '4')).isTrue()).toBe(true);
+    expect(sut.operate(map('A', '10')).isTrue()).toBe(true);
     expect(sut.operate(map('B', 'B1')).isTrue()).toBe(true); // no key matched, true
 });

@@ -1,5 +1,5 @@
-import { ParseException } from '../exception';
-import { Key, KeyValueMap, Value } from '../keyvalue';
+import { EvaluationException, ParseException } from '../exception';
+import { Key, KeyValueMap, Value, ValueType } from '../keyvalue';
 import {
     EqualToken,
     GreaterThanEqualToken,
@@ -14,6 +14,8 @@ import {
     RCurlyBraceToken,
     StringToken,
     Token,
+    NumberToken,
+    IfToken,
 } from '../parser/token';
 import { Clause } from './clause';
 import { ForceBoolean } from './forceBool';
@@ -40,14 +42,21 @@ export class Term extends Clause {
                 if (t instanceof StringToken) {
                     this.rightValues.push(Value.of(t.literal));
                 }
+                if (t instanceof NumberToken) {
+                    this.rightValues.push(Value.of(t.literal));
+                }
                 t = input.shift();
                 // TODO IN allow keys?
             }
         } else {
             if (third instanceof ParameterNameToken) {
                 this.rightKeys = [Key.of(third.literal)];
-            } else {
+            } else if (third instanceof StringToken) {
                 this.rightValues = [Value.of((third as StringToken).literal)];
+            } else if (third instanceof NumberToken) {
+                this.rightValues = [
+                    Value.of((third as NumberToken).literal, 'number'),
+                ];
             }
         }
     }
@@ -55,53 +64,73 @@ export class Term extends Clause {
     operate(record: KeyValueMap): ForceBoolean {
         const buildForceBoolean = (
             record: KeyValueMap,
-            operate: (l: string, r: string) => boolean
+            operate: (l: string | number, r: string | number) => boolean
         ): ForceBoolean => {
-            const l = this.getLeftValue(record);
             const r = this.getRightValue(record);
+            const rv = r[0];
+            const rtype = r[1];
+            const l = this.getLeftValue(record, rtype);
 
-            if (l === undefined || r === undefined) {
+            if (l === undefined || rv === undefined) {
                 return new ForceBoolean(true, true);
             }
 
             return !this.not
-                ? new ForceBoolean(operate(l, r), false)
-                : new ForceBoolean(operate(l, r), false).flip();
+                ? new ForceBoolean(operate(l, rv), false)
+                : new ForceBoolean(operate(l, rv), false).flip();
         };
 
         switch (this.relationOperator) {
             case '=': {
-                return buildForceBoolean(record, (l: string, r: string) => {
-                    return l === r;
-                });
+                return buildForceBoolean(
+                    record,
+                    (l: string | number, r: string | number) => {
+                        return l === r;
+                    }
+                );
             }
             case '<>': {
-                return buildForceBoolean(record, (l: string, r: string) => {
-                    return l !== r;
-                });
+                return buildForceBoolean(
+                    record,
+                    (l: string | number, r: string | number) => {
+                        return l !== r;
+                    }
+                );
             }
             case '>': {
-                return buildForceBoolean(record, (l: string, r: string) => {
-                    return l > r;
-                });
+                return buildForceBoolean(
+                    record,
+                    (l: string | number, r: string | number) => {
+                        return l > r;
+                    }
+                );
             }
             case '>=': {
-                return buildForceBoolean(record, (l: string, r: string) => {
-                    return l >= r;
-                });
+                return buildForceBoolean(
+                    record,
+                    (l: string | number, r: string | number) => {
+                        return l >= r;
+                    }
+                );
             }
             case '<': {
-                return buildForceBoolean(record, (l: string, r: string) => {
-                    return l < r;
-                });
+                return buildForceBoolean(
+                    record,
+                    (l: string | number, r: string | number) => {
+                        return l < r;
+                    }
+                );
             }
             case '<=': {
-                return buildForceBoolean(record, (l: string, r: string) => {
-                    return l <= r;
-                });
+                return buildForceBoolean(
+                    record,
+                    (l: string | number, r: string | number) => {
+                        return l <= r;
+                    }
+                );
             }
             case 'LIKE': {
-                const l = this.getLeftValue(record);
+                const l = this.getLeftValue(record, 'string');
                 const pattern = this.rightValues[0];
 
                 if (l === undefined) {
@@ -110,14 +139,17 @@ export class Term extends Clause {
 
                 // TODO PICT pattern is not same as js regex
                 return !this.not
-                    ? new ForceBoolean(l.match(pattern.value) !== null, false)
+                    ? new ForceBoolean(
+                          (l as string).match(pattern.value) !== null,
+                          false
+                      )
                     : new ForceBoolean(
-                          l.match(pattern.value) !== null,
+                          (l as string).match(pattern.value) !== null,
                           false
                       ).flip();
             }
             case 'IN': {
-                const l = this.getLeftValue(record);
+                const l = this.getLeftValue(record, 'string');
 
                 if (l === undefined) {
                     return new ForceBoolean(true, true);
@@ -131,14 +163,38 @@ export class Term extends Clause {
         }
     }
 
-    getLeftValue(record: KeyValueMap): string | undefined {
-        return record.get(this.left)?.value;
+    getLeftValue(
+        record: KeyValueMap,
+        type: ValueType
+    ): string | number | undefined {
+        const lv = record.get(this.left);
+        if (lv === undefined) {
+            return lv;
+        }
+        if (type === 'number') {
+            return parseFloat(lv.value);
+        }
+        return lv.value;
     }
 
-    getRightValue(record: KeyValueMap): string | undefined {
-        return this.rightValues.length !== 0
-            ? this.rightValues[0].value
-            : record.get(this.rightKeys[0] as Key)?.value;
+    getRightValue(
+        record: KeyValueMap
+    ): [string | number | undefined, ValueType] {
+        const v =
+            this.rightValues.length !== 0
+                ? this.rightValues[0]
+                : record.get(this.rightKeys[0] as Key);
+        if (v === undefined) {
+            return [undefined, 'string' /* nonsense */];
+        }
+
+        let rv = v.value as string | number;
+
+        if (v.type === 'number') {
+            rv = parseFloat(v.value);
+        }
+
+        return [rv, v.type];
     }
 }
 
