@@ -13,9 +13,12 @@ jobs:
               with:
                   node-version: '12.x'
             - run: npm install
+              working-directory: ./pictts
             - run: npm run lint
+              working-directory: ./pictts
               env:
                   CI: true
             - run: npm test
+              working-directory: ./pictts
               env:
                   CI: true
