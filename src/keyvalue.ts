@@ -47,6 +47,20 @@ export class KeyValueMap extends Map<Key, Value> {
     }
 }
 
+export function equalsKeys(keys1: Key[], keys2: Key[]): boolean {
+    if (keys1.length !== keys2.length) {
+        return false;
+    }
+
+    for (let index = 0; index < keys1.length; index++) {
+        if (keys1[index] !== keys2[index]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 export function map(key: string, value: string): KeyValueMap {
     new Map();
     const result = new KeyValueMap();

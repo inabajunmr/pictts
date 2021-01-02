@@ -1,6 +1,6 @@
 import * as C from './combination';
 import { Constraint } from './constraint/constraint';
-import { Key, KeyValueMap, Value } from './keyvalue';
+import { equalsKeys, Key, KeyValueMap, Value } from './keyvalue';
 import { Random } from './random';
 import { PictResult } from './pictResult';
 export class Pict {
@@ -202,31 +202,26 @@ export class Pict {
             // TODO impossibleの重複は消したい
             this.impossibles.push(line);
 
-            // reput revert to matched combination
+            // pop latest
             const revert = result.revert();
-            allCombinations
-                .filter((c) => {
-                    return c.keys.filter((k) => !revert.has(k)).length === 0;
-                })[0]
-                .allCombinations.push(revert);
+            // find keys matched combinations(revert target)
+            const revertTargetCombinations = allCombinations.filter((c) => {
+                return equalsKeys(c.keys, Array.from(revert.keys()));
+            })[0];
 
             if (this.factorCount === line.size) {
-                const revertTarget = allCombinations.filter((c) => {
-                    return (
-                        c.keys.filter((k) => {
-                            return revert.has(k) === false;
-                        }).length === 0
-                    );
-                })[0];
-
+                // minimum slot doesn't revert because it's impossible
                 // mark as impossible
                 // TODO done in remove
-                revertTarget.removeFromWorking(line);
-                revertTarget.removeFromAll(line);
+                revertTargetCombinations.removeFromWorking(line);
+                revertTargetCombinations.removeFromAll(line);
 
                 if (combinations.workingCombinations.length === 0) {
                     combinations.done = true;
                 }
+            } else {
+                // revert to combinations
+                revertTargetCombinations.allCombinations.push(revert);
             }
 
             return [new KeyValueMap(), combinations, false];
@@ -240,8 +235,8 @@ export class Pict {
             return [nextSlot, combinations, fromAll];
         }
 
+        // mark as used
         combinations.removeFromWorking(nextSlot);
-
         return [nextSlot, combinations, fromAll];
     }
 
