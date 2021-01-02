@@ -1,6 +1,6 @@
 import * as C from './combination';
 import { Constraint } from './constraint/constraint';
-import { equalsKeys, Key, KeyValueMap, Value } from './keyvalue';
+import { containsKey1InKey2, Key, KeyValueMap, Value } from './keyvalue';
 import { Random } from './random';
 import { PictResult } from './pictResult';
 export class Pict {
@@ -197,7 +197,7 @@ export class Pict {
             const revert = result.revert();
             // find keys matched combinations(revert target)
             const revertTargetCombinations = allCombinations.filter((c) => {
-                return equalsKeys(c.keys, Array.from(revert.keys()));
+                return containsKey1InKey2(c.keys, Array.from(revert.keys()));
             })[0];
 
             if (this.factorCount === line.size) {
