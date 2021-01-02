@@ -72,7 +72,7 @@ test('revert', () => {
     expect(sut.nowIsFull()).toBe(true);
     expect(sut.nowKey().length).toBe(0);
 
-    sut.revert();
+    expect(assertEquals(map('C', 'C2'), sut.revert())).toBe(true);
     expect(sut.result.length).toBe(2);
     expect(assertEquals(map2('A', 'A2', 'B', 'B2'), sut.result[1])).toBe(true);
     expect(sut.contains(map('B', 'B2'))).toBe(true);
@@ -80,14 +80,14 @@ test('revert', () => {
     expect(sut.nowKey()[0]).toBe(Key.of('A'));
     expect(sut.nowKey()[1]).toBe(Key.of('B'));
 
-    sut.revert();
+    expect(assertEquals(map('B', 'B2'), sut.revert())).toBe(true);
     expect(sut.result.length).toBe(2);
     expect(assertEquals(map('A', 'A2'), sut.result[1])).toBe(true);
     expect(sut.contains(map('A', 'A2'))).toBe(true);
     expect(sut.nowIsFull()).toBe(false);
     expect(sut.nowKey()[0]).toBe(Key.of('A'));
 
-    sut.revert();
+    expect(assertEquals(map('A', 'A2'), sut.revert())).toBe(true);
     expect(sut.result.length).toBe(1);
     expect(
         assertEquals(map3('A', 'A1', 'B', 'B1', 'C', 'C1'), sut.result[0])
@@ -96,7 +96,7 @@ test('revert', () => {
     expect(sut.nowIsFull()).toBe(true);
     expect(sut.nowKey().length).toBe(0);
 
-    sut.revert();
+    expect(assertEquals(map('C', 'C1'), sut.revert())).toBe(true);
     expect(sut.result.length).toBe(1);
     expect(assertEquals(map2('A', 'A1', 'B', 'B1'), sut.result[0])).toBe(true);
     expect(sut.contains(map('B', 'B1'))).toBe(true);
@@ -104,13 +104,14 @@ test('revert', () => {
     expect(sut.nowKey()[0]).toBe(Key.of('A'));
     expect(sut.nowKey()[1]).toBe(Key.of('B'));
 
-    sut.revert();
+    expect(assertEquals(map('B', 'B1'), sut.revert())).toBe(true);
     expect(sut.result.length).toBe(1);
     expect(assertEquals(map('A', 'A1'), sut.result[0])).toBe(true);
     expect(sut.contains(map('A', 'A1'))).toBe(true);
     expect(sut.contains(map('A', 'A2'))).toBe(false);
     expect(sut.nowIsFull()).toBe(false);
     expect(sut.nowKey()[0]).toBe(Key.of('A'));
+    expect(assertEquals(map('A', 'A1'), sut.revert())).toBe(true);
 });
 
 function assertEquals(target: KeyValueMap, result: KeyValueMap): boolean {

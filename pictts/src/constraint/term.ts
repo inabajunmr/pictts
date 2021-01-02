@@ -1,4 +1,4 @@
-import { EvaluationException, ParseException } from '../exception';
+import { ParseException } from '../exception';
 import { Key, KeyValueMap, Value, ValueType } from '../keyvalue';
 import {
     EqualToken,
