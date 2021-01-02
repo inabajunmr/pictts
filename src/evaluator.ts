@@ -85,8 +85,7 @@ export class Pict {
     }
 
     buildAllCombinations(keyCombinations: Key[][]): C.Combinations[] {
-        const allCombinations: C.Combinations[] = [];
-        keyCombinations.forEach((kc) => {
+        return keyCombinations.reduce((acc, kc) => {
             const combinations = C.allCombinationsByMultipleArray(
                 kc,
                 this.parameters
@@ -107,9 +106,9 @@ export class Pict {
             combinations.allCombinations = Array.from(
                 combinations.workingCombinations
             );
-            allCombinations.push(combinations);
-        });
-        return allCombinations;
+            acc.push(combinations);
+            return acc;
+        }, [] as C.Combinations[]);
     }
 
     allDone(c: C.Combinations[]): boolean {
