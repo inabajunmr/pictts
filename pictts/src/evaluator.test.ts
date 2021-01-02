@@ -533,6 +533,87 @@ test('pict 4factor', () => {
     }
 });
 
+test('pict 3factor with IN constraints', () => {
+    const sut = new P.Parser(
+        `
+        A:A1,A2,A3
+        B:B1,B2,B3
+        C:C1,C2
+        IF [A] = "A1" THEN [B] IN {"B1","B2"};
+        `
+    ).parse();
+    for (let index = 0; index < 100; index++) {
+        sut.setRandomSeed(Math.floor(Math.random() * 10000));
+        const actual = sut.testCases();
+
+        expect(assertContains(map2('A', 'A1', 'B', 'B1'), actual.result)).toBe(
+            true
+        );
+        expect(assertContains(map2('A', 'A1', 'B', 'B2'), actual.result)).toBe(
+            true
+        );
+        expect(assertContains(map2('A', 'A1', 'B', 'B3'), actual.result)).toBe(
+            false
+        ); // constraints violation
+        expect(assertContains(map2('A', 'A2', 'B', 'B1'), actual.result)).toBe(
+            true
+        );
+        expect(assertContains(map2('A', 'A2', 'B', 'B2'), actual.result)).toBe(
+            true
+        );
+        expect(assertContains(map2('A', 'A2', 'B', 'B3'), actual.result)).toBe(
+            true
+        );
+        expect(assertContains(map2('A', 'A3', 'B', 'B1'), actual.result)).toBe(
+            true
+        );
+        expect(assertContains(map2('A', 'A3', 'B', 'B2'), actual.result)).toBe(
+            true
+        );
+        expect(assertContains(map2('A', 'A3', 'B', 'B3'), actual.result)).toBe(
+            true
+        );
+
+        expect(assertContains(map2('A', 'A1', 'C', 'C1'), actual.result)).toBe(
+            true
+        );
+        expect(assertContains(map2('A', 'A1', 'C', 'C2'), actual.result)).toBe(
+            true
+        );
+        expect(assertContains(map2('A', 'A2', 'C', 'C1'), actual.result)).toBe(
+            true
+        );
+        expect(assertContains(map2('A', 'A2', 'C', 'C2'), actual.result)).toBe(
+            true
+        );
+        expect(assertContains(map2('A', 'A3', 'C', 'C1'), actual.result)).toBe(
+            true
+        );
+        expect(assertContains(map2('A', 'A3', 'C', 'C2'), actual.result)).toBe(
+            true
+        );
+
+        expect(assertContains(map2('B', 'B1', 'C', 'C1'), actual.result)).toBe(
+            true
+        );
+        expect(assertContains(map2('B', 'B1', 'C', 'C2'), actual.result)).toBe(
+            true
+        );
+        expect(assertContains(map2('B', 'B2', 'C', 'C1'), actual.result)).toBe(
+            true
+        );
+        expect(assertContains(map2('B', 'B2', 'C', 'C2'), actual.result)).toBe(
+            true
+        );
+        expect(assertContains(map2('B', 'B3', 'C', 'C1'), actual.result)).toBe(
+            true
+        );
+        expect(assertContains(map2('B', 'B3', 'C', 'C2'), actual.result)).toBe(
+            true
+        );
+    }
+});
+
 function assertContains(target: KeyValueMap, result: KeyValueMap[]): boolean {
     return (
         result.filter((r) => {

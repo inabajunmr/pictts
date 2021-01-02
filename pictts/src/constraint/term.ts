@@ -32,15 +32,15 @@ export class Term extends Clause {
         this.relationOperator = relationTokenToRelation(second);
         const third = input.shift();
         if (third instanceof LCurlyBraceToken) {
-            for (let index = 0; index < input.length; index++) {
-                const t = input.shift();
+            let t = input.shift();
+            while (t !== undefined) {
                 if (t instanceof RCurlyBraceToken) {
                     break;
                 }
                 if (t instanceof StringToken) {
                     this.rightValues.push(Value.of(t.literal));
                 }
-
+                t = input.shift();
                 // TODO IN allow keys?
             }
         } else {

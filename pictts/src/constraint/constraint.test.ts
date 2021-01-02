@@ -101,3 +101,20 @@ test('constraints5', () => {
     expect(sut.match(map2('B', 'B3', 'D', 'D1'))).toBe(true);
     expect(sut.match(map2('B', 'B3', 'D', 'D2'))).toBe(false);
 });
+
+test('constraints6', () => {
+    const sut = new Constraint(
+        new SentenceParser(
+            'IF [A] = "A1" THEN [B] IN {"B1","B2"};'
+        ).nextConstraintsSentence()[0]
+    );
+
+    // IF matched and THEN matched
+    expect(sut.match(map2('A', 'A1', 'B', 'B1'))).toBe(true);
+    expect(sut.match(map2('A', 'A1', 'B', 'B2'))).toBe(true);
+    // IF matched and THEN matched and unrelated
+    expect(sut.match(map3('A', 'A1', 'B', 'B1', 'C', 'C1'))).toBe(true);
+    // IF matched and THEN unmatched
+    expect(sut.match(map3('A', 'A1', 'B', 'B3', 'C', 'C2'))).toBe(false);
+    expect(sut.match(map2('A', 'A1', 'B', 'B3'))).toBe(false);
+});
