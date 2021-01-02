@@ -15,7 +15,6 @@ import {
     StringToken,
     Token,
     NumberToken,
-    IfToken,
 } from '../parser/token';
 import { Clause } from './clause';
 import { ForceBoolean } from './forceBool';
