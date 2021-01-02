@@ -439,6 +439,18 @@ test('pict 2factor all invalid', () => {
         expect(actual.result.length).toBe(0);
     }
 });
+test('pict 4factor', () => {
+    const sut = new P.Parser(
+        `A:A1,A2
+        B:B1,B2
+        C:C1,C2
+        D:D1,D2
+        `
+    ).parse();
+    sut.setRandomSeed(1);
+    const actual = sut.testCases();
+    expect(actual.result.length).toBe(0);
+});
 
 function assertContains(target: KeyValueMap, result: KeyValueMap[]): boolean {
     return (

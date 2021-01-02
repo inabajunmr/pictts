@@ -68,7 +68,7 @@ export class Pict {
             const exceptKeys = result.nowKey(); // if longest combinations is the same as result, it will be skipped.
             const [suitable, longest, fromAll] = this.nextSlot(
                 allCombinations,
-                [exceptKeys],
+                [exceptKeys], // TODO これにマッチするやつがかえってきてしまっている
                 result.nowLine(),
                 result
             );
