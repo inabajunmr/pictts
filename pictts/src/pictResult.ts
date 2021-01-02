@@ -23,11 +23,20 @@ export class PictResult {
         if (this.resultHistory === undefined) {
             this.resultHistory = [];
         }
-        this.result = this.resultHistory[this.resultHistory.length - 1];
-        if (this.result === undefined) {
+        if (this.resultHistory[this.resultHistory.length - 1] === undefined) {
             this.result = [];
+        } else {
+            this.result = this.resultHistory[
+                this.resultHistory.length - 1
+            ].reduce((acc, map) => {
+                acc.push(new KeyValueMap(map)); // need to other instance
+                return acc;
+            }, [] as KeyValueMap[]);
         }
-        const latest = this.putValuesHistory[this.putValuesHistory.length - 1];
+
+        const latest = new KeyValueMap(
+            this.putValuesHistory[this.putValuesHistory.length - 1]
+        );
         this.putValuesHistory = this.putValuesHistory.slice(
             0,
             this.putValuesHistory.length - 1

@@ -115,3 +115,19 @@ test('constraints3', () => {
     expect(actual[17]).toBeInstanceOf(T.EOFToken);
     expect(actual.length).toBe(18);
 });
+
+test('constraints 4', () => {
+    const sut = new ConstraintsLexer('IF [A] > 1;');
+
+    const actual = sut.tokens();
+
+    expect(actual[0]).toBe(T.IfToken.TOKEN);
+    expect(actual[1]).toBeInstanceOf(T.ParameterNameToken);
+    expect((actual[1] as T.ParameterNameToken).literal).toBe('A');
+    expect(actual[2]).toBe(T.GreaterThanToken.TOKEN);
+    expect(actual[3]).toBeInstanceOf(T.NumberToken);
+    expect((actual[3] as T.NumberToken).literal).toBe('1');
+    expect(actual[4]).toBe(T.SemicolonToken.TOKEN);
+    expect(actual[5]).toStrictEqual(new T.EOFToken());
+    expect(actual.length).toBe(6);
+});

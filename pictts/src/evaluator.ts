@@ -204,9 +204,6 @@ export class Pict {
                 // minimum slot doesn't revert because it's impossible
                 // mark as impossible
                 revertTargetCombinations.markAsImpossible(line);
-            } else {
-                // revert to combinations
-                revertTargetCombinations.allCombinations.push(revert);
             }
 
             return [new KeyValueMap(), combinations, false];
