@@ -91,24 +91,24 @@ export class Pict {
                 this.parameters
             );
 
-            // use only constraints matched combinations
+            // filter only constraints matched combinations
             if (this.constraints.length !== 0) {
-                combinations.workingCombinations = combinations.workingCombinations.filter(
-                    (v) => {
-                        return (
-                            this.constraints.filter((c) => !c.match(v))
-                                .length === 0
-                        );
-                    }
+                combinations.set(
+                    combinations.allCombinations.filter((v) =>
+                        this.matchAllConstraints(v)
+                    )
                 );
             }
-
-            combinations.allCombinations = Array.from(
-                combinations.workingCombinations
-            );
             acc.push(combinations);
             return acc;
         }, [] as C.Combinations[]);
+    }
+
+    matchAllConstraints(record: Map<Key, Value>): boolean {
+        return (
+            this.constraints.filter((c) => c.match(record)).length ===
+            this.constraints.length
+        );
     }
 
     allDone(c: C.Combinations[]): boolean {

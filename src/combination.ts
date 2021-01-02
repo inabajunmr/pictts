@@ -39,7 +39,7 @@ function iAllCombinationsByMultipleArray(
 ) {
     // it means tmp has all values of keys
     if (keyIndex == keys.length) {
-        result.workingCombinations.push(
+        result.push(
             // temp lost key information so rebuild map
             tmp.reduce((acc, v, i) => {
                 return acc.set(keys[i], v);
@@ -157,9 +157,21 @@ export class Combinations {
     keys: Key[];
     workingCombinations: Map<Key, Value>[] = [];
     allCombinations: Map<Key, Value>[] = [];
+
+    // all combinations already applied, true
     done = false;
     constructor(keys: Key[]) {
         this.keys = keys;
+    }
+
+    set(combinations: Map<Key, Value>[]): void {
+        this.workingCombinations = combinations;
+        this.allCombinations = combinations;
+    }
+
+    push(combination: Map<Key, Value>): void {
+        this.workingCombinations.push(combination);
+        this.allCombinations.push(combination);
     }
 
     removeFromWorking(target: Map<Key, Value>): void {
