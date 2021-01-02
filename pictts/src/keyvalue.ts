@@ -47,7 +47,15 @@ export class KeyValueMap extends Map<Key, Value> {
     }
 }
 
-export function equalsKeys(keys1: Key[], keys2: Key[]): boolean {
+/**
+ * contains keys1 in keys2
+ * keys1:['a','b','c'], keys2:['a','b','c'] true
+ * keys1:['a','b','c'], keys2:['a','b','c','d'] true
+ * keys1:['a','b','c'], keys2:['a','b'] false
+ * @param keys1
+ * @param keys2
+ */
+export function containsKey1InKey2(keys1: Key[], keys2: Key[]): boolean {
     if (keys1.length !== keys2.length) {
         return false;
     }
