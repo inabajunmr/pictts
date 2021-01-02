@@ -24,6 +24,6 @@
     "webpack-cli": "^4.3.1"
   },
   "dependencies": {
-    "pictts": "0.0.1"
+    "pictts": "0.0.2"
   }
 }
