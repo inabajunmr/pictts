@@ -161,14 +161,15 @@ export class Pict {
             ];
         }
 
-        const alreadyExistedKeys: Key[] = [];
-        combinations.keys.forEach((k) => {
+        const alreadyExistedKeys = combinations.keys.reduce((acc, k) => {
             const v = line.get(k);
             if (v !== undefined) {
-                alreadyExistedKeys.push(k);
+                acc.push(k);
             }
-        });
+            return acc;
+        }, [] as Key[]);
 
+        // from working
         let suitables = this.matchedSlot(
             combinations.workingCombinations,
             line,
@@ -177,6 +178,7 @@ export class Pict {
 
         let fromAll = false;
         if (suitables.length === 0) {
+            // if all working aren't matched, from all
             fromAll = true;
             suitables = this.matchedSlot(
                 combinations.allCombinations,
@@ -187,7 +189,7 @@ export class Pict {
 
         if (suitables.length === 0) {
             if (allCombinations.length !== usedKeyCombinations.length) {
-                // using next combinations
+                // find other combinations
                 return this.nextSlot(
                     allCombinations,
                     usedKeyCombinations,
@@ -217,22 +219,20 @@ export class Pict {
                     );
                 })[0];
 
-                if (combinations.workingCombinations.length === 1) {
-                    combinations.done = true;
-                }
-
+                // mark as impossible
                 // TODO done in remove
                 revertTarget.removeFromWorking(line);
                 revertTarget.removeFromAll(line);
+
+                if (combinations.workingCombinations.length === 0) {
+                    combinations.done = true;
+                }
             }
 
             return [new KeyValueMap(), combinations, false];
         }
 
-        let nextSlot = suitables[this.random.random(0, suitables.length - 1)];
-        if (nextSlot === undefined) {
-            nextSlot = combinations.workingCombinations[0];
-        }
+        const nextSlot = suitables[this.random.random(0, suitables.length - 1)];
 
         // when other combinations are remaining after all combinations are used, any combination is used for others.
         if (combinations.workingCombinations.length === 1) {
