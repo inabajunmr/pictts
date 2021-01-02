@@ -203,13 +203,11 @@ export class Combinations {
     }
 
     removeFromAll(target: KeyValueMap): void {
-        if (this.allCombinations.length !== 1) {
-            const cache = this.allCombinations.filter((c) => {
-                return !this.equalsAllElements(c, target);
-            });
+        const cache = this.allCombinations.filter((c) => {
+            return !this.equalsAllElements(c, target);
+        });
 
-            this.allCombinations = cache;
-        }
+        this.allCombinations = cache;
     }
 
     equalsAllElements(target1: KeyValueMap, target2: KeyValueMap): boolean {
@@ -217,16 +215,6 @@ export class Combinations {
             return target1 === target2;
         }
 
-        if (target1.size !== target2.size) {
-            return false;
-        }
-
-        const keys = Array.from(target1.keys());
-
-        return (
-            keys.filter((k) => {
-                return target1.get(k) !== target2.get(k);
-            }).length === 0
-        );
+        return target1.equals(target2);
     }
 }
