@@ -208,6 +208,9 @@ export class Pict {
     }
 
     matchedSlot(combinations: KeyValueMap[], line: KeyValueMap): KeyValueMap[] {
+        if (combinations.length === 0) {
+            return [];
+        }
         // if line has keys['A', 'B', 'C'] and combinations has keys ['A', 'C', 'D'], mutualKeys are ['A', 'C']
         // mutualKeys matched value need to be same between combinations and line
         const mutualKeys = Array.from(combinations[0].keys()).filter((k) =>

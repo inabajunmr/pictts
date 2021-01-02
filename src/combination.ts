@@ -192,13 +192,12 @@ export class Combinations {
     }
 
     removeFromWorking(target: KeyValueMap): void {
-        if (this.workingCombinations.length !== 1) {
-            const cache = this.workingCombinations.filter((c) => {
-                return !this.equalsAllElements(c, target);
-            });
+        const cache = this.workingCombinations.filter((c) => {
+            return !this.equalsAllElements(c, target);
+        });
 
-            this.workingCombinations = cache;
-        } else {
+        this.workingCombinations = cache;
+        if (this.workingCombinations.length === 0) {
             this.done = true;
         }
     }
