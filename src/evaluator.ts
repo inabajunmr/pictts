@@ -73,7 +73,6 @@ export class Pict {
 
             // if result already has suitable, skip it
             if (result.contains(suitable) && !longest.done && !fromAll) {
-                longest.removeFromWorking(suitable);
                 continue;
             }
 
@@ -147,18 +146,17 @@ export class Pict {
         usedKeyCombinations.push(combinations.keys);
 
         if (line.size === 0) {
-            if (combinations.workingCombinations.length === 1) {
-                combinations.done = true;
-            }
-
             // next line equals combinations.workingCombinations[0]
             // workingCombinations already omitted constraints violation
-            return [
-                (combinations // TODO should be random but something wrong
-                    .workingCombinations[0] as KeyValueMap) as KeyValueMap,
-                combinations,
-                false,
-            ];
+            const result = combinations.workingCombinations[0]; // TODO should be random but something wrong
+
+            if (combinations.workingCombinations.length === 1) {
+                combinations.done = true;
+                return [result, combinations, false];
+            }
+
+            combinations.removeFromWorking(result);
+            return [result, combinations, false];
         }
 
         // from working
