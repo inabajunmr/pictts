@@ -256,7 +256,7 @@ export class Pict {
         }
 
         const constraintsFiltered = suitables.filter((s) => {
-            const merge = new Map(s);
+            const merge = new KeyValueMap(s);
 
             Array.from(line).forEach((k) => {
                 merge.set(k[0], k[1]);
