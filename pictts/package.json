@@ -6,6 +6,9 @@
         "type": "git",
         "url": "https://github.com/inabajunmr/pictts"
     },
+    "bugs": {
+        "url": "https://github.com/inabajunmr/pictts/issues"
+    },    
     "main": "dist/index.js",
     "files": [
         "dist"
