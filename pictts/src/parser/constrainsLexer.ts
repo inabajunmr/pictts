@@ -83,12 +83,22 @@ export class ConstraintsLexer {
     private readIdent(): string {
         let result = '';
 
-        while (this.now !== ' ' && this.now !== '\n' && this.now != '\r') {
+        while (
+            this.now !== ' ' &&
+            this.now !== '\n' &&
+            this.now != '\r' &&
+            this.now != ';'
+        ) {
             result += this.now;
             if (this.lastChar()) {
                 return result;
             }
             this.nextChar();
+        }
+
+        // semicolon doesn't include in ident but need to recognize as token
+        if (this.now === ';') {
+            this.index--;
         }
 
         return result;

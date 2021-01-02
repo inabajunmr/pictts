@@ -49,7 +49,7 @@ export class IdentToken extends Token {
             case 'NOT':
                 return NotToken.TOKEN;
             default:
-                throw new ParseException(`${this.literal} is undefined.`);
+                return new NumberToken(this.literal);
         }
     }
 }
@@ -145,6 +145,24 @@ export class StringToken extends Token {
     readonly literal: string;
     constructor(literal: string) {
         super();
+        this.literal = literal;
+    }
+}
+
+/**
+ * 1
+ */
+export class NumberToken extends Token {
+    toString(): string {
+        return `Number: ${this.literal}`;
+    }
+
+    readonly literal: string;
+    constructor(literal: string) {
+        super();
+        if (isNaN(parseFloat(literal))) {
+            throw new ParseException(`${literal} is not number.`);
+        }
         this.literal = literal;
     }
 }
