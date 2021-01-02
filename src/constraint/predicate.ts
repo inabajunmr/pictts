@@ -1,4 +1,4 @@
-import { Key, Value } from '../keyvalue';
+import { Key, KeyValueMap, Value } from '../keyvalue';
 import {
     AndToken,
     EOFToken,
@@ -63,7 +63,7 @@ export class Predicate extends Clause {
         }
     }
 
-    operate(record: Map<Key, Value>): ForceBoolean {
+    operate(record: KeyValueMap): ForceBoolean {
         if (this.right === null) {
             const result = this.left!.operate(record);
             if (result.isForce()) {

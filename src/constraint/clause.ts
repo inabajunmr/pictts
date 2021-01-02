@@ -1,4 +1,4 @@
-import { Key, Value } from '../keyvalue';
+import { Key, KeyValueMap, Value } from '../keyvalue';
 import { ForceBoolean } from './forceBool';
 
 export abstract class Clause {
@@ -8,5 +8,5 @@ export abstract class Clause {
         this.not = not;
     }
 
-    abstract operate(record: Map<Key, Value>): ForceBoolean;
+    abstract operate(record: KeyValueMap): ForceBoolean;
 }

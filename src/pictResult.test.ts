@@ -1,4 +1,4 @@
-import { Key, map, map2, map3, Value } from './keyvalue';
+import { Key, KeyValueMap, map, map2, map3, Value } from './keyvalue';
 import { PictResult } from './pictResult';
 
 test('put', () => {
@@ -113,10 +113,7 @@ test('revert', () => {
     expect(sut.nowKey()[0]).toBe(Key.of('A'));
 });
 
-function assertEquals(
-    target: Map<Key, Value>,
-    result: Map<Key, Value>
-): boolean {
+function assertEquals(target: KeyValueMap, result: KeyValueMap): boolean {
     let assert = true;
     Array.from(target.keys()).forEach((k) => {
         if (target.get(k) !== result.get(k)) {

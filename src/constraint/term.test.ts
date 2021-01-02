@@ -1,4 +1,4 @@
-import { Key, Value } from '../keyvalue';
+import { map, map2 } from '../keyvalue';
 import { ConstraintsLexer } from '../parser/constrainsLexer';
 import { Term } from './term';
 
@@ -13,24 +13,8 @@ test('=', () => {
 test('= with key', () => {
     const t = new ConstraintsLexer('[A] = [B]').tokens();
     const sut = new Term(false, t);
-    expect(
-        sut
-            .operate(
-                new Map()
-                    .set(Key.of('A'), Value.of('XXX'))
-                    .set(Key.of('B'), Value.of('XXX'))
-            )
-            .isTrue()
-    ).toBe(true);
-    expect(
-        sut
-            .operate(
-                new Map()
-                    .set(Key.of('A'), Value.of('XXX'))
-                    .set(Key.of('B'), Value.of('YYY'))
-            )
-            .isTrue()
-    ).toBe(false);
+    expect(sut.operate(map2('A', 'XXX', 'B', 'XXX')).isTrue()).toBe(true);
+    expect(sut.operate(map2('A', 'XXX', 'B', 'YYY')).isTrue()).toBe(false);
     expect(sut.operate(map('B', 'B1')).isTrue()).toBe(true); // no key matched, true
 });
 
@@ -90,7 +74,3 @@ test('IN', () => {
     expect(sut.operate(map('A', 'ccc')).isTrue()).toBe(false);
     expect(sut.operate(map('B', 'B1')).isTrue()).toBe(true); // no key matched, true
 });
-
-function map(key: string, value: string): Map<Key, Value> {
-    return new Map().set(Key.of(key), Value.of(value));
-}

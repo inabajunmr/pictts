@@ -1,5 +1,5 @@
 import { ParseException } from '../exception';
-import { Key, Value } from '../keyvalue';
+import { Key, KeyValueMap, Value } from '../keyvalue';
 import {
     EqualToken,
     GreaterThanEqualToken,
@@ -52,9 +52,9 @@ export class Term extends Clause {
         }
     }
 
-    operate(record: Map<Key, Value>): ForceBoolean {
+    operate(record: KeyValueMap): ForceBoolean {
         const buildForceBoolean = (
-            record: Map<Key, Value>,
+            record: KeyValueMap,
             operate: (l: string, r: string) => boolean
         ): ForceBoolean => {
             const l = this.getLeftValue(record);
@@ -131,11 +131,11 @@ export class Term extends Clause {
         }
     }
 
-    getLeftValue(record: Map<Key, Value>): string | undefined {
+    getLeftValue(record: KeyValueMap): string | undefined {
         return record.get(this.left)?.value;
     }
 
-    getRightValue(record: Map<Key, Value>): string | undefined {
+    getRightValue(record: KeyValueMap): string | undefined {
         return this.rightValues.length !== 0
             ? this.rightValues[0].value
             : record.get(this.rightKeys[0] as Key)?.value;
