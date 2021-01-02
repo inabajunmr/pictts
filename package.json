@@ -1,8 +1,15 @@
 {
-    "name": "app",
-    "version": "1.0.0",
-    "description": "",
-    "main": "index.js",
+    "name": "pictts",
+    "version": "0.0.0",
+    "description": "PICT clone by TypeScript",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/inabajunmr/pictts"
+    },
+    "main": "dist/index.js",
+    "files": [
+        "dist"
+    ],
     "scripts": {
         "test": "jest",
         "fix": "run-s fix:prettier fix:eslint",
@@ -10,11 +17,13 @@
         "lint": "run-p lint:prettier lint:eslint",
         "lint:eslint": "eslint src --ext .ts",
         "fix:prettier": "prettier --write src",
-        "lint:prettier": "prettier --check src"
+        "lint:prettier": "prettier --check src",
+        "build": "tsc",
+        "prepublishOnly": "npm run build"
     },
     "keywords": [],
-    "author": "",
-    "license": "ISC",
+    "author": "inabajunmr",
+    "license": "MIT",
     "devDependencies": {
         "@types/jest": "^26.0.19",
         "@typescript-eslint/eslint-plugin": "^4.11.0",

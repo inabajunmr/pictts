@@ -1,2 +1,3 @@
 # pictts
-PICT clone
+
+PICT clone by TypeScript
