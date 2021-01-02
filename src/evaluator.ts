@@ -149,12 +149,6 @@ export class Pict {
             // next line equals combinations.workingCombinations[0]
             // workingCombinations already omitted constraints violation
             const result = combinations.workingCombinations[0]; // TODO should be random but something wrong
-
-            if (combinations.workingCombinations.length === 1) {
-                combinations.done = true;
-                return [result, combinations, false];
-            }
-
             combinations.removeFromWorking(result);
             return [result, combinations, false];
         }
@@ -197,13 +191,7 @@ export class Pict {
             if (this.factorCount === line.size) {
                 // minimum slot doesn't revert because it's impossible
                 // mark as impossible
-                // TODO done in remove
-                revertTargetCombinations.removeFromWorking(line);
-                revertTargetCombinations.removeFromAll(line);
-
-                if (combinations.workingCombinations.length === 0) {
-                    combinations.done = true;
-                }
+                revertTargetCombinations.markAsImpossible(line);
             } else {
                 // revert to combinations
                 revertTargetCombinations.allCombinations.push(revert);
@@ -213,12 +201,6 @@ export class Pict {
         }
 
         const nextSlot = suitables[this.random.random(0, suitables.length - 1)];
-
-        // when other combinations are remaining after all combinations are used, any combination is used for others.
-        if (combinations.workingCombinations.length === 1) {
-            combinations.done = true;
-            return [nextSlot, combinations, fromAll];
-        }
 
         // mark as used
         combinations.removeFromWorking(nextSlot);

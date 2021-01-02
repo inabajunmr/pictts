@@ -174,6 +174,23 @@ export class Combinations {
         this.allCombinations.push(combination);
     }
 
+    markAsImpossible(target: KeyValueMap): void {
+        const cache1 = this.workingCombinations.filter((c) => {
+            return !this.equalsAllElements(c, target);
+        });
+
+        this.workingCombinations = cache1;
+        if (this.workingCombinations.length == 0) {
+            this.done = true;
+        }
+
+        const cache2 = this.allCombinations.filter((c) => {
+            return !this.equalsAllElements(c, target);
+        });
+
+        this.allCombinations = cache2;
+    }
+
     removeFromWorking(target: KeyValueMap): void {
         if (this.workingCombinations.length !== 1) {
             const cache = this.workingCombinations.filter((c) => {
@@ -181,6 +198,8 @@ export class Combinations {
             });
 
             this.workingCombinations = cache;
+        } else {
+            this.done = true;
         }
     }
 
