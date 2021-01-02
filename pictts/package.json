@@ -1,6 +1,6 @@
 {
     "name": "pictts",
-    "version": "0.0.0",
+    "version": "0.0.1",
     "description": "PICT clone by TypeScript",
     "repository": {
         "type": "git",
@@ -8,7 +8,7 @@
     },
     "bugs": {
         "url": "https://github.com/inabajunmr/pictts/issues"
-    },    
+    },
     "main": "dist/index.js",
     "files": [
         "dist"
