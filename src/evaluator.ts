@@ -250,13 +250,14 @@ export class Pict {
             return valueMatched;
         }
 
+        // filtering by constraints
         const constraintsFiltered = valueMatched.filter((s) => {
             const merge = new KeyValueMap(s);
 
             Array.from(line).forEach((k) => {
                 merge.set(k[0], k[1]);
             });
-            return this.constraints.filter((c) => !c.match(merge)).length === 0;
+            return this.matchAllConstraints(merge);
         });
 
         if (this.impossibles.length === 0) {
@@ -267,6 +268,7 @@ export class Pict {
             return maps.filter((m) => m.equals(target)).length !== 0;
         };
 
+        // filtering by impossibles
         return constraintsFiltered.filter((c) => {
             return !contains(c, this.impossibles);
         });
