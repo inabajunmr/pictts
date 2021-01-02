@@ -243,15 +243,14 @@ export class Pict {
             return this.matchAllConstraints(merge);
         });
 
-        if (this.impossibles.length === 0) {
-            return constraintsFiltered;
-        }
-
+        // filtering by impossibles
         const contains = (target: KeyValueMap, maps: KeyValueMap[]) => {
+            if (maps.length === 0) {
+                return false;
+            }
             return maps.filter((m) => m.equals(target)).length !== 0;
         };
 
-        // filtering by impossibles
         return constraintsFiltered.filter((c) => {
             return !contains(c, this.impossibles);
         });
