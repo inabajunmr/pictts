@@ -98,6 +98,11 @@ export class Pict {
                     )
                 );
             }
+
+            if (combinations.workingCombinations.length === 0) {
+                combinations.done = true;
+            }
+
             acc.push(combinations);
             return acc;
         }, [] as C.Combinations[]);

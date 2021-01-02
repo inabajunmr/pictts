@@ -401,6 +401,45 @@ test('pict 3factors by 2 with nested constraints', () => {
     }
 });
 
+test('pict 1factor 1parameters all invalid', () => {
+    const sut = new P.Parser('A:A1\nIF [A]="A1" THEN [A]="A2";').parse();
+    sut.setFactorCount(1);
+    for (let index = 0; index < 100; index++) {
+        sut.setRandomSeed(Math.floor(Math.random() * 10000));
+        const actual = sut.testCases();
+        expect(actual.result.length).toBe(0);
+    }
+});
+
+test('pict 2factor 2parameters all invalid', () => {
+    const sut = new P.Parser(
+        `A:A1,A2
+        B:B1,B2
+        IF [A]="A1" THEN [A]="A2";
+        IF [A]="A2" THEN [A]="A1";`
+    ).parse();
+    sut.setFactorCount(1);
+    for (let index = 0; index < 100; index++) {
+        sut.setRandomSeed(Math.floor(Math.random() * 10000));
+        const actual = sut.testCases();
+        expect(actual.result.length).toBe(0);
+    }
+});
+
+test('pict 2factor all invalid', () => {
+    const sut = new P.Parser(
+        `A:A1,A2
+        B:B1,B2
+        IF [A]="A1" THEN [A]="A2";
+        IF [A]="A2" THEN [A]="A1";`
+    ).parse();
+    for (let index = 0; index < 100; index++) {
+        sut.setRandomSeed(Math.floor(Math.random() * 10000));
+        const actual = sut.testCases();
+        expect(actual.result.length).toBe(0);
+    }
+});
+
 function assertContains(target: KeyValueMap, result: KeyValueMap[]): boolean {
     return (
         result.filter((r) => {

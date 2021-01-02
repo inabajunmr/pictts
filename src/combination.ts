@@ -210,7 +210,10 @@ export class Combinations {
         this.allCombinations = cache;
     }
 
-    equalsAllElements(target1: KeyValueMap, target2: KeyValueMap): boolean {
+    private equalsAllElements(
+        target1: KeyValueMap,
+        target2: KeyValueMap
+    ): boolean {
         if (target1 === undefined || target2 === undefined) {
             return target1 === target2;
         }
