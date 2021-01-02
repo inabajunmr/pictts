@@ -195,12 +195,6 @@ export class Pict {
 
             // pop latest
             const revert = result.revert();
-            if (
-                revert.get(Key.of('A')) === Value.of('2') &&
-                revert.get(Key.of('B')) === Value.of('1')
-            ) {
-                console.log();
-            }
             // find keys matched combinations(revert target)
             const revertTargetCombinations = allCombinations.filter((c) => {
                 return containsKey1InKey2(c.keys, Array.from(revert.keys()));
@@ -210,9 +204,6 @@ export class Pict {
                 // minimum slot doesn't revert because it's impossible
                 // mark as impossible
                 revertTargetCombinations.markAsImpossible(line);
-            } else {
-                // revert to combinations // TODO いる？
-                revertTargetCombinations.allCombinations.push(revert);
             }
 
             return [new KeyValueMap(), combinations, false];
