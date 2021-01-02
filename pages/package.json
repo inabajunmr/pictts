@@ -16,6 +16,7 @@
     "url": "https://github.com/inabajunmr/pictts/issues"
   },
   "homepage": "https://github.com/inabajunmr/pictts#readme",
+  "private": true,
   "devDependencies": {
     "ts-loader": "^8.0.13",
     "typescript": "^4.1.3",
