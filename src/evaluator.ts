@@ -23,6 +23,12 @@ export class Pict {
         this.constraints = constraints;
     }
 
+    pushImpossibles(impossible: KeyValueMap): void {
+        if (this.impossibles.filter((i) => i.equals(impossible)).length === 0) {
+            this.impossibles.push(impossible);
+        }
+    }
+
     setFactorCount(factorCount: number): Pict {
         this.factorCount = factorCount;
         return this;
@@ -183,8 +189,7 @@ export class Pict {
             }
 
             // all slot in all combinations aren't matched so current line is impossible
-            // TODO impossibleの重複は消したい
-            this.impossibles.push(line);
+            this.pushImpossibles(line);
 
             // pop latest
             const revert = result.revert();
