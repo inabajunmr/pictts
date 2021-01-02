@@ -217,6 +217,11 @@ export class Pict {
                     );
                 })[0];
 
+                if (combinations.workingCombinations.length === 1) {
+                    combinations.done = true;
+                }
+
+                // TODO done in remove
                 revertTarget.removeFromWorking(line);
                 revertTarget.removeFromAll(line);
             }
