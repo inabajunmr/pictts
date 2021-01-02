@@ -1,0 +1,26 @@
+{
+  "name": "pictts-page",
+  "version": "0.0.0",
+  "description": "browser ui for pictts",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/inabajunmr/pictts.git"
+  },
+  "author": "inabajunmr",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/inabajunmr/pictts/issues"
+  },
+  "homepage": "https://github.com/inabajunmr/pictts#readme",
+  "devDependencies": {
+    "webpack": "^5.11.1",
+    "webpack-cli": "^4.3.1"
+  },
+  "dependencies": {
+    "pictts": "0.0.0"
+  }
+}
