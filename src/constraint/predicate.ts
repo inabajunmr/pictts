@@ -1,4 +1,4 @@
-import { Key, KeyValueMap, Value } from '../keyvalue';
+import { KeyValueMap } from '../keyvalue';
 import {
     AndToken,
     EOFToken,

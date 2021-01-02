@@ -1,4 +1,4 @@
-import { Key, KeyValueMap, Value } from '../keyvalue';
+import { KeyValueMap } from '../keyvalue';
 import { ConstraintsSentence } from '../parser/sentenceParser';
 import { ElseToken, ThenToken } from '../parser/token';
 import { Predicate } from './predicate';

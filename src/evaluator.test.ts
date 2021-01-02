@@ -1,4 +1,4 @@
-import { map2, map3, KeyValueMap, map } from './keyvalue';
+import { map2, map3, KeyValueMap } from './keyvalue';
 import * as P from './parser/parser';
 
 test('pict 3factors by 2', () => {
