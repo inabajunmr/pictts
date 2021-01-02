@@ -129,7 +129,9 @@ export class Pict {
      * and line={A:'a',X:'x'},
      * return ['a','1'] because combinations.A and line.A are matched.
      * @param combinations
+     * @param usedKeyCombinations
      * @param line
+     * @param result
      */
     nextSlot(
         allCombinations: C.Combinations[],
@@ -137,20 +139,23 @@ export class Pict {
         line: KeyValueMap,
         result: PictResult
     ): [KeyValueMap, C.Combinations, boolean] {
+        // choice next keys combination
         const combinations = C.longestCombination(
             usedKeyCombinations,
             allCombinations
         );
         usedKeyCombinations.push(combinations.keys);
 
-        if (combinations.workingCombinations.length === 1) {
-            combinations.done = true;
-            return [combinations.workingCombinations[0], combinations, false];
-        }
-
         if (line.size === 0) {
+            if (combinations.workingCombinations.length === 1) {
+                combinations.done = true;
+            }
+
+            // next line equals combinations.workingCombinations[0]
+            // workingCombinations already omitted constraints violation
             return [
-                combinations.workingCombinations.shift() as KeyValueMap,
+                (combinations // TODO should be random but something wrong
+                    .workingCombinations[0] as KeyValueMap) as KeyValueMap,
                 combinations,
                 false,
             ];

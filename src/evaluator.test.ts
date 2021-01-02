@@ -1,4 +1,4 @@
-import { Key, Value, map2, map3, KeyValueMap } from './keyvalue';
+import { map2, map3, KeyValueMap, map } from './keyvalue';
 import * as P from './parser/parser';
 
 test('pict 3factors by 2', () => {
@@ -21,7 +21,6 @@ test('pict 3factors by 2', () => {
         expect(assertContains(map2('A', 'A2', 'B', 'B2'), actual.result)).toBe(
             true
         );
-
         expect(assertContains(map2('A', 'A1', 'C', 'C1'), actual.result)).toBe(
             true
         );
@@ -319,7 +318,10 @@ test('pict 2factors with 1 constraints(no else)', () => {
 
 test('pict 2factors with 2 constraints(no else)', () => {
     const sut = new P.Parser(
-        'A:A1,A2\nB:B1,B2\nIF [A] = "A1" THEN [B] = "B1";\nIF [A] = "A2" THEN [B] = "B2";'
+        `A:A1,A2
+        B:B1,B2
+        IF [A] = "A1" THEN [B] = "B1";
+        IF [A] = "A2" THEN [B] = "B2";`
     ).parse();
     for (let index = 0; index < 100; index++) {
         sut.setRandomSeed(Math.floor(Math.random() * 10000));
