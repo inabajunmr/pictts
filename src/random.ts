@@ -25,4 +25,8 @@ export class Random {
         const r = Math.abs(this.iRandom());
         return min + (r % (max + 1 - min));
     }
+
+    randomElement<E>(array: E[]): E {
+        return array[this.random(0, array.length - 1)];
+    }
 }

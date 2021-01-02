@@ -159,13 +159,9 @@ export class Pict {
         if (line.size === 0) {
             // next line equals combinations.workingCombinations[0]
             // workingCombinations already omitted constraints violation
-            const result =
-                combinations.workingCombinations[
-                    this.random.random(
-                        0,
-                        combinations.workingCombinations.length - 1
-                    )
-                ];
+            const result = this.random.randomElement(
+                combinations.workingCombinations
+            );
             combinations.removeFromWorking(result);
             return [result, combinations, false];
         }
@@ -216,7 +212,7 @@ export class Pict {
             return [new KeyValueMap(), combinations, false];
         }
 
-        const nextSlot = suitables[this.random.random(0, suitables.length - 1)];
+        const nextSlot = this.random.randomElement(suitables);
 
         // mark as used
         combinations.removeFromWorking(nextSlot);
