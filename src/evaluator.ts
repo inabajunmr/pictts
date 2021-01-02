@@ -161,30 +161,17 @@ export class Pict {
             ];
         }
 
-        const alreadyExistedKeys = combinations.keys.reduce((acc, k) => {
-            const v = line.get(k);
-            if (v !== undefined) {
-                acc.push(k);
-            }
-            return acc;
-        }, [] as Key[]);
-
         // from working
         let suitables = this.matchedSlot(
             combinations.workingCombinations,
-            line,
-            alreadyExistedKeys
+            line
         );
 
         let fromAll = false;
         if (suitables.length === 0) {
             // if all working aren't matched, from all
             fromAll = true;
-            suitables = this.matchedSlot(
-                combinations.allCombinations,
-                line,
-                alreadyExistedKeys
-            );
+            suitables = this.matchedSlot(combinations.allCombinations, line);
         }
 
         if (suitables.length === 0) {
@@ -240,27 +227,38 @@ export class Pict {
         return [nextSlot, combinations, fromAll];
     }
 
-    matchedSlot(
-        combinations: KeyValueMap[],
-        line: KeyValueMap,
-        alreadyExistedKeys: Key[]
-    ): KeyValueMap[] {
-        const suitables = combinations.filter((c) => {
-            let all = true;
-            alreadyExistedKeys.forEach((k) => {
+    matchedSlot(combinations: KeyValueMap[], line: KeyValueMap): KeyValueMap[] {
+        // if line has keys['A', 'B', 'C'] and combinations has keys ['A', 'C', 'D'], mutualKeys are ['A', 'C']
+        // mutualKeys matched value need to be same between combinations and line
+        const mutualKeys = Array.from(combinations[0].keys()).reduce(
+            (acc, k) => {
+                const v = line.get(k);
+                if (v !== undefined) {
+                    acc.push(k);
+                }
+                return acc;
+            },
+            [] as Key[]
+        );
+
+        // combinations values and lines values matched in a range of mutual keys
+        const valueMatched = combinations.filter((c) => {
+            const allMatched = mutualKeys.reduce((acc, k) => {
                 const v = line.get(k);
                 if (v !== c.get(k)) {
-                    all = false;
+                    // if at least one value don't match, this combinations is invalid
+                    return false;
                 }
-            });
-            return all;
+                return acc;
+            }, true);
+            return allMatched;
         });
 
         if (this.constraints.length === 0) {
-            return suitables;
+            return valueMatched;
         }
 
-        const constraintsFiltered = suitables.filter((s) => {
+        const constraintsFiltered = valueMatched.filter((s) => {
             const merge = new KeyValueMap(s);
 
             Array.from(line).forEach((k) => {
