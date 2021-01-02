@@ -112,12 +112,8 @@ export function longestCombination(
     cs: Combinations[]
 ): Combinations {
     const equalsKeys = (key1: Key[], key2: Key[]): boolean => {
-        if (key1.length !== key2.length) {
-            return false;
-        }
-
         for (let index = 0; index < key1.length; index++) {
-            if (key1[index] !== key2[index]) {
+            if (key2.indexOf(key1[index]) === -1) {
                 return false;
             }
         }
