@@ -159,7 +159,13 @@ export class Pict {
         if (line.size === 0) {
             // next line equals combinations.workingCombinations[0]
             // workingCombinations already omitted constraints violation
-            const result = combinations.workingCombinations[0]; // TODO should be random but something wrong
+            const result =
+                combinations.workingCombinations[
+                    this.random.random(
+                        0,
+                        combinations.workingCombinations.length - 1
+                    )
+                ];
             combinations.removeFromWorking(result);
             return [result, combinations, false];
         }
