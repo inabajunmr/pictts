@@ -1,4 +1,4 @@
-import { Key, Value, map2, map3 } from './keyvalue';
+import { Key, Value, map2, map3, KeyValueMap } from './keyvalue';
 import * as P from './parser/parser';
 
 test('pict 3factors by 2', () => {
@@ -399,10 +399,7 @@ test('pict 3factors by 2 with nested constraints', () => {
     }
 });
 
-function assertContains(
-    target: Map<Key, Value>,
-    result: Map<Key, Value>[]
-): boolean {
+function assertContains(target: KeyValueMap, result: KeyValueMap[]): boolean {
     return (
         result.filter((r) => {
             let assert = true;

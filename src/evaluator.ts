@@ -1,6 +1,6 @@
 import * as C from './combination';
 import { Constraint } from './constraint/constraint';
-import { Key, Value } from './keyvalue';
+import { Key, KeyValueMap, Value } from './keyvalue';
 import { Random } from './random';
 import { PictResult } from './pictResult';
 export class Pict {
@@ -13,7 +13,7 @@ export class Pict {
 
     // constraints sometimes never allows the combination.
     // impossibles has disallowed combinations.
-    readonly impossibles: Map<Key, Value>[] = [];
+    readonly impossibles: KeyValueMap[] = [];
 
     // If PAIRwise, 2. If TRIOwise, 3
     factorCount = 2;
@@ -104,7 +104,7 @@ export class Pict {
         }, [] as C.Combinations[]);
     }
 
-    matchAllConstraints(record: Map<Key, Value>): boolean {
+    matchAllConstraints(record: KeyValueMap): boolean {
         return (
             this.constraints.filter((c) => c.match(record)).length ===
             this.constraints.length
@@ -134,9 +134,9 @@ export class Pict {
     nextSlot(
         allCombinations: C.Combinations[],
         usedKeyCombinations: Key[][],
-        line: Map<Key, Value>,
+        line: KeyValueMap,
         result: PictResult
-    ): [Map<Key, Value>, C.Combinations, boolean] {
+    ): [KeyValueMap, C.Combinations, boolean] {
         const combinations = C.longestCombination(
             usedKeyCombinations,
             allCombinations
@@ -150,7 +150,7 @@ export class Pict {
 
         if (line.size === 0) {
             return [
-                combinations.workingCombinations.shift() as Map<Key, Value>,
+                combinations.workingCombinations.shift() as KeyValueMap,
                 combinations,
                 false,
             ];
@@ -216,7 +216,7 @@ export class Pict {
                 revertTarget.removeFromAll(line);
             }
 
-            return [new Map<Key, Value>(), combinations, false];
+            return [new KeyValueMap(), combinations, false];
         }
 
         let nextSlot = suitables[this.random.random(0, suitables.length - 1)];
@@ -236,10 +236,10 @@ export class Pict {
     }
 
     matchedSlot(
-        combinations: Map<Key, Value>[],
-        line: Map<Key, Value>,
+        combinations: KeyValueMap[],
+        line: KeyValueMap,
         alreadyExistedKeys: Key[]
-    ): Map<Key, Value>[] {
+    ): KeyValueMap[] {
         const suitables = combinations.filter((c) => {
             let all = true;
             alreadyExistedKeys.forEach((k) => {
@@ -268,26 +268,8 @@ export class Pict {
             return constraintsFiltered;
         }
 
-        const mapEquals = (
-            m1: Map<Key, Value>,
-            m2: Map<Key, Value>
-        ): boolean => {
-            if (m1.size !== m2.size) {
-                return false;
-            }
-
-            let result = true;
-            Array.from(m1.keys()).forEach((k) => {
-                if (m1.get(k) !== m2.get(k)) {
-                    result = false;
-                }
-            });
-
-            return result;
-        };
-
-        const contains = (target: Map<Key, Value>, maps: Map<Key, Value>[]) => {
-            return maps.filter((m) => mapEquals(m, target)).length !== 0;
+        const contains = (target: KeyValueMap, maps: KeyValueMap[]) => {
+            return maps.filter((m) => m.equals(target)).length !== 0;
         };
 
         return constraintsFiltered.filter((c) => {

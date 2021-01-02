@@ -1,21 +1,21 @@
-import { Key, Value } from './keyvalue';
+import { Key, KeyValueMap, Value } from './keyvalue';
 
 export class PictResult {
     private readonly keys: Key[];
 
-    result: Map<Key, Value>[] = [];
+    result: KeyValueMap[] = [];
 
     // result snapshots
-    resultHistory: Map<Key, Value>[][] = [];
+    resultHistory: KeyValueMap[][] = [];
 
     // put value history
-    putValuesHistory: Map<Key, Value>[] = [];
+    putValuesHistory: KeyValueMap[] = [];
 
     constructor(keys: Key[]) {
         this.keys = keys;
     }
 
-    revert(): Map<Key, Value> {
+    revert(): KeyValueMap {
         this.resultHistory = this.resultHistory.slice(
             0,
             this.resultHistory.length - 1
@@ -39,7 +39,7 @@ export class PictResult {
         return latest;
     }
 
-    put(target: Map<Key, Value>): void {
+    put(target: KeyValueMap): void {
         this.putValuesHistory.push(target);
         const line = this.nowLine();
 
@@ -50,9 +50,9 @@ export class PictResult {
         });
 
         // deepcopy
-        const newHistory: Map<Key, Value>[] = [];
+        const newHistory: KeyValueMap[] = [];
         this.result.forEach((element) => {
-            newHistory.push(new Map(element));
+            newHistory.push(new KeyValueMap(element));
         });
         this.resultHistory.push(newHistory);
     }
@@ -71,15 +71,15 @@ export class PictResult {
         return Array.from(this.nowLine().keys());
     }
 
-    nowLine(): Map<Key, Value> {
+    nowLine(): KeyValueMap {
         if (this.nowIsFull()) {
-            this.result.push(new Map<Key, Value>());
+            this.result.push(new KeyValueMap());
         }
 
         return this.result[this.result.length - 1];
     }
 
-    contains(values: Map<Key, Value>): boolean {
+    contains(values: KeyValueMap): boolean {
         const keys = Array.from(values.keys());
         return (
             this.result.filter((r) => {
@@ -101,7 +101,7 @@ export class PictResult {
             for (let j = i + 1; j < this.result.length; j++) {
                 const r2 = this.result[j];
                 if (this.equalsMap(r1, r2)) {
-                    this.result[j] = new Map();
+                    this.result[j] = new KeyValueMap();
                 }
             }
         }

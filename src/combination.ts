@@ -1,4 +1,4 @@
-import { Key, Value } from './keyvalue';
+import { Key, KeyValueMap, Value } from './keyvalue';
 
 /**
  * All combination by multiple params.
@@ -43,7 +43,7 @@ function iAllCombinationsByMultipleArray(
             // temp lost key information so rebuild map
             tmp.reduce((acc, v, i) => {
                 return acc.set(keys[i], v);
-            }, new Map<Key, Value>())
+            }, new KeyValueMap())
         );
         return;
     }
@@ -155,8 +155,8 @@ export function longestCombination(
 }
 export class Combinations {
     keys: Key[];
-    workingCombinations: Map<Key, Value>[] = [];
-    allCombinations: Map<Key, Value>[] = [];
+    workingCombinations: KeyValueMap[] = [];
+    allCombinations: KeyValueMap[] = [];
 
     // all combinations already applied, true
     done = false;
@@ -164,17 +164,17 @@ export class Combinations {
         this.keys = keys;
     }
 
-    set(combinations: Map<Key, Value>[]): void {
+    set(combinations: KeyValueMap[]): void {
         this.workingCombinations = combinations;
         this.allCombinations = combinations;
     }
 
-    push(combination: Map<Key, Value>): void {
+    push(combination: KeyValueMap): void {
         this.workingCombinations.push(combination);
         this.allCombinations.push(combination);
     }
 
-    removeFromWorking(target: Map<Key, Value>): void {
+    removeFromWorking(target: KeyValueMap): void {
         if (this.workingCombinations.length !== 1) {
             const cache = this.workingCombinations.filter((c) => {
                 return !this.equalsAllElements(c, target);
@@ -184,7 +184,7 @@ export class Combinations {
         }
     }
 
-    removeFromAll(target: Map<Key, Value>): void {
+    removeFromAll(target: KeyValueMap): void {
         if (this.allCombinations.length !== 1) {
             const cache = this.allCombinations.filter((c) => {
                 return !this.equalsAllElements(c, target);
@@ -194,10 +194,7 @@ export class Combinations {
         }
     }
 
-    equalsAllElements(
-        target1: Map<Key, Value>,
-        target2: Map<Key, Value>
-    ): boolean {
+    equalsAllElements(target1: KeyValueMap, target2: KeyValueMap): boolean {
         if (target1 === undefined || target2 === undefined) {
             return target1 === target2;
         }
