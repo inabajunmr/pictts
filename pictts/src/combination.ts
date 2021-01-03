@@ -182,7 +182,6 @@ export class Combinations {
 
     set(combinations: KeyValueMap[]): void {
         this.workingCombinations = [...combinations];
-        this.allCombinations = [...combinations]; // TODO delete
         this.validCombinations = [...combinations];
     }
 
@@ -200,11 +199,11 @@ export class Combinations {
             this.done = true;
         }
 
-        const cache2 = this.allCombinations.filter((c) => {
+        const cache2 = this.validCombinations.filter((c) => {
             return !this.equalsAllElements(c, target);
         });
 
-        this.allCombinations = cache2;
+        this.validCombinations = cache2;
     }
 
     removeFromWorking(target: KeyValueMap): void {
@@ -219,11 +218,11 @@ export class Combinations {
     }
 
     removeFromAll(target: KeyValueMap): void {
-        const cache = this.allCombinations.filter((c) => {
+        const cache = this.validCombinations.filter((c) => {
             return !this.equalsAllElements(c, target);
         });
 
-        this.allCombinations = cache;
+        this.validCombinations = cache;
     }
 
     private equalsAllElements(

@@ -166,7 +166,7 @@ export class Pict {
         if (suitables.length === 0) {
             // if all working aren't matched, from all
             fromAll = true;
-            suitables = this.matchedSlot(combinations.allCombinations, line);
+            suitables = this.matchedSlot(combinations.validCombinations, line);
         }
 
         if (suitables.length === 0) {
