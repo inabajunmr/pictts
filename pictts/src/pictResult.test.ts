@@ -121,6 +121,7 @@ test('assert impossible', () => {
     sut.put(map('B', 'B1'));
     sut.put(map('C', 'C1'));
     sut.impossibleSlots.push(map('A', 'A1'));
+    sut.allSlots = sut.impossibleSlots;
 
     expect(() => sut.assert()).toThrow('Contains impossible slot:A:A1.');
 });
@@ -132,6 +133,19 @@ test('assert valid', () => {
     sut.put(map('B', 'B1'));
     sut.put(map('C', 'C1'));
     sut.validSlots.push(map('A', 'A2'));
+    sut.allSlots = sut.validSlots;
 
     expect(() => sut.assert()).toThrow('Expected slot:A:A2 is not found.');
+});
+
+test('assert slot exist only all', () => {
+    const sut = new PictResult([Key.of('A'), Key.of('B'), Key.of('C')]);
+
+    sut.allSlots.push(map('A', 'A1'));
+    sut.allSlots.push(map('A', 'A2'));
+    sut.allSlots.push(map('A', 'A3'));
+    sut.validSlots.push(map('A', 'A1'));
+    sut.impossibleSlots.push(map('A', 'A2'));
+
+    expect(() => sut.assert()).toThrow('Something wrong.');
 });

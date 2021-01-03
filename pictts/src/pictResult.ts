@@ -16,6 +16,7 @@ export class PictResult {
     // for assertion
     validSlots: KeyValueMap[] = [];
     impossibleSlots: KeyValueMap[] = [];
+    allSlots: KeyValueMap[] = [];
 
     constructor(keys: Key[]) {
         this.keys = keys;
@@ -29,6 +30,9 @@ export class PictResult {
 
             c.impossibleCombinations.forEach((ic) => {
                 this.impossibleSlots.push(ic);
+            });
+            c.allCombinations.forEach((ic) => {
+                this.allSlots.push(ic);
             });
         });
     }
@@ -150,6 +154,44 @@ export class PictResult {
     }
 
     assert(): void {
+        if (
+            this.allSlots.length !==
+            this.impossibleSlots.length + this.validSlots.length
+        ) {
+            throw new AssertionError('Something wrong.');
+        }
+
+        const contains = (
+            target: KeyValueMap,
+            maps: KeyValueMap[]
+        ): boolean => {
+            const keys = Array.from(target.keys());
+            return (
+                maps.filter((r) => {
+                    let contains = true;
+                    keys.filter((k) => {
+                        if (r.get(k) !== target.get(k)) {
+                            contains = false;
+                        }
+                    });
+                    return contains;
+                }).length !== 0
+            );
+        };
+
+        // assert all slots contains all impossibleSlots and all validSlots
+        if (
+            this.allSlots
+                .filter((s) => {
+                    return contains(s, this.impossibleSlots);
+                })
+                .filter((s) => {
+                    return contains(s, this.validSlots);
+                }).length !== 0
+        ) {
+            throw new AssertionError('Something wrong.');
+        }
+
         this.impossibleSlots.forEach((s) => {
             if (this.contains(s)) {
                 throw new AssertionError(
