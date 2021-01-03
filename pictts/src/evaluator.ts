@@ -19,6 +19,8 @@ export class Pict {
     // If PAIRwise, 2. If TRIOwise, 3
     factorCount = 2;
 
+    power = 1;
+
     constructor(parameters: Map<Key, Value[]>, constraints: Constraint[]) {
         this.parameters = parameters;
         this.constraints = constraints;
@@ -42,10 +44,26 @@ export class Pict {
         this.random = new Random(seed);
     }
 
+    setPower(power: number): Pict {
+        this.power = power;
+        return this;
+    }
+
+    testCases(): PictResult {
+        let min = this.itestCases();
+        for (let index = 0; index < this.power - 1; index++) {
+            const next = this.itestCases();
+            if (next.result.length < min.result.length) {
+                min = next;
+            }
+        }
+        return min;
+    }
+
     /**
      * Create all test case
      */
-    testCases(): PictResult {
+    itestCases(): PictResult {
         const keys: Key[] = [];
         this.parameters.forEach((_, k) => {
             keys.push(k);

@@ -5,9 +5,9 @@ PICT clone by TypeScript.
 ## Example
 
 ```typescript
-const pictts = require("pictts")
+const pictts = require('pictts');
 const pict = new pictts.Parser(
-`
+    `
 Type:           Primary, Logical, Single, Span, Stripe, Mirror, RAID-5
 Size:           10, 100, 500, 1000, 5000, 10000, 40000
 Format method:  quick, slow
@@ -30,9 +30,9 @@ testCases.toString();
 ### Parse and Generate test cases
 
 ```typescript
-const pictts = require("pictts")
+const pictts = require('pictts');
 const pict = new pictts.Parser(
-`
+    `
 A:A1,A2
 B:B1,B2
 C:C1,C2
@@ -58,9 +58,9 @@ A1,B2,C2
 If you want to triplewise test case like `/o:3`.
 
 ```typescript
-const pictts = require("pictts")
+const pictts = require('pictts');
 const pict = new pictts.Parser(
-`
+    `
 A:A1,A2
 B:B1,B2
 C:C1,C2
@@ -91,9 +91,9 @@ Changing delimiter like `/d:|`.
 Default is `,`.
 
 ```typescript
-const pictts = require("pictts")
+const pictts = require('pictts');
 const pict = new pictts.Parser(
-`
+    `
 A:A1,A2
 B:B1,B2
 C:C1,C2
@@ -112,6 +112,27 @@ A1|B2|C1
 A2|B2|C2
 A1|B1|C2
 A1|B2|C2
+```
+
+### Optimizing result
+
+Number of test cases by PICT depends on random seed.
+It means changing seed changes number of test.
+
+When `power` parameters increases, pictts repeat generating test cases and search less number of test cases.
+
+```typescript
+const pictts = require('pictts');
+const pict = new pictts.Parser(
+    `
+A:A1,A2
+B:B1,B2
+C:C1,C2
+`
+).parse();
+pict.setPower(100); // specify repeat count
+const testCases = pict.testCases();
+testCases.toString();
 ```
 
 ## Development
