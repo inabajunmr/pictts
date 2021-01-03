@@ -1,9 +1,15 @@
 import * as P from 'pictts'
 
-export function pict(input:string):P.PictResult {
+export function pict(input:string):void {
     const pict = new P.Parser(input).parse();
-    pict.setPower(10);
-    return pict.testCases();
+    var e = (document.getElementById("power")) as HTMLSelectElement;
+    var sel = e.selectedIndex;
+    var opt = e.options[sel];
+    pict.setPower(parseInt(opt.value));
+    const order = document.getElementById('order') as HTMLInputElement
+    pict.setFactorCount(parseInt(order.value));
+
+    document.getElementById("result")!.textContent = pict.testCases().toString();
 }
 
 const sample = `Type:           Primary, Logical, Single, Span, Stripe, Mirror, RAID-5
@@ -17,8 +23,16 @@ IF [File system] = "FAT"   THEN [Size] <= 4096 ;
 IF [File system] = "FAT32" THEN [Size] <= 32000 ;`
 
 document.getElementById("input")!.textContent = sample;
-document.getElementById("result")!.textContent = pict((document.getElementById("input") as any).value).toString();
+pict((document.getElementById("input") as any).value);
 
 document.getElementById("input")!.addEventListener("input", () => {
-    document.getElementById("result")!.textContent = pict((document.getElementById("input") as any).value).toString();
-})    
+    pict((document.getElementById("input") as any).value);
+})
+
+document.getElementById("order")!.addEventListener("input", () => {
+    pict((document.getElementById("input") as any).value);
+})
+
+document.getElementById("power")!.addEventListener("input", () => {
+    pict((document.getElementById("input") as any).value);
+})

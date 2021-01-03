@@ -1,6 +1,6 @@
 {
     "name": "pictts",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "description": "PICT clone by TypeScript",
     "repository": {
         "type": "git",
@@ -24,7 +24,10 @@
         "build": "tsc",
         "prepublishOnly": "npm run build"
     },
-    "keywords": ["PICT", "Testing"],
+    "keywords": [
+        "PICT",
+        "Testing"
+    ],
     "author": "inabajunmr",
     "license": "MIT",
     "devDependencies": {
