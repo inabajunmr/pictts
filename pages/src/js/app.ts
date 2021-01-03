@@ -2,6 +2,7 @@ import * as P from 'pictts'
 
 export function pict(input:string):P.PictResult {
     const pict = new P.Parser(input).parse();
+    pict.setPower(10);
     return pict.testCases();
 }
 
