@@ -42,6 +42,8 @@ const testCases = pict.testCases();
 testCases.toString();
 ```
 
+#### Result
+
 ```
 A,B,C
 A2,B1,C1
@@ -51,9 +53,9 @@ A1,B1,C2
 A1,B2,C2
 ```
 
-### Change combination factor count.
+### Change combination factor count
 
-If you want to triplewise test case.
+If you want to triplewise test case like `/o:3`.
 
 ```typescript
 const pictts = require("pictts")
@@ -69,6 +71,8 @@ const testCases = pict.testCases();
 testCases.toString();
 ```
 
+#### Result
+
 ```
 A,B,C
 A2,B2,C1
@@ -79,6 +83,35 @@ A1,B2,C1
 A1,B1,C1
 A2,B2,C2
 A1,B1,C2
+```
+
+### Change delimiter
+
+Changing delimiter like `/d:|`.
+Default is `,`.
+
+```typescript
+const pictts = require("pictts")
+const pict = new pictts.Parser(
+`
+A:A1,A2
+B:B1,B2
+C:C1,C2
+`
+).parse();
+const testCases = pict.testCases();
+testCases.toString('|'); // specify `|` as delimiter
+```
+
+#### Result
+
+```
+A|B|C
+A2|B1|C1
+A1|B2|C1
+A2|B2|C2
+A1|B1|C2
+A1|B2|C2
 ```
 
 ## development
