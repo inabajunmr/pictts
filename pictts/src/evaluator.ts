@@ -16,8 +16,6 @@ export class Pict {
     // impossibles has disallowed combinations.
     readonly impossibleCombinations: KeyValueMap[] = [];
 
-    readonly impossibleSlot: KeyValueMap[] = [];
-
     // If PAIRwise, 2. If TRIOwise, 3
     factorCount = 2;
 
@@ -32,9 +30,6 @@ export class Pict {
                 .length === 0
         ) {
             this.impossibleCombinations.push(impossible);
-            if (impossible.size == this.factorCount) {
-                this.impossibleSlot.push(impossible);
-            }
         }
     }
 
@@ -96,7 +91,13 @@ export class Pict {
             result.put(suitable);
         }
 
-        return result.clean();
+        result.clean();
+
+        // assertion
+        result.setSlots(allCombinations);
+        result.assert();
+
+        return result;
     }
 
     buildAllSlot(keyCombinations: Key[][]): C.Combinations[] {

@@ -59,6 +59,29 @@ export class KeyValueMap extends Map<Key, Value> {
 
         return result;
     }
+
+    /**
+     * All this keyvalue contains argument.
+     * this:{'A':'A1', 'B':'B1'}, argument:{'A':'A1', 'B':'B1'}, true
+     * this:{'A':'A1', 'B':'B1'}, argument:{'A':'A1', 'B':'B1', 'C':'C1'}, true
+     * this:{'A':'A1', 'B':'B1'}, argument:{'A':'A1', 'B':'B2', 'C':'C1'}, false
+     * this:{'A':'A1', 'B':'B1'}, argument:{'A':'A1'}, false
+     * @param m
+     */
+    contains(m: KeyValueMap): boolean {
+        const result = Array.from(this.entries()).reduce((acc, kv) => {
+            return acc && kv[1] === m.get(kv[0]);
+        }, true);
+        return result;
+    }
+
+    toString(): string {
+        return Array.from(this.entries())
+            .map((kv) => {
+                return `${kv[0].key}:${kv[1].value}`;
+            })
+            .join(',');
+    }
 }
 
 /**

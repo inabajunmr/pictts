@@ -1,3 +1,5 @@
+import { Combinations } from './combination';
+import { AssertionError } from './exception';
 import { Key, KeyValueMap, Value } from './keyvalue';
 
 export class PictResult {
@@ -11,8 +13,24 @@ export class PictResult {
     // put value history
     putValuesHistory: KeyValueMap[] = [];
 
+    // for assertion
+    validSlots: KeyValueMap[] = [];
+    impossibleSlots: KeyValueMap[] = [];
+
     constructor(keys: Key[]) {
         this.keys = keys;
+    }
+
+    setSlots(combinations: Combinations[]): void {
+        combinations.forEach((c) => {
+            c.validCombinations.forEach((ic) => {
+                this.validSlots.push(ic);
+            });
+
+            c.impossibleCombinations.forEach((ic) => {
+                this.impossibleSlots.push(ic);
+            });
+        });
     }
 
     revert(): KeyValueMap {
@@ -129,6 +147,24 @@ export class PictResult {
             Array.from(m1.keys()).filter((k) => m1.get(k) !== m2.get(k))
                 .length === 0
         );
+    }
+
+    assert(): void {
+        this.impossibleSlots.forEach((s) => {
+            if (this.contains(s)) {
+                throw new AssertionError(
+                    `Contains impossible slot:${s.toString()}.`
+                );
+            }
+        });
+
+        this.validSlots.forEach((s) => {
+            if (!this.contains(s)) {
+                throw new AssertionError(
+                    `Expected slot:${s.toString()} is not found.`
+                );
+            }
+        });
     }
 
     toString(delimiter = ','): string {

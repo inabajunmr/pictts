@@ -191,7 +191,8 @@ export class Combinations {
 
     markAsImpossible(target: KeyValueMap): void {
         this.removeFromValid(target);
-        this.removeFromValid(target);
+        this.removeFromWorking(target);
+        this.impossibleCombinations.push(target);
         const cache1 = this.workingCombinations.filter((c) => {
             return !this.equalsAllElements(c, target);
         });
