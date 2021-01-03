@@ -731,9 +731,10 @@ Compression:    on, off
     ).parse();
     let min = 1000000;
     let max = 0;
+    let count = 0;
     let a: PictResult | undefined = undefined;
     let b: PictResult | undefined = undefined;
-    for (let index = 0; index < 1000; index++) {
+    for (let index = 0; index < 200; index++) {
         const actual = sut.testCases();
         if (min > actual.result.length) {
             min = actual.result.length;
@@ -743,12 +744,17 @@ Compression:    on, off
             max = actual.result.length;
             b = actual;
         }
+        count += actual.result.length;
         console.log(actual.result.length);
     }
 
-    console.log(`min:${min}`);
-    console.log(a!.toString());
-    console.log(b!.toString());
+    console.log(
+        `min:${min}
+max:${max}
+${count / 200}`
+    );
+    // console.log(a!.toString());
+    // console.log(b!.toString());
     expect(true).toBe(true);
 });
 

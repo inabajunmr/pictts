@@ -103,7 +103,7 @@ export class Pict {
             }
 
             // if result already has suitable, skip it
-            if (result.contains(suitable) && !longest.done && !fromAll) {
+            if (result.contains(suitable) && !fromAll) {
                 continue;
             }
 
@@ -235,8 +235,12 @@ export class Pict {
             return [new KeyValueMap(), combinations, false];
         }
 
-        // TODO 他で利用済みのsuitablesの優先順位を下げる
         const nextSlot = this.random.randomElement(suitables);
+        // TODO 他で利用済みのsuitablesの優先順位を下げる場合
+        // const primary = suitables.filter((s) => !result.contains(s));
+        // if (primary.length !== 0) {
+        //     nextSlot = this.random.randomElement(primary);
+        // }
 
         // mark as used
         combinations.removeFromWorking(nextSlot);
