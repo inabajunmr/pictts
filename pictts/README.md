@@ -2,7 +2,7 @@
 
 PICT clone by TypeScript.
 
-## Sample
+## Example
 
 ```typescript
 const pictts = require("pictts")
