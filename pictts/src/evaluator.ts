@@ -89,7 +89,7 @@ export class Pict {
         ) {
             // get next slot from longest combinations
             const exceptKeys = result.nowKey(); // if longest combinations is the same as result, it will be skipped.
-            const [suitable, longest, fromAll] = this.nextSlot(
+            const [suitable, fromAll] = this.nextSlot(
                 allCombinations,
                 exceptKeys,
                 [exceptKeys],
@@ -161,7 +161,7 @@ export class Pict {
         line: KeyValueMap,
         all: boolean,
         result: PictResult
-    ): [KeyValueMap, C.Combinations, boolean] {
+    ): [KeyValueMap, boolean] {
         // choice next keys combination
         const combinations = C.longestCombination(
             usedKeyCombinations,
@@ -176,7 +176,7 @@ export class Pict {
                 combinations.workingCombinations
             );
             combinations.removeFromWorking(result);
-            return [result, combinations, false];
+            return [result, false];
         }
 
         // from working
@@ -232,19 +232,19 @@ export class Pict {
                 revertTargetCombinations.markAsImpossible(line);
             }
 
-            return [new KeyValueMap(), combinations, false];
+            return [new KeyValueMap(), false];
         }
 
         const nextSlot = this.random.randomElement(suitables);
-        // TODO 他で利用済みのsuitablesの優先順位を下げる場合
-        // const primary = suitables.filter((s) => !result.contains(s));
+        // // TODO 他で利用済みのsuitablesの優先順位を下げる場合
+        // const primary = suitables.filter((s) => result.contains(s));
         // if (primary.length !== 0) {
         //     nextSlot = this.random.randomElement(primary);
         // }
 
         // mark as used
         combinations.removeFromWorking(nextSlot);
-        return [nextSlot, combinations, fromAll];
+        return [nextSlot, fromAll];
     }
 
     allCombinationsUsed(cs: C.Combinations[], usedKeys: Key[][]): boolean {
