@@ -1,9 +1,9 @@
 # pictts
 
-PICT([microsoft/pict](https://github.com/microsoft/pict)) clone by TypeScript.
+[PICT](https://github.com/microsoft/pict) clone by TypeScript.
 
-* [Library implementation](./pictts)
-* [UI](./pages)
+* [Library implementation & documentation](./pictts)
+* [UI implementation](./pages)
 * [npm](https://www.npmjs.com/package/pictts)
 ## Try it on browser
 
