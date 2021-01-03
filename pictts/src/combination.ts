@@ -187,7 +187,6 @@ export class Combinations {
     }
 
     push(combination: KeyValueMap): void {
-        this.workingCombinations.push(combination);
         this.allCombinations.push(combination);
     }
 
