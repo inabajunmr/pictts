@@ -727,9 +727,6 @@ test('todo', () => {
         File system:    FAT, FAT32, NTFS
         Cluster size:   512, 1024, 2048, 4096, 8192, 16384, 32768, 65536
         Compression:    on, off
-        
-        IF [File system] = "FAT"   THEN [Size] <= 4096 ;
-        IF [File system] = "FAT32" THEN [Size] <= 32000 ;
 `
     ).parse();
     let min = 1000000;
