@@ -89,7 +89,7 @@ export class Pict {
         ) {
             // get next slot from longest combinations
             const exceptKeys = result.nowKey(); // if longest combinations is the same as result, it will be skipped.
-            const [suitable, longest, fromAll] = this.nextSlot(
+            const [suitable, fromAll] = this.nextSlot(
                 allCombinations,
                 [exceptKeys],
                 result.nowLine(),
@@ -101,7 +101,7 @@ export class Pict {
             }
 
             // if result already has suitable, skip it
-            if (result.contains(suitable) && !longest.done && !fromAll) {
+            if (result.contains(suitable) && !fromAll) {
                 continue;
             }
 
@@ -157,7 +157,7 @@ export class Pict {
         usedKeyCombinations: Key[][],
         line: KeyValueMap,
         result: PictResult
-    ): [KeyValueMap, C.Combinations, boolean] {
+    ): [KeyValueMap, boolean] {
         // choice next keys combination
         const combinations = C.longestCombination(
             usedKeyCombinations,
@@ -172,7 +172,7 @@ export class Pict {
                 combinations.workingCombinations
             );
             combinations.removeFromWorking(result);
-            return [result, combinations, false];
+            return [result, false];
         }
 
         // from working
@@ -215,14 +215,14 @@ export class Pict {
                 revertTargetCombinations.markAsImpossible(line);
             }
 
-            return [new KeyValueMap(), combinations, false];
+            return [new KeyValueMap(), false];
         }
 
         const nextSlot = this.random.randomElement(suitables);
 
         // mark as used
         combinations.removeFromWorking(nextSlot);
-        return [nextSlot, combinations, fromAll];
+        return [nextSlot, fromAll];
     }
 
     matchedSlot(combinations: KeyValueMap[], line: KeyValueMap): KeyValueMap[] {
