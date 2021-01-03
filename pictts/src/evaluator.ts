@@ -1,5 +1,6 @@
 import * as C from './combination';
-import { Constraint } from './constraint/constraint';
+import { Constraint, matchAllConstraints } from './constraint/constraint';
+
 import { containsKey1InKey2, Key, KeyValueMap, Value } from './keyvalue';
 import { Random } from './random';
 import { PictResult } from './pictResult';
@@ -13,7 +14,7 @@ export class Pict {
 
     // constraints sometimes never allows the combination.
     // impossibles has disallowed combinations.
-    readonly impossibles: KeyValueMap[] = [];
+    readonly impossibleCombinations: KeyValueMap[] = [];
 
     // If PAIRwise, 2. If TRIOwise, 3
     factorCount = 2;
@@ -24,8 +25,11 @@ export class Pict {
     }
 
     pushImpossibles(impossible: KeyValueMap): void {
-        if (this.impossibles.filter((i) => i.equals(impossible)).length === 0) {
-            this.impossibles.push(impossible);
+        if (
+            this.impossibleCombinations.filter((i) => i.equals(impossible))
+                .length === 0
+        ) {
+            this.impossibleCombinations.push(impossible);
         }
     }
 
@@ -53,10 +57,11 @@ export class Pict {
             this.factorCount
         );
 
-        // create all combinations(by factor count)
-        const allCombinations: C.Combinations[] = this.buildAllCombinations(
+        // create all slot(by factor count)
+        const allCombinations: C.Combinations[] = this.buildAllSlot(
             keyCombinations
         );
+        allCombinations.forEach((c) => c.applyConstraints(this.constraints));
 
         // consume slots and assemble results
         const result = new PictResult(keys);
@@ -86,39 +91,25 @@ export class Pict {
             result.put(suitable);
         }
 
-        return result.clean();
+        result.clean();
+
+        // assertion
+        result.setSlots(allCombinations);
+        result.assert();
+
+        return result;
     }
 
-    buildAllCombinations(keyCombinations: Key[][]): C.Combinations[] {
+    buildAllSlot(keyCombinations: Key[][]): C.Combinations[] {
         return keyCombinations.reduce((acc, kc) => {
             const combinations = C.allCombinationsByMultipleArray(
                 kc,
                 this.parameters
             );
 
-            // filter only constraints matched combinations
-            if (this.constraints.length !== 0) {
-                combinations.set(
-                    combinations.allCombinations.filter((v) =>
-                        this.matchAllConstraints(v)
-                    )
-                );
-            }
-
-            if (combinations.workingCombinations.length === 0) {
-                combinations.done = true;
-            }
-
             acc.push(combinations);
             return acc;
         }, [] as C.Combinations[]);
-    }
-
-    matchAllConstraints(record: KeyValueMap): boolean {
-        return (
-            this.constraints.filter((c) => c.match(record)).length ===
-            this.constraints.length
-        );
     }
 
     allDone(c: C.Combinations[]): boolean {
@@ -176,7 +167,7 @@ export class Pict {
         if (suitables.length === 0) {
             // if all working aren't matched, from all
             fromAll = true;
-            suitables = this.matchedSlot(combinations.allCombinations, line);
+            suitables = this.matchedSlot(combinations.validCombinations, line);
         }
 
         if (suitables.length === 0) {
@@ -249,7 +240,7 @@ export class Pict {
             Array.from(line).forEach((k) => {
                 merge.set(k[0], k[1]);
             });
-            return this.matchAllConstraints(merge);
+            return matchAllConstraints(this.constraints, merge);
         });
 
         // filtering by impossibles
@@ -261,7 +252,7 @@ export class Pict {
         };
 
         return constraintsFiltered.filter((c) => {
-            return !contains(c, this.impossibles);
+            return !contains(c, this.impossibleCombinations);
         });
     }
 }

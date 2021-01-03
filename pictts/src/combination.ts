@@ -1,4 +1,6 @@
+import { Constraint } from './constraint/constraint';
 import { Key, KeyValueMap, Value } from './keyvalue';
+import { matchAllConstraints } from './constraint/constraint';
 
 /**
  * All combination by multiple params.
@@ -152,6 +154,8 @@ export function longestCombination(
 export class Combinations {
     keys: Key[];
     workingCombinations: KeyValueMap[] = [];
+    validCombinations: KeyValueMap[] = [];
+    impossibleCombinations: KeyValueMap[] = [];
     allCombinations: KeyValueMap[] = [];
 
     // all combinations already applied, true
@@ -160,17 +164,35 @@ export class Combinations {
         this.keys = keys;
     }
 
+    applyConstraints(constraints: Constraint[]): void {
+        // filter only constraints matched slot
+        const matched = this.allCombinations.filter((v) =>
+            matchAllConstraints(constraints, v)
+        );
+        const impossibles = this.allCombinations.filter(
+            (v) => !matchAllConstraints(constraints, v)
+        );
+
+        this.set(matched);
+        this.impossibleCombinations = impossibles;
+        if (this.workingCombinations.length === 0) {
+            this.done = true;
+        }
+    }
+
     set(combinations: KeyValueMap[]): void {
-        this.workingCombinations = combinations;
-        this.allCombinations = combinations;
+        this.workingCombinations = [...combinations];
+        this.validCombinations = [...combinations];
     }
 
     push(combination: KeyValueMap): void {
-        this.workingCombinations.push(combination);
         this.allCombinations.push(combination);
     }
 
     markAsImpossible(target: KeyValueMap): void {
+        this.removeFromValid(target);
+        this.removeFromWorking(target);
+        this.impossibleCombinations.push(target);
         const cache1 = this.workingCombinations.filter((c) => {
             return !this.equalsAllElements(c, target);
         });
@@ -180,11 +202,11 @@ export class Combinations {
             this.done = true;
         }
 
-        const cache2 = this.allCombinations.filter((c) => {
+        const cache2 = this.validCombinations.filter((c) => {
             return !this.equalsAllElements(c, target);
         });
 
-        this.allCombinations = cache2;
+        this.validCombinations = cache2;
     }
 
     removeFromWorking(target: KeyValueMap): void {
@@ -198,12 +220,12 @@ export class Combinations {
         }
     }
 
-    removeFromAll(target: KeyValueMap): void {
-        const cache = this.allCombinations.filter((c) => {
+    removeFromValid(target: KeyValueMap): void {
+        const cache = this.validCombinations.filter((c) => {
             return !this.equalsAllElements(c, target);
         });
 
-        this.allCombinations = cache;
+        this.validCombinations = cache;
     }
 
     private equalsAllElements(

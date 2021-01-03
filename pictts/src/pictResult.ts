@@ -1,3 +1,5 @@
+import { Combinations } from './combination';
+import { AssertionError } from './exception';
 import { Key, KeyValueMap, Value } from './keyvalue';
 
 export class PictResult {
@@ -11,8 +13,28 @@ export class PictResult {
     // put value history
     putValuesHistory: KeyValueMap[] = [];
 
+    // for assertion
+    validSlots: KeyValueMap[] = [];
+    impossibleSlots: KeyValueMap[] = [];
+    allSlots: KeyValueMap[] = [];
+
     constructor(keys: Key[]) {
         this.keys = keys;
+    }
+
+    setSlots(combinations: Combinations[]): void {
+        combinations.forEach((c) => {
+            c.validCombinations.forEach((ic) => {
+                this.validSlots.push(ic);
+            });
+
+            c.impossibleCombinations.forEach((ic) => {
+                this.impossibleSlots.push(ic);
+            });
+            c.allCombinations.forEach((ic) => {
+                this.allSlots.push(ic);
+            });
+        });
     }
 
     revert(): KeyValueMap {
@@ -129,6 +151,62 @@ export class PictResult {
             Array.from(m1.keys()).filter((k) => m1.get(k) !== m2.get(k))
                 .length === 0
         );
+    }
+
+    assert(): void {
+        if (
+            this.allSlots.length !==
+            this.impossibleSlots.length + this.validSlots.length
+        ) {
+            throw new AssertionError('Something wrong.');
+        }
+
+        const contains = (
+            target: KeyValueMap,
+            maps: KeyValueMap[]
+        ): boolean => {
+            const keys = Array.from(target.keys());
+            return (
+                maps.filter((r) => {
+                    let contains = true;
+                    keys.filter((k) => {
+                        if (r.get(k) !== target.get(k)) {
+                            contains = false;
+                        }
+                    });
+                    return contains;
+                }).length !== 0
+            );
+        };
+
+        // assert all slots contains all impossibleSlots and all validSlots
+        if (
+            this.allSlots
+                .filter((s) => {
+                    return contains(s, this.impossibleSlots);
+                })
+                .filter((s) => {
+                    return contains(s, this.validSlots);
+                }).length !== 0
+        ) {
+            throw new AssertionError('Something wrong.');
+        }
+
+        this.impossibleSlots.forEach((s) => {
+            if (this.contains(s)) {
+                throw new AssertionError(
+                    `Contains impossible slot:${s.toString()}.`
+                );
+            }
+        });
+
+        this.validSlots.forEach((s) => {
+            if (!this.contains(s)) {
+                throw new AssertionError(
+                    `Expected slot:${s.toString()} is not found.`
+                );
+            }
+        });
     }
 
     toString(delimiter = ','): string {

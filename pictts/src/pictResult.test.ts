@@ -6,7 +6,7 @@ test('put', () => {
 
     sut.put(map('A', 'A1'));
     expect(sut.result.length).toBe(1);
-    expect(assertEquals(map('A', 'A1'), sut.result[0])).toBe(true);
+    expect(map('A', 'A1').equals(sut.result[0])).toBe(true);
     expect(sut.contains(map('A', 'A1'))).toBe(true);
     expect(sut.contains(map('A', 'A2'))).toBe(false);
     expect(sut.nowIsFull()).toBe(false);
@@ -14,7 +14,7 @@ test('put', () => {
 
     sut.put(map('B', 'B1'));
     expect(sut.result.length).toBe(1);
-    expect(assertEquals(map2('A', 'A1', 'B', 'B1'), sut.result[0])).toBe(true);
+    expect(map2('A', 'A1', 'B', 'B1').equals(sut.result[0])).toBe(true);
     expect(sut.contains(map('B', 'B1'))).toBe(true);
     expect(sut.nowIsFull()).toBe(false);
     expect(sut.nowKey()[0]).toBe(Key.of('A'));
@@ -22,23 +22,23 @@ test('put', () => {
 
     sut.put(map('C', 'C1'));
     expect(sut.result.length).toBe(1);
-    expect(
-        assertEquals(map3('A', 'A1', 'B', 'B1', 'C', 'C1'), sut.result[0])
-    ).toBe(true);
+    expect(map3('A', 'A1', 'B', 'B1', 'C', 'C1').equals(sut.result[0])).toBe(
+        true
+    );
     expect(sut.contains(map('C', 'C1'))).toBe(true);
     expect(sut.nowIsFull()).toBe(true);
     expect(sut.nowKey().length).toBe(0);
 
     sut.put(map('A', 'A2'));
     expect(sut.result.length).toBe(2);
-    expect(assertEquals(map('A', 'A2'), sut.result[1])).toBe(true);
+    expect(map('A', 'A2').equals(sut.result[1])).toBe(true);
     expect(sut.contains(map('A', 'A2'))).toBe(true);
     expect(sut.nowIsFull()).toBe(false);
     expect(sut.nowKey()[0]).toBe(Key.of('A'));
 
     sut.put(map('B', 'B2'));
     expect(sut.result.length).toBe(2);
-    expect(assertEquals(map2('A', 'A2', 'B', 'B2'), sut.result[1])).toBe(true);
+    expect(map2('A', 'A2', 'B', 'B2').equals(sut.result[1])).toBe(true);
     expect(sut.contains(map('B', 'B2'))).toBe(true);
     expect(sut.nowIsFull()).toBe(false);
     expect(sut.nowKey()[0]).toBe(Key.of('A'));
@@ -46,9 +46,9 @@ test('put', () => {
 
     sut.put(map('C', 'C2'));
     expect(sut.result.length).toBe(2);
-    expect(
-        assertEquals(map3('A', 'A2', 'B', 'B2', 'C', 'C2'), sut.result[1])
-    ).toBe(true);
+    expect(map3('A', 'A2', 'B', 'B2', 'C', 'C2').equals(sut.result[1])).toBe(
+        true
+    );
     expect(sut.contains(map('C', 'C2'))).toBe(true);
     expect(sut.nowIsFull()).toBe(true);
     expect(sut.nowKey().length).toBe(0);
@@ -65,61 +65,87 @@ test('revert', () => {
     sut.put(map('C', 'C2'));
 
     expect(sut.result.length).toBe(2);
-    expect(
-        assertEquals(map3('A', 'A2', 'B', 'B2', 'C', 'C2'), sut.result[1])
-    ).toBe(true);
+    expect(map3('A', 'A2', 'B', 'B2', 'C', 'C2').equals(sut.result[1])).toBe(
+        true
+    );
     expect(sut.contains(map('C', 'C2'))).toBe(true);
     expect(sut.nowIsFull()).toBe(true);
     expect(sut.nowKey().length).toBe(0);
 
-    expect(assertEquals(map('C', 'C2'), sut.revert())).toBe(true);
+    expect(map('C', 'C2').equals(sut.revert())).toBe(true);
     expect(sut.result.length).toBe(2);
-    expect(assertEquals(map2('A', 'A2', 'B', 'B2'), sut.result[1])).toBe(true);
+    expect(map2('A', 'A2', 'B', 'B2').equals(sut.result[1])).toBe(true);
     expect(sut.contains(map('B', 'B2'))).toBe(true);
     expect(sut.nowIsFull()).toBe(false);
     expect(sut.nowKey()[0]).toBe(Key.of('A'));
     expect(sut.nowKey()[1]).toBe(Key.of('B'));
 
-    expect(assertEquals(map('B', 'B2'), sut.revert())).toBe(true);
+    expect(map('B', 'B2').equals(sut.revert())).toBe(true);
     expect(sut.result.length).toBe(2);
-    expect(assertEquals(map('A', 'A2'), sut.result[1])).toBe(true);
+    expect(map('A', 'A2').equals(sut.result[1])).toBe(true);
     expect(sut.contains(map('A', 'A2'))).toBe(true);
     expect(sut.nowIsFull()).toBe(false);
     expect(sut.nowKey()[0]).toBe(Key.of('A'));
 
-    expect(assertEquals(map('A', 'A2'), sut.revert())).toBe(true);
+    expect(map('A', 'A2').equals(sut.revert())).toBe(true);
     expect(sut.result.length).toBe(1);
-    expect(
-        assertEquals(map3('A', 'A1', 'B', 'B1', 'C', 'C1'), sut.result[0])
-    ).toBe(true);
+    expect(map3('A', 'A1', 'B', 'B1', 'C', 'C1').equals(sut.result[0])).toBe(
+        true
+    );
     expect(sut.contains(map('C', 'C1'))).toBe(true);
     expect(sut.nowIsFull()).toBe(true);
     expect(sut.nowKey().length).toBe(0);
 
-    expect(assertEquals(map('C', 'C1'), sut.revert())).toBe(true);
+    expect(map('C', 'C1').equals(sut.revert())).toBe(true);
     expect(sut.result.length).toBe(1);
-    expect(assertEquals(map2('A', 'A1', 'B', 'B1'), sut.result[0])).toBe(true);
+    expect(map2('A', 'A1', 'B', 'B1').equals(sut.result[0])).toBe(true);
     expect(sut.contains(map('B', 'B1'))).toBe(true);
     expect(sut.nowIsFull()).toBe(false);
     expect(sut.nowKey()[0]).toBe(Key.of('A'));
     expect(sut.nowKey()[1]).toBe(Key.of('B'));
 
-    expect(assertEquals(map('B', 'B1'), sut.revert())).toBe(true);
+    expect(map('B', 'B1').equals(sut.revert())).toBe(true);
     expect(sut.result.length).toBe(1);
-    expect(assertEquals(map('A', 'A1'), sut.result[0])).toBe(true);
+    expect(map('A', 'A1').equals(sut.result[0])).toBe(true);
     expect(sut.contains(map('A', 'A1'))).toBe(true);
     expect(sut.contains(map('A', 'A2'))).toBe(false);
     expect(sut.nowIsFull()).toBe(false);
     expect(sut.nowKey()[0]).toBe(Key.of('A'));
-    expect(assertEquals(map('A', 'A1'), sut.revert())).toBe(true);
+    expect(map('A', 'A1').equals(sut.revert())).toBe(true);
 });
 
-function assertEquals(target: KeyValueMap, result: KeyValueMap): boolean {
-    let assert = true;
-    Array.from(target.keys()).forEach((k) => {
-        if (target.get(k) !== result.get(k)) {
-            assert = false;
-        }
-    });
-    return assert;
-}
+test('assert impossible', () => {
+    const sut = new PictResult([Key.of('A'), Key.of('B'), Key.of('C')]);
+
+    sut.put(map('A', 'A1'));
+    sut.put(map('B', 'B1'));
+    sut.put(map('C', 'C1'));
+    sut.impossibleSlots.push(map('A', 'A1'));
+    sut.allSlots = sut.impossibleSlots;
+
+    expect(() => sut.assert()).toThrow('Contains impossible slot:A:A1.');
+});
+
+test('assert valid', () => {
+    const sut = new PictResult([Key.of('A'), Key.of('B'), Key.of('C')]);
+
+    sut.put(map('A', 'A1'));
+    sut.put(map('B', 'B1'));
+    sut.put(map('C', 'C1'));
+    sut.validSlots.push(map('A', 'A2'));
+    sut.allSlots = sut.validSlots;
+
+    expect(() => sut.assert()).toThrow('Expected slot:A:A2 is not found.');
+});
+
+test('assert slot exist only all', () => {
+    const sut = new PictResult([Key.of('A'), Key.of('B'), Key.of('C')]);
+
+    sut.allSlots.push(map('A', 'A1'));
+    sut.allSlots.push(map('A', 'A2'));
+    sut.allSlots.push(map('A', 'A3'));
+    sut.validSlots.push(map('A', 'A1'));
+    sut.impossibleSlots.push(map('A', 'A2'));
+
+    expect(() => sut.assert()).toThrow('Something wrong.');
+});
