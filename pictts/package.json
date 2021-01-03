@@ -24,7 +24,7 @@
         "build": "tsc",
         "prepublishOnly": "npm run build"
     },
-    "keywords": [],
+    "keywords": ["PICT", "Testing"],
     "author": "inabajunmr",
     "license": "MIT",
     "devDependencies": {
