@@ -235,6 +235,7 @@ export class Pict {
             return [new KeyValueMap(), combinations, false];
         }
 
+        // TODO 他で利用済みのsuitablesの優先順位を下げる
         const nextSlot = this.random.randomElement(suitables);
 
         // mark as used

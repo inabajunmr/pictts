@@ -143,10 +143,6 @@ export function longestCombination(
                 : a;
         });
     }
-
-    if (nonUsed.length === 0) {
-        console.log('');
-    }
     // if there are no not done combinations, return done it.
     return nonUsed.reduce((b, a) => {
         return b.workingCombinations.length >= a.workingCombinations.length

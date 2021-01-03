@@ -1,5 +1,6 @@
 import { map2, map3, KeyValueMap } from './keyvalue';
 import * as P from './parser/parser';
+import { PictResult } from './pictResult';
 
 test('pict 3factors by 2', () => {
     const sut = new P.Parser('A:A1,A2\nB:B1,B2\nC:C1,C2').parse();
@@ -729,15 +730,26 @@ Compression:    on, off
 `
     ).parse();
     let min = 1000000;
+    let max = 0;
+    let a: PictResult | undefined = undefined;
+    let b: PictResult | undefined = undefined;
     for (let index = 0; index < 1000; index++) {
         const actual = sut.testCases();
         if (min > actual.result.length) {
             min = actual.result.length;
+            a = actual;
+        }
+        if (max < actual.result.length) {
+            max = actual.result.length;
+            b = actual;
         }
         console.log(actual.result.length);
     }
 
     console.log(`min:${min}`);
+    console.log(a!.toString());
+    console.log(b!.toString());
+    expect(true).toBe(true);
 });
 
 function assertContains(target: KeyValueMap, result: KeyValueMap[]): boolean {
