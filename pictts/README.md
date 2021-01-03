@@ -53,7 +53,7 @@ A1,B1,C2
 A1,B2,C2
 ```
 
-### Change combination factor count
+### Change order of combinations
 
 If you want to triplewise test case like `/o:3`.
 
@@ -114,7 +114,7 @@ A1|B1|C2
 A1|B2|C2
 ```
 
-## development
+## Development
 
 ### test
 
@@ -128,7 +128,9 @@ npm test
 npm run lint
 ```
 
-## publish
+### publish
+
+Build and publish to npm.
 
 ```
 npm publish
