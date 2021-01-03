@@ -173,12 +173,10 @@ export class Combinations {
             (v) => !matchAllConstraints(constraints, v)
         );
 
-        if (constraints.length !== 0) {
-            this.set(matched);
-            this.impossibleCombinations = impossibles;
-            if (this.workingCombinations.length === 0) {
-                this.done = true;
-            }
+        this.set(matched);
+        this.impossibleCombinations = impossibles;
+        if (this.workingCombinations.length === 0) {
+            this.done = true;
         }
     }
 

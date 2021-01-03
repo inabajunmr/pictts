@@ -58,6 +58,9 @@ export function matchAllConstraints(
     constraints: Constraint[],
     record: KeyValueMap
 ): boolean {
+    if (constraints.length === 0) {
+        return true;
+    }
     return (
         constraints.filter((c) => c.match(record)).length === constraints.length
     );
