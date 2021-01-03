@@ -7,15 +7,16 @@ export class Lexer {
     private readonly constrainsLexer: ConstraintsLexer;
 
     constructor(input: string) {
+        const withoutComment = input.replace(/#.*/g, '');
         this.parametersLexer = new ParametersLexer(
-            input
+            withoutComment
                 .split('\n')
                 .filter((v) => v.indexOf(':') !== -1)
                 .map((v) => v.trim())
                 .reduce((a, v) => a + v + '\n', '')
         );
         this.constrainsLexer = new ConstraintsLexer(
-            input
+            withoutComment
                 .split('\n')
                 .filter((v) => v.indexOf(':') === -1)
                 .map((v) => v.trim())

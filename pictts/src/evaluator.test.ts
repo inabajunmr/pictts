@@ -718,6 +718,39 @@ test('number constraints', () => {
     }
 });
 
+test('comment', () => {
+    const sut = new P.Parser(
+        `
+        # Comment
+        # Comment:
+        # Comment;
+        A:A1,A2 # Comment,
+        B:B1,B2# Comment:
+        IF [A] = "A1" THEN [B] = "B1"; # Comment;
+        # IF [A] = "A1" THEN [B] = "B1"; Comment
+        # IF [A] = "A1" THEN [B] = "B1"; Comment:
+        IF [A] = "A2" THEN [B] = "B2";#Comment`
+    ).parse();
+    for (let index = 0; index < 100; index++) {
+        sut.setRandomSeed(Math.floor(Math.random() * 10000));
+        const actual = sut.testCases();
+
+        // contains all combinations
+        expect(assertContains(map2('A', 'A1', 'B', 'B1'), actual.result)).toBe(
+            true
+        );
+        expect(assertContains(map2('A', 'A1', 'B', 'B2'), actual.result)).toBe(
+            false // constraints violation
+        );
+        expect(assertContains(map2('A', 'A2', 'B', 'B1'), actual.result)).toBe(
+            false // constraints violation
+        );
+        expect(assertContains(map2('A', 'A2', 'B', 'B2'), actual.result)).toBe(
+            true
+        );
+    }
+});
+
 test('benchmark', () => {
     const sut = new P.Parser(
         `
