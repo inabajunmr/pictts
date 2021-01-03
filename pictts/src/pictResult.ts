@@ -209,7 +209,7 @@ export class PictResult {
         });
     }
 
-    toString(delimiter = ','): string {
+    toString(delimiter = '\t'): string {
         let result = this.keys.map((k) => k.key).join(delimiter) + '\n';
 
         this.result.forEach((c) => {

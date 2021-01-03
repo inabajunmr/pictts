@@ -45,12 +45,12 @@ testCases.toString();
 #### Result
 
 ```
-A,B,C
-A2,B1,C1
-A1,B2,C1
-A2,B2,C2
-A1,B1,C2
-A1,B2,C2
+A	B	C
+A2	B1	C1
+A1	B2	C1
+A2	B2	C2
+A1	B1	C2
+A1	B2	C2
 ```
 
 ### Change order of combinations
@@ -74,21 +74,21 @@ testCases.toString();
 #### Result
 
 ```
-A,B,C
-A2,B2,C1
-A1,B2,C2
-A2,B1,C2
-A2,B1,C1
-A1,B2,C1
-A1,B1,C1
-A2,B2,C2
-A1,B1,C2
+A	B	C
+A2	B2	C1
+A1	B2	C2
+A2	B1	C2
+A2	B1	C1
+A1	B2	C1
+A1	B1	C1
+A2	B2	C2
+A1	B1	C2
 ```
 
 ### Change delimiter
 
 Changing delimiter.
-Default is `,`.
+Default is `\t`.
 
 ```typescript
 const pictts = require('pictts');
