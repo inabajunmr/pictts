@@ -91,8 +91,10 @@ export class Pict {
             const exceptKeys = result.nowKey(); // if longest combinations is the same as result, it will be skipped.
             const [suitable, longest, fromAll] = this.nextSlot(
                 allCombinations,
+                exceptKeys,
                 [exceptKeys],
                 result.nowLine(),
+                false,
                 result
             );
 
@@ -154,8 +156,10 @@ export class Pict {
      */
     nextSlot(
         allCombinations: C.Combinations[],
+        exceptKeys: Key[],
         usedKeyCombinations: Key[][],
         line: KeyValueMap,
+        all: boolean,
         result: PictResult
     ): [KeyValueMap, C.Combinations, boolean] {
         // choice next keys combination
@@ -182,19 +186,32 @@ export class Pict {
         );
 
         let fromAll = false;
-        if (suitables.length === 0) {
+        if (suitables.length === 0 && all) {
             // if all working aren't matched, from all
             fromAll = true;
             suitables = this.matchedSlot(combinations.validCombinations, line);
         }
 
         if (suitables.length === 0) {
-            if (allCombinations.length !== usedKeyCombinations.length) {
+            if (
+                this.allCombinationsUsed(allCombinations, usedKeyCombinations)
+            ) {
                 // find other combinations
                 return this.nextSlot(
                     allCombinations,
+                    exceptKeys,
                     usedKeyCombinations,
                     line,
+                    all,
+                    result
+                );
+            } else if (!all) {
+                return this.nextSlot(
+                    allCombinations,
+                    exceptKeys,
+                    [exceptKeys], // revert used
+                    line,
+                    true,
                     result
                 );
             }
@@ -223,6 +240,17 @@ export class Pict {
         // mark as used
         combinations.removeFromWorking(nextSlot);
         return [nextSlot, combinations, fromAll];
+    }
+
+    allCombinationsUsed(cs: C.Combinations[], usedKeys: Key[][]): boolean {
+        const c = cs.reduce((acc, c) => {
+            const a = usedKeys.reduce((acc2, k) => {
+                const b = containsKey1InKey2(c.keys, k);
+                return acc2 && b;
+            }, true);
+            return acc && a;
+        }, true);
+        return c;
     }
 
     matchedSlot(combinations: KeyValueMap[], line: KeyValueMap): KeyValueMap[] {
