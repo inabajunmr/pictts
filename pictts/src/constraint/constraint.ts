@@ -53,3 +53,12 @@ export class Constraint {
         return true;
     }
 }
+
+export function matchAllConstraints(
+    constraints: Constraint[],
+    record: KeyValueMap
+): boolean {
+    return (
+        constraints.filter((c) => c.match(record)).length === constraints.length
+    );
+}
