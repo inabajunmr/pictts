@@ -87,7 +87,7 @@ A1,B1,C2
 
 ### Change delimiter
 
-Changing delimiter like `/d:|`.
+Changing delimiter.
 Default is `,`.
 
 ```typescript
