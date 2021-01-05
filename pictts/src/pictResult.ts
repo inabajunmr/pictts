@@ -13,6 +13,12 @@ export class PictResult {
     // put value history
     putValuesHistory: KeyValueMap[] = [];
 
+    // TODO putValuesのSetをもっておいて、containsで使うとどうか
+    // KeyValueはImmutableかつインスタンス使い回せるようにして==で比較できるようにする
+    // TODO revertがうまく出来ない
+    // TODO 同一line内でのcontainsは不要なので、lineが確定するまでキャッシュしといてlineが確定したらSetにいれる？
+    // TODO 確定したlineが巻き戻るようなrevertは発生しないはず
+
     // for assertion
     validSlots: KeyValueMap[] = [];
     impossibleSlots: KeyValueMap[] = [];
