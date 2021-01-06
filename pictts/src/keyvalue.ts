@@ -55,6 +55,7 @@ export class KeyValueMap extends Map<Key, Value> {
         if (cache !== undefined) {
             return cache;
         }
+        this.cache.set(cacheKey, map);
         return map;
     }
 
@@ -73,6 +74,10 @@ export class KeyValueMap extends Map<Key, Value> {
         return this.fromCache(v);
     }
 
+    set(key: Key, value: Value): this {
+        return super.set(key, value);
+    }
+
     cacheKey(): string {
         return JSON.stringify(
             Array.from(this).sort((a, b) => {
@@ -83,19 +88,6 @@ export class KeyValueMap extends Map<Key, Value> {
                 }
             })
         );
-    }
-
-    equals(m: KeyValueMap): boolean {
-        if (this.size !== m.size) {
-            return false;
-        }
-
-        const result = Array.from(this.keys()).reduce(
-            (acc, key) => acc && this.get(key) == m.get(key),
-            true
-        );
-
-        return result;
     }
 
     /**

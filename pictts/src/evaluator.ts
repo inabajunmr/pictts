@@ -28,7 +28,7 @@ export class Pict {
 
     pushImpossibles(impossible: KeyValueMap): void {
         if (
-            this.impossibleCombinations.filter((i) => i.equals(impossible))
+            this.impossibleCombinations.filter((i) => i === impossible)
                 .length === 0
         ) {
             this.impossibleCombinations.push(impossible);
@@ -266,7 +266,7 @@ export class Pict {
             if (maps.length === 0) {
                 return false;
             }
-            return maps.filter((m) => m.equals(target)).length !== 0;
+            return maps.filter((m) => m === target).length !== 0;
         };
 
         return constraintsFiltered.filter((c) => {

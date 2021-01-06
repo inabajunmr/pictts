@@ -236,6 +236,6 @@ export class Combinations {
             return target1 === target2;
         }
 
-        return target1.equals(target2);
+        return target1 === target2;
     }
 }

@@ -132,7 +132,7 @@ export class PictResult {
             const r1 = this.result[i];
             for (let j = i + 1; j < this.result.length; j++) {
                 const r2 = this.result[j];
-                if (this.equalsMap(r1, r2)) {
+                if (r1 === r2) {
                     this.result[j] = KeyValueMap.empty();
                 }
             }
