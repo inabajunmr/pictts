@@ -1,6 +1,5 @@
 import { map2, map3, KeyValueMap } from './keyvalue';
 import * as P from './parser/parser';
-import { PictResult } from './pictResult';
 
 test('pict 3factors by 2', () => {
     const sut = new P.Parser('A:A1,A2\nB:B1,B2\nC:C1,C2').parse();

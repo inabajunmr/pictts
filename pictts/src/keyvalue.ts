@@ -92,8 +92,14 @@ export class KeyValueMap extends Map<Key, Value> {
         );
     }
 
+    /**
+     * All combinations in Map by specified order.
+     *
+     * If Map={'A','A1','B','B1','C','C1'} and order=2,
+     * result=[{'A','A1','B','B1'},{'A','A1','C','C1'},{'B','B1','C','C1'}]
+     * @param order
+     */
     allCombinations(order: number): KeyValueMap[] {
-        // TODO test
         const keys = Array.from(this.keys());
         const b = combinationsBySingleArray(keys, order).reduce((acc, kc) => {
             const aa = kc.reduce((acc, k) => {
