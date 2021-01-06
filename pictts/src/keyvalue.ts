@@ -145,10 +145,7 @@ export function containsKey1InKey2(keys1: Key[], keys2: Key[]): boolean {
 }
 
 export function map(key: string, value: string): KeyValueMap {
-    new Map();
-    const result = new KeyValueMap();
-    result.set(Key.of(key), Value.of(value));
-    return result;
+    return KeyValueMap.of(Key.of(key), Value.of(value));
 }
 
 export function map2(
@@ -157,9 +154,9 @@ export function map2(
     k2: string,
     v2: string
 ): KeyValueMap {
-    const result = new KeyValueMap();
-    result.set(Key.of(k1), Value.of(v1));
-    result.set(Key.of(k2), Value.of(v2));
+    let result = KeyValueMap.empty();
+    result = KeyValueMap.set(result, Key.of(k1), Value.of(v1));
+    result = KeyValueMap.set(result, Key.of(k2), Value.of(v2));
     return result;
 }
 
@@ -171,9 +168,9 @@ export function map3(
     k3: string,
     v3: string
 ): KeyValueMap {
-    const result = new KeyValueMap();
-    result.set(Key.of(k1), Value.of(v1));
-    result.set(Key.of(k2), Value.of(v2));
-    result.set(Key.of(k3), Value.of(v3));
+    let result = KeyValueMap.empty();
+    result = KeyValueMap.set(result, Key.of(k1), Value.of(v1));
+    result = KeyValueMap.set(result, Key.of(k2), Value.of(v2));
+    result = KeyValueMap.set(result, Key.of(k3), Value.of(v3));
     return result;
 }
