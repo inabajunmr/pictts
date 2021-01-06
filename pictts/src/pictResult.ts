@@ -13,13 +13,18 @@ export class PictResult {
     // put value history
     putValuesHistory: KeyValueMap[] = [];
 
+    covered: Set<KeyValueMap> = new Set();
+
+    order: number;
+
     // for assertion
     validSlots: KeyValueMap[] = [];
     impossibleSlots: KeyValueMap[] = [];
     allSlots: KeyValueMap[] = [];
 
-    constructor(keys: Key[]) {
+    constructor(keys: Key[], order: number) {
         this.keys = keys;
+        this.order = order;
     }
 
     setSlots(combinations: Combinations[]): void {
@@ -51,14 +56,13 @@ export class PictResult {
             this.result = this.resultHistory[
                 this.resultHistory.length - 1
             ].reduce((acc, map) => {
-                acc.push(new KeyValueMap(map)); // need to other instance
+                acc.push(map);
                 return acc;
             }, [] as KeyValueMap[]);
         }
 
-        const latest = new KeyValueMap(
-            this.putValuesHistory[this.putValuesHistory.length - 1]
-        );
+        const latest = this.putValuesHistory[this.putValuesHistory.length - 1];
+
         this.putValuesHistory = this.putValuesHistory.slice(
             0,
             this.putValuesHistory.length - 1
@@ -72,20 +76,22 @@ export class PictResult {
 
     put(target: KeyValueMap): void {
         this.putValuesHistory.push(target);
-        const line = this.nowLine();
+        let line = this.nowLine();
 
         Array.from(target.keys()).forEach((k) => {
             if (line.get(k) === undefined) {
-                line.set(k, target.get(k) as Value);
+                line = KeyValueMap.set(line, k, target.get(k) as Value);
             }
         });
 
-        // deepcopy
-        const newHistory: KeyValueMap[] = [];
-        this.result.forEach((element) => {
-            newHistory.push(new KeyValueMap(element));
-        });
-        this.resultHistory.push(newHistory);
+        if (line.size === this.keys.length) {
+            line.allCombinations(this.order).forEach((element) => {
+                this.covered.add(element);
+            });
+        }
+
+        this.result[this.result.length - 1] = line;
+        this.resultHistory.push(Array.from(this.result));
     }
 
     nowIsFull(): boolean {
@@ -104,25 +110,14 @@ export class PictResult {
 
     nowLine(): KeyValueMap {
         if (this.nowIsFull()) {
-            this.result.push(new KeyValueMap());
+            this.result.push(KeyValueMap.empty());
         }
 
         return this.result[this.result.length - 1];
     }
 
     contains(values: KeyValueMap): boolean {
-        const keys = Array.from(values.keys());
-        return (
-            this.result.filter((r) => {
-                let contains = true;
-                keys.filter((k) => {
-                    if (r.get(k) !== values.get(k)) {
-                        contains = false;
-                    }
-                });
-                return contains;
-            }).length !== 0
-        );
+        return this.covered.has(values);
     }
 
     clean(): PictResult {
@@ -131,8 +126,8 @@ export class PictResult {
             const r1 = this.result[i];
             for (let j = i + 1; j < this.result.length; j++) {
                 const r2 = this.result[j];
-                if (this.equalsMap(r1, r2)) {
-                    this.result[j] = new KeyValueMap();
+                if (r1 === r2) {
+                    this.result[j] = KeyValueMap.empty();
                 }
             }
         }

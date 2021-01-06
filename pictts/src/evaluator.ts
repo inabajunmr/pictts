@@ -28,7 +28,7 @@ export class Pict {
 
     pushImpossibles(impossible: KeyValueMap): void {
         if (
-            this.impossibleCombinations.filter((i) => i.equals(impossible))
+            this.impossibleCombinations.filter((i) => i === impossible)
                 .length === 0
         ) {
             this.impossibleCombinations.push(impossible);
@@ -82,7 +82,7 @@ export class Pict {
         allCombinations.forEach((c) => c.applyConstraints(this.constraints));
 
         // consume slots and assemble results
-        const result = new PictResult(keys);
+        const result = new PictResult(keys, this.factorCount);
         while (
             (this.allDone(allCombinations) && result.nowKey().length === 0) ===
             false
@@ -215,7 +215,7 @@ export class Pict {
                 revertTargetCombinations.markAsImpossible(line);
             }
 
-            return [new KeyValueMap(), false];
+            return [KeyValueMap.empty(), false];
         }
 
         const nextSlot = this.random.randomElement(suitables);
@@ -253,10 +253,10 @@ export class Pict {
 
         // filtering by constraints
         const constraintsFiltered = valueMatched.filter((s) => {
-            const merge = new KeyValueMap(s);
+            let merge = s;
 
             Array.from(line).forEach((k) => {
-                merge.set(k[0], k[1]);
+                merge = KeyValueMap.set(merge, k[0], k[1]);
             });
             return matchAllConstraints(this.constraints, merge);
         });
@@ -266,7 +266,7 @@ export class Pict {
             if (maps.length === 0) {
                 return false;
             }
-            return maps.filter((m) => m.equals(target)).length !== 0;
+            return maps.filter((m) => m === target).length !== 0;
         };
 
         return constraintsFiltered.filter((c) => {

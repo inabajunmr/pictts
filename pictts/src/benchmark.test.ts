@@ -104,12 +104,11 @@ test('benchmark3', () => {
     }
     console.log('benchmark3');
     console.log(`time:${performance.now() - start}`);
-
     console.log(
         `
 min:${min}
 max:${max}
 ${count / 10}`
     );
-    expect(count / 10).toBeLessThan(400);
+    expect(count / 10).toBeLessThan(1200);
 });

@@ -1,3 +1,5 @@
+import { combinationsBySingleArray } from './combination';
+
 export class Key {
     key: string;
     static cache = new Map<string, Key>();
@@ -47,17 +49,63 @@ export class Value {
 export type ValueType = 'string' | 'number';
 
 export class KeyValueMap extends Map<Key, Value> {
-    equals(m: KeyValueMap): boolean {
-        if (this.size !== m.size) {
-            return false;
+    static cache = new Map<string, KeyValueMap>();
+
+    private static fromCache(map: KeyValueMap) {
+        const cacheKey = map.cacheKey();
+        const cache = this.cache.get(cacheKey);
+        if (cache !== undefined) {
+            return cache;
         }
+        this.cache.set(cacheKey, map);
+        return map;
+    }
 
-        const result = Array.from(this.keys()).reduce(
-            (acc, key) => acc && this.get(key) == m.get(key),
-            true
+    static empty(): KeyValueMap {
+        return this.fromCache(new KeyValueMap());
+    }
+
+    static of(key: Key, value: Value): KeyValueMap {
+        const v = new KeyValueMap().set(key, value);
+        return this.fromCache(v);
+    }
+
+    static set(map: KeyValueMap, key: Key, value: Value): KeyValueMap {
+        const v = new KeyValueMap(map);
+        v.set(key, value);
+        return this.fromCache(v);
+    }
+
+    cacheKey(): string {
+        return JSON.stringify(
+            Array.from(this).sort((a, b) => {
+                if (a[0].key > b[0].key) {
+                    return 1;
+                } else {
+                    return -1;
+                }
+            })
         );
+    }
 
-        return result;
+    /**
+     * All combinations in Map by specified order.
+     *
+     * If Map={'A','A1','B','B1','C','C1'} and order=2,
+     * result=[{'A','A1','B','B1'},{'A','A1','C','C1'},{'B','B1','C','C1'}]
+     * @param order
+     */
+    allCombinations(order: number): KeyValueMap[] {
+        const keys = Array.from(this.keys());
+        const b = combinationsBySingleArray(keys, order).reduce((acc, kc) => {
+            const aa = kc.reduce((acc, k) => {
+                return KeyValueMap.set(acc, k, this.get(k) as Value);
+            }, KeyValueMap.empty());
+            acc.push(aa);
+            return acc;
+        }, [] as KeyValueMap[]);
+
+        return b;
     }
 
     /**
@@ -107,10 +155,7 @@ export function containsKey1InKey2(keys1: Key[], keys2: Key[]): boolean {
 }
 
 export function map(key: string, value: string): KeyValueMap {
-    new Map();
-    const result = new KeyValueMap();
-    result.set(Key.of(key), Value.of(value));
-    return result;
+    return KeyValueMap.of(Key.of(key), Value.of(value));
 }
 
 export function map2(
@@ -119,9 +164,9 @@ export function map2(
     k2: string,
     v2: string
 ): KeyValueMap {
-    const result = new KeyValueMap();
-    result.set(Key.of(k1), Value.of(v1));
-    result.set(Key.of(k2), Value.of(v2));
+    let result = KeyValueMap.empty();
+    result = KeyValueMap.set(result, Key.of(k1), Value.of(v1));
+    result = KeyValueMap.set(result, Key.of(k2), Value.of(v2));
     return result;
 }
 
@@ -133,9 +178,9 @@ export function map3(
     k3: string,
     v3: string
 ): KeyValueMap {
-    const result = new KeyValueMap();
-    result.set(Key.of(k1), Value.of(v1));
-    result.set(Key.of(k2), Value.of(v2));
-    result.set(Key.of(k3), Value.of(v3));
+    let result = KeyValueMap.empty();
+    result = KeyValueMap.set(result, Key.of(k1), Value.of(v1));
+    result = KeyValueMap.set(result, Key.of(k2), Value.of(v2));
+    result = KeyValueMap.set(result, Key.of(k3), Value.of(v3));
     return result;
 }
