@@ -238,6 +238,9 @@ export class Pict {
         // combinations values and lines values matched in a range of mutual keys
         const valueMatched = combinations.filter((c) => {
             const allMatched = mutualKeys.reduce((acc, k) => {
+                // TODO キーの全探索はいらない
+                // TODO ランダムに探索すれば全探索しないで1つマッチしたらおしまいでいい
+                // TODO constraintsのマッチは一度にやる
                 if (line.get(k) !== c.get(k)) {
                     // if at least one value don't match, this combinations is invalid
                     return false;
