@@ -86,7 +86,7 @@ export class PictResult {
 
         if (line.size === this.keys.length) {
             line.allCombinations(this.order).forEach((element) => {
-                this.covered.add(element); // TTODO
+                this.covered.add(element);
             });
         }
 
@@ -110,7 +110,6 @@ export class PictResult {
 
     nowLine(): KeyValueMap {
         if (this.nowIsFull()) {
-            // TODO nowLineに含まれる組み合わせを全部coveredにマーク？
             this.result.push(KeyValueMap.empty());
         }
 
