@@ -1,15 +1,20 @@
 import * as P from 'pictts'
 
 export function pict(input:string):void {
-    const pict = new P.Parser(input).parse();
     var e = (document.getElementById("power")) as HTMLSelectElement;
     var sel = e.selectedIndex;
     var opt = e.options[sel];
-    pict.setPower(parseInt(opt.value));
     const order = document.getElementById('order') as HTMLInputElement
-    pict.setFactorCount(parseInt(order.value));
 
-    document.getElementById("result")!.textContent = pict.testCases().toString();
+    try {
+        const pict = new P.Parser(input).parse();
+        pict.setPower(parseInt(opt.value));
+        pict.setFactorCount(parseInt(order.value));    
+        document.getElementById("result")!.textContent = pict.testCases().toString();
+        document.getElementById("error")!.textContent = '';
+    }catch(e) {
+        document.getElementById("error")!.textContent = e.message;
+    }
 }
 
 const sample = `Type:           Primary, Logical, Single, Span, Stripe, Mirror, RAID-5
