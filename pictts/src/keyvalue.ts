@@ -47,6 +47,40 @@ export class Value {
 export type ValueType = 'string' | 'number';
 
 export class KeyValueMap extends Map<Key, Value> {
+    static cache = new Map<string, KeyValueMap>();
+
+    private static fromCache(map: KeyValueMap) {
+        const cacheKey = map.cacheKey();
+        const cache = this.cache.get(cacheKey);
+        if (cache !== undefined) {
+            return cache;
+        }
+        return map;
+    }
+
+    static of(key: Key, value: Value): KeyValueMap {
+        const v = new KeyValueMap().set(key, value);
+        return this.fromCache(v);
+    }
+
+    static set(map: KeyValueMap, key: Key, value: Value): KeyValueMap {
+        const v = new KeyValueMap(map);
+        v.set(key, value);
+        return this.fromCache(v);
+    }
+
+    cacheKey(): string {
+        return JSON.stringify(
+            Array.from(this).sort((a, b) => {
+                if (a[0].key > b[0].key) {
+                    return 1;
+                } else {
+                    return -1;
+                }
+            })
+        );
+    }
+
     equals(m: KeyValueMap): boolean {
         if (this.size !== m.size) {
             return false;

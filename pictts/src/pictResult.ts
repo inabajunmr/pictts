@@ -57,14 +57,13 @@ export class PictResult {
             this.result = this.resultHistory[
                 this.resultHistory.length - 1
             ].reduce((acc, map) => {
-                acc.push(new KeyValueMap(map)); // need to other instance
+                acc.push(map);
                 return acc;
             }, [] as KeyValueMap[]);
         }
 
-        const latest = new KeyValueMap(
-            this.putValuesHistory[this.putValuesHistory.length - 1]
-        );
+        const latest = this.putValuesHistory[this.putValuesHistory.length - 1];
+
         this.putValuesHistory = this.putValuesHistory.slice(
             0,
             this.putValuesHistory.length - 1
@@ -78,13 +77,15 @@ export class PictResult {
 
     put(target: KeyValueMap): void {
         this.putValuesHistory.push(target);
-        const line = this.nowLine();
+        let line = this.nowLine();
 
         Array.from(target.keys()).forEach((k) => {
             if (line.get(k) === undefined) {
-                line.set(k, target.get(k) as Value);
+                line = KeyValueMap.set(line, k, target.get(k) as Value);
             }
         });
+
+        this.result[this.result.length - 1] = line;
 
         // deepcopy
         const newHistory: KeyValueMap[] = [];
