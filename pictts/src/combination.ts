@@ -44,8 +44,8 @@ function iAllCombinationsByMultipleArray(
         result.push(
             // temp lost key information so rebuild map
             tmp.reduce((acc, v, i) => {
-                return acc.set(keys[i], v);
-            }, new KeyValueMap())
+                return KeyValueMap.set(acc, keys[i], v);
+            }, KeyValueMap.empty())
         );
         return;
     }

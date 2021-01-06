@@ -86,13 +86,7 @@ export class PictResult {
         });
 
         this.result[this.result.length - 1] = line;
-
-        // deepcopy
-        const newHistory: KeyValueMap[] = [];
-        this.result.forEach((element) => {
-            newHistory.push(new KeyValueMap(element));
-        });
-        this.resultHistory.push(newHistory);
+        this.resultHistory.push(Array.from(this.result));
     }
 
     nowIsFull(): boolean {
@@ -111,7 +105,7 @@ export class PictResult {
 
     nowLine(): KeyValueMap {
         if (this.nowIsFull()) {
-            this.result.push(new KeyValueMap());
+            this.result.push(KeyValueMap.empty());
         }
 
         return this.result[this.result.length - 1];
@@ -139,7 +133,7 @@ export class PictResult {
             for (let j = i + 1; j < this.result.length; j++) {
                 const r2 = this.result[j];
                 if (this.equalsMap(r1, r2)) {
-                    this.result[j] = new KeyValueMap();
+                    this.result[j] = KeyValueMap.empty();
                 }
             }
         }

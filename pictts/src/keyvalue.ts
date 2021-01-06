@@ -58,6 +58,10 @@ export class KeyValueMap extends Map<Key, Value> {
         return map;
     }
 
+    static empty(): KeyValueMap {
+        return this.fromCache(new KeyValueMap());
+    }
+
     static of(key: Key, value: Value): KeyValueMap {
         const v = new KeyValueMap().set(key, value);
         return this.fromCache(v);
