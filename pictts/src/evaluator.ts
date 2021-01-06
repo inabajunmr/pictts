@@ -215,7 +215,7 @@ export class Pict {
                 revertTargetCombinations.markAsImpossible(line);
             }
 
-            return [new KeyValueMap(), false];
+            return [KeyValueMap.empty(), false];
         }
 
         const nextSlot = this.random.randomElement(suitables);
@@ -253,10 +253,10 @@ export class Pict {
 
         // filtering by constraints
         const constraintsFiltered = valueMatched.filter((s) => {
-            const merge = new KeyValueMap(s);
+            let merge = s;
 
             Array.from(line).forEach((k) => {
-                merge.set(k[0], k[1]);
+                merge = KeyValueMap.set(merge, k[0], k[1]);
             });
             return matchAllConstraints(this.constraints, merge);
         });
