@@ -104,7 +104,6 @@ test('benchmark3', () => {
     }
     console.log('benchmark3');
     console.log(`time:${performance.now() - start}`);
-
     console.log(
         `
 min:${min}
