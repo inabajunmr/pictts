@@ -751,40 +751,6 @@ test('comment', () => {
     }
 });
 
-test('benchmark', () => {
-    const sut = new P.Parser(
-        `
-        Type:           Primary, Logical, Single, Span, Stripe, Mirror, RAID-5
-        Size:           10, 100, 500, 1000, 5000, 10000, 40000
-        Format method:  quick, slow
-        File system:    FAT, FAT32, NTFS
-        Cluster size:   512, 1024, 2048, 4096, 8192, 16384, 32768, 65536
-        Compression:    on, off
-`
-    ).parse();
-    let min = 100000000;
-    let max = 0;
-    let count = 0;
-    for (let index = 0; index < 200; index++) {
-        const actual = sut.testCases();
-        if (min > actual.result.length) {
-            min = actual.result.length;
-        }
-        if (max < actual.result.length) {
-            max = actual.result.length;
-        }
-        count += actual.result.length;
-    }
-
-    console.log(
-        `
-min:${min}
-max:${max}
-${count / 200}`
-    );
-    expect(count / 200).toBeLessThan(68);
-});
-
 function assertContains(target: KeyValueMap, result: KeyValueMap[]): boolean {
     return (
         result.filter((r) => {

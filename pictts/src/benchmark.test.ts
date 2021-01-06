@@ -111,5 +111,5 @@ min:${min}
 max:${max}
 ${count / 10}`
     );
-    expect(count / 10).toBeLessThan(400);
+    expect(count / 10).toBeLessThan(1200);
 });
