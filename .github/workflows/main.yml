@@ -22,3 +22,9 @@ jobs:
               working-directory: ./pictts
               env:
                   CI: true
+            - run: node --prof node_modules/.bin/jest -- benchmark.test.ts
+              working-directory: ./pictts
+            - run: ls -la isolate* | sort -r -k 5 -h | head -1 | awk '{print $9}' | xargs node --prof-process > processed.txt
+              working-directory: ./pictts
+            - run: cat processed.txt
+              working-directory: ./pictts
