@@ -1,3 +1,5 @@
+import { combinationsBySingleArray } from './combination';
+
 export class Key {
     key: string;
     static cache = new Map<string, Key>();
@@ -88,6 +90,20 @@ export class KeyValueMap extends Map<Key, Value> {
                 }
             })
         );
+    }
+
+    allCombinations(order: number): KeyValueMap[] {
+        // TODO test
+        const keys = Array.from(this.keys());
+        const b = combinationsBySingleArray(keys, order).reduce((acc, kc) => {
+            const aa = kc.reduce((acc, k) => {
+                return KeyValueMap.set(acc, k, this.get(k) as Value);
+            }, KeyValueMap.empty());
+            acc.push(aa);
+            return acc;
+        }, [] as KeyValueMap[]);
+
+        return b;
     }
 
     /**

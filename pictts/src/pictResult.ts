@@ -13,7 +13,13 @@ export class PictResult {
     // put value history
     putValuesHistory: KeyValueMap[] = [];
 
+    covered: Set<KeyValueMap> = new Set();
+
+    order: number;
+
     // TODO putValuesのSetをもっておいて、containsで使うとどうか
+    // 駄目 2組だけではない
+    // 次のラインを作るタイミングで、そのラインに含まれる組み合わせを全部setにいれる？
     // KeyValueはImmutableかつインスタンス使い回せるようにして==で比較できるようにする
     // TODO revertがうまく出来ない
     // TODO 同一line内でのcontainsは不要なので、lineが確定するまでキャッシュしといてlineが確定したらSetにいれる？
@@ -24,8 +30,9 @@ export class PictResult {
     impossibleSlots: KeyValueMap[] = [];
     allSlots: KeyValueMap[] = [];
 
-    constructor(keys: Key[]) {
+    constructor(keys: Key[], order: number) {
         this.keys = keys;
+        this.order = order;
     }
 
     setSlots(combinations: Combinations[]): void {
@@ -85,6 +92,12 @@ export class PictResult {
             }
         });
 
+        if (line.size === this.keys.length) {
+            line.allCombinations(this.order).forEach((element) => {
+                this.covered.add(element); // TTODO
+            });
+        }
+
         this.result[this.result.length - 1] = line;
         this.resultHistory.push(Array.from(this.result));
     }
@@ -105,6 +118,7 @@ export class PictResult {
 
     nowLine(): KeyValueMap {
         if (this.nowIsFull()) {
+            // TODO nowLineに含まれる組み合わせを全部coveredにマーク？
             this.result.push(KeyValueMap.empty());
         }
 
@@ -112,18 +126,7 @@ export class PictResult {
     }
 
     contains(values: KeyValueMap): boolean {
-        const keys = Array.from(values.keys());
-        return (
-            this.result.filter((r) => {
-                let contains = true;
-                keys.filter((k) => {
-                    if (r.get(k) !== values.get(k)) {
-                        contains = false;
-                    }
-                });
-                return contains;
-            }).length !== 0
-        );
+        return this.covered.has(values);
     }
 
     clean(): PictResult {

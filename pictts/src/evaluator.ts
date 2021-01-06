@@ -82,7 +82,7 @@ export class Pict {
         allCombinations.forEach((c) => c.applyConstraints(this.constraints));
 
         // consume slots and assemble results
-        const result = new PictResult(keys);
+        const result = new PictResult(keys, this.factorCount);
         while (
             (this.allDone(allCombinations) && result.nowKey().length === 0) ===
             false
