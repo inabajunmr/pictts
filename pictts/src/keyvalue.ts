@@ -76,10 +76,6 @@ export class KeyValueMap extends Map<Key, Value> {
         return this.fromCache(v);
     }
 
-    set(key: Key, value: Value): this {
-        return super.set(key, value);
-    }
-
     cacheKey(): string {
         return JSON.stringify(
             Array.from(this).sort((a, b) => {
