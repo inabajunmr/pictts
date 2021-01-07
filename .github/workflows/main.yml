@@ -32,7 +32,7 @@ jobs:
         working-directory: ./pictts
       - run: cat processed.txt
         working-directory: ./pictts
-      - run: cat benchmark.txt
+      - run: sed -i -z 's/\n/\\n/g' benchmark.txt
         working-directory: ./pictts
       - name: Post benchmark result
         env:
