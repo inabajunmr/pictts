@@ -254,21 +254,21 @@ export class Pict {
                 return acc;
             }, true);
 
-            let merge = c;
-
             if (this.constraints.length === 0) {
                 return allMatched;
             }
 
-            Array.from(line).forEach((k) => {
-                merge = KeyValueMap.set(merge, k[0], k[1]);
-            });
+            // let merge = c;
 
-            return (
-                allMatched &&
-                matchAllConstraints(this.constraints, merge) &&
-                !this.contains(c, this.impossibleCombinations)
-            );
+            // Array.from(line).forEach((k) => {
+            //     merge = KeyValueMap.set(merge, k[0], k[1]);
+            // });
+
+            // return (
+            //     allMatched &&
+            //     matchAllConstraints(this.constraints, merge) &&
+            //     !this.contains(c, this.impossibleCombinations)
+            // );
         }) as KeyValueMap;
 
         if (valueMatched === undefined) {
