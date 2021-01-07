@@ -236,30 +236,6 @@ export class Pict {
         );
 
         // combinations values and lines values matched in a range of mutual keys
-        const valueMatched = combinations.filter((c) => {
-            const allMatched = mutualKeys.reduce((acc, k) => {
-                if (line.get(k) !== c.get(k)) {
-                    // if at least one value don't match, this combinations is invalid
-                    return false;
-                }
-                return acc;
-            }, true);
-            return allMatched;
-        });
-
-        if (this.constraints.length === 0) {
-            return valueMatched;
-        }
-
-        // filtering by constraints
-        const constraintsFiltered = valueMatched.filter((s) => {
-            let merge = s;
-
-            Array.from(line).forEach((k) => {
-                merge = KeyValueMap.set(merge, k[0], k[1]);
-            });
-            return matchAllConstraints(this.constraints, merge);
-        });
 
         // filtering by impossibles
         const contains = (target: KeyValueMap, maps: KeyValueMap[]) => {
@@ -269,8 +245,35 @@ export class Pict {
             return maps.filter((m) => m === target).length !== 0;
         };
 
-        return constraintsFiltered.filter((c) => {
-            return !contains(c, this.impossibleCombinations);
-        });
+        const valueMatched = combinations.find((c) => {
+            const allMatched = mutualKeys.reduce((acc, k) => {
+                if (line.get(k) !== c.get(k)) {
+                    // if at least one value don't match, this combinations is invalid
+                    return false;
+                }
+                return acc;
+            }, true);
+
+            let merge = c;
+
+            if (this.constraints.length === 0) {
+                return allMatched;
+            }
+
+            Array.from(line).forEach((k) => {
+                merge = KeyValueMap.set(merge, k[0], k[1]);
+            });
+
+            return (
+                allMatched &&
+                matchAllConstraints(this.constraints, merge) &&
+                !contains(c, this.impossibleCombinations)
+            );
+        }) as KeyValueMap;
+
+        if (valueMatched === undefined) {
+            return [];
+        }
+        return [valueMatched];
     }
 }
