@@ -225,6 +225,14 @@ export class Pict {
         return [nextSlot, fromAll];
     }
 
+    // filtering by impossibles
+    contains = (target: KeyValueMap, maps: KeyValueMap[]) => {
+        if (maps.length === 0) {
+            return false;
+        }
+        return maps.filter((m) => m === target).length !== 0;
+    };
+
     matchedSlot(combinations: KeyValueMap[], line: KeyValueMap): KeyValueMap[] {
         if (combinations.length === 0) {
             return [];
@@ -236,14 +244,6 @@ export class Pict {
         );
 
         // combinations values and lines values matched in a range of mutual keys
-
-        // filtering by impossibles
-        const contains = (target: KeyValueMap, maps: KeyValueMap[]) => {
-            if (maps.length === 0) {
-                return false;
-            }
-            return maps.filter((m) => m === target).length !== 0;
-        };
 
         const valueMatched = combinations.find((c) => {
             const allMatched = mutualKeys.reduce((acc, k) => {
@@ -267,7 +267,7 @@ export class Pict {
             return (
                 allMatched &&
                 matchAllConstraints(this.constraints, merge) &&
-                !contains(c, this.impossibleCombinations)
+                !this.contains(c, this.impossibleCombinations)
             );
         }) as KeyValueMap;
 
