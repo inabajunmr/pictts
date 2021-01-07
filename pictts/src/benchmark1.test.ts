@@ -29,14 +29,12 @@ test('benchmark1', () => {
     }
 
     const result = `
-----------------------
-  benchmark1(order=2)
-======================
+### benchmark1(order=2)
 time:${performance.now() - start}
 min:${min}
 max:${max}
 avg:${count / 200}
-----------------------`;
+`;
     console.log(result);
     fs.appendFileSync('benchmark.txt', result);
     expect(count / 200).toBeLessThan(68);
@@ -69,14 +67,12 @@ test('benchmark2', () => {
         count += actual.result.length;
     }
     const result = `
-----------------------
-  benchmark2(order=3)
-======================
+### benchmark2(order=3)
 time:${performance.now() - start}
 min:${min}
 max:${max}
 avg:${count / 10}
-----------------------`;
+`;
     console.log(result);
     fs.appendFileSync('benchmark.txt', result);
     expect(count / 10).toBeLessThan(400);
@@ -110,14 +106,11 @@ test('benchmark3', () => {
     }
 
     const result = `
-----------------------
-  benchmark3(order=4)
-======================
+### benchmark3(order=4)
 time:${performance.now() - start}
 min:${min}
 max:${max}
 avg:${count}
-----------------------
 `;
     console.log(result);
     fs.appendFileSync('benchmark.txt', result);
