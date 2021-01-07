@@ -235,20 +235,28 @@ export class Pict {
             line.has(k)
         );
 
+        const mutualMap = mutualKeys.reduce((acc, k) => {
+            return KeyValueMap.set(acc, k, line.get(k) as Value);
+        }, KeyValueMap.empty());
+
         // combinations values and lines values matched in a range of mutual keys
-        const valueMatched = combinations.filter((c) => {
-            const allMatched = mutualKeys.reduce((acc, k) => {
-                // TODO キーの全探索はいらない
-                // TODO ランダムに探索すれば全探索しないで1つマッチしたらおしまいでいい
-                // TODO constraintsのマッチは一度にやる
-                if (line.get(k) !== c.get(k)) {
-                    // if at least one value don't match, this combinations is invalid
-                    return false;
+
+        let valueMatched: KeyValueMap[] = [];
+        for (let index = 0; index < combinations.length; index++) {
+            // TODO randomize
+            const c = combinations[index];
+            let allMatched = true;
+            for (let j = 0; j < mutualKeys.length; j++) {
+                if (mutualMap.get(mutualKeys[j]) !== c.get(mutualKeys[j])) {
+                    allMatched = false;
+                    break;
                 }
-                return acc;
-            }, true);
-            return allMatched;
-        });
+            }
+            if (allMatched) {
+                valueMatched = [c];
+                break;
+            }
+        }
 
         if (this.constraints.length === 0) {
             return valueMatched;
