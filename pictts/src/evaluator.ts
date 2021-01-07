@@ -241,7 +241,20 @@ export class Pict {
 
         // combinations values and lines values matched in a range of mutual keys
 
+        const randomShift = <E>(array: E[]): [E | undefined, E[]] => {
+            //
+            return [undefined, []];
+        };
+
         let valueMatched: KeyValueMap[] = [];
+        // filtering by impossibles
+        const contains = (target: KeyValueMap, maps: KeyValueMap[]) => {
+            // TODO hash?
+            if (maps.length === 0) {
+                return false;
+            }
+            return maps.filter((m) => m === target).length !== 0;
+        };
         for (let index = 0; index < combinations.length; index++) {
             // TODO randomize
             const c = combinations[index];
@@ -252,36 +265,30 @@ export class Pict {
                     break;
                 }
             }
-            if (allMatched) {
+
+            if (!allMatched) {
+                continue;
+            }
+
+            if (contains(c, this.impossibleCombinations)) {
+                continue;
+            }
+
+            if (this.constraints.length === 0) {
+                valueMatched = [c];
+                break;
+            }
+
+            let merge = c;
+            Array.from(line).forEach((k) => {
+                merge = KeyValueMap.set(merge, k[0], k[1]);
+            });
+            if (matchAllConstraints(this.constraints, merge)) {
                 valueMatched = [c];
                 break;
             }
         }
 
-        if (this.constraints.length === 0) {
-            return valueMatched;
-        }
-
-        // filtering by constraints
-        const constraintsFiltered = valueMatched.filter((s) => {
-            let merge = s;
-
-            Array.from(line).forEach((k) => {
-                merge = KeyValueMap.set(merge, k[0], k[1]);
-            });
-            return matchAllConstraints(this.constraints, merge);
-        });
-
-        // filtering by impossibles
-        const contains = (target: KeyValueMap, maps: KeyValueMap[]) => {
-            if (maps.length === 0) {
-                return false;
-            }
-            return maps.filter((m) => m === target).length !== 0;
-        };
-
-        return constraintsFiltered.filter((c) => {
-            return !contains(c, this.impossibleCombinations);
-        });
+        return valueMatched;
     }
 }
