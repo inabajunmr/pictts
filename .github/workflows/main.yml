@@ -1,6 +1,8 @@
 name: CI
 
-on: [push]
+on:
+  pull_request:
+    types: synchronize
 
 jobs:
   build:
@@ -31,4 +33,14 @@ jobs:
       - run: cat processed.txt
         working-directory: ./pictts
       - run: cat benchmark.txt
+        working-directory: ./pictts
+      - name: Post benchmark result
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          URL: ${{ github.event.pull_request.comments_url }}
+        run: |
+          curl -X POST \
+              -H "Authorization: token ${GITHUB_TOKEN}" \
+              -d "{\"body\": \"$(cat benchmark.txt)\"}" \
+              ${{ github.event.pull_request.comments_url }}
         working-directory: ./pictts
