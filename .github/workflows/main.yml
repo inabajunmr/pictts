@@ -31,6 +31,7 @@ jobs:
       - run: cat processed.txt
         working-directory: ./pictts
 
+      - run: echo ${{ github.event.pull_request.comments_url }}
       - name: Post benchmark result
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -39,5 +40,5 @@ jobs:
           curl -X POST \
               -H "Authorization: token ${GITHUB_TOKEN}" \
               -d "{\"body\": \"$(cat benchmark.txt)\"}" \
-              ${URL}
+              ${{ github.event.pull_request.comments_url }}
         working-directory: ./pictts
