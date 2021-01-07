@@ -1,6 +1,6 @@
 import { Parser } from './parser/parser';
 
-test('benchmark4', () => {
+test('benchmark with prof', () => {
     const sut = new Parser(
         `
         Type:           Primary, Logical, Single, Span, Stripe, Mirror, RAID-5
@@ -26,13 +26,13 @@ test('benchmark4', () => {
         }
         count += actual.result.length;
     }
-    console.log('benchmark5');
-    console.log(`time:${performance.now() - start}`);
-    console.log(
-        `
+    const result = `
+### benchmarkp
+time:${performance.now() - start}
 min:${min}
 max:${max}
-${count / 10}`
-    );
-    expect(count / 10).toBeLessThan(1200);
+avg:${count}
+`;
+    console.log(result);
+    expect(count).toBeLessThan(2620);
 });

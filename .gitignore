@@ -108,3 +108,6 @@ dist
 
 # prof
 processed.txt
+
+# benchmark
+benchmark.txt

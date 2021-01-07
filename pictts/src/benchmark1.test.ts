@@ -1,4 +1,5 @@
 import { Parser } from './parser/parser';
+import fs from 'fs';
 
 test('benchmark1', () => {
     const sut = new Parser(
@@ -26,15 +27,16 @@ test('benchmark1', () => {
         }
         count += actual.result.length;
     }
-    console.log('benchmark1');
-    console.log(`time:${performance.now() - start}`);
 
-    console.log(
-        `
+    const result = `
+### benchmark1(order=2)
+time:${performance.now() - start}
 min:${min}
 max:${max}
-${count / 200}`
-    );
+avg:${count / 200}
+`;
+    console.log(result);
+    fs.appendFileSync('benchmark.txt', result);
     expect(count / 200).toBeLessThan(68);
 });
 
@@ -64,15 +66,15 @@ test('benchmark2', () => {
         }
         count += actual.result.length;
     }
-    console.log('benchmark2');
-    console.log(`time:${performance.now() - start}`);
-
-    console.log(
-        `
+    const result = `
+### benchmark2(order=3)
+time:${performance.now() - start}
 min:${min}
 max:${max}
-${count / 10}`
-    );
+avg:${count / 10}
+`;
+    console.log(result);
+    fs.appendFileSync('benchmark.txt', result);
     expect(count / 10).toBeLessThan(400);
 });
 
@@ -102,13 +104,15 @@ test('benchmark3', () => {
         }
         count += actual.result.length;
     }
-    console.log('benchmark3');
-    console.log(`time:${performance.now() - start}`);
-    console.log(
-        `
+
+    const result = `
+### benchmark3(order=4)
+time:${performance.now() - start}
 min:${min}
 max:${max}
-${count / 10}`
-    );
-    expect(count / 10).toBeLessThan(1200);
+avg:${count}
+`;
+    console.log(result);
+    fs.appendFileSync('benchmark.txt', result);
+    expect(count).toBeLessThan(1250);
 });
