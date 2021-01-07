@@ -40,3 +40,4 @@ jobs:
               -H "Authorization: token ${GITHUB_TOKEN}" \
               -d "{\"body\": \"$(cat benchmark.txt)\"}" \
               ${URL}
+        working-directory: ./pictts
