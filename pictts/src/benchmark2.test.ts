@@ -15,7 +15,6 @@ test('benchmark with prof', () => {
     let min = 100000000;
     let max = 0;
     let count = 0;
-    const start = performance.now();
     for (let index = 0; index < 1; index++) {
         const actual = sut.testCases();
         if (min > actual.result.length) {
@@ -26,13 +25,6 @@ test('benchmark with prof', () => {
         }
         count += actual.result.length;
     }
-    const result = `
-### benchmarkp
-time:${performance.now() - start}
-min:${min}
-max:${max}
-avg:${count}
-`;
-    console.log(result);
+
     expect(count).toBeLessThan(2620);
 });

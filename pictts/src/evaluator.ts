@@ -93,6 +93,7 @@ export class Pict {
                 allCombinations,
                 [exceptKeys],
                 result.nowLine(),
+                false,
                 result
             );
 
@@ -133,7 +134,7 @@ export class Pict {
     allDone(c: C.Combinations[]): boolean {
         return (
             c.filter((c) => {
-                return c.done;
+                return c.isDone();
             }).length === c.length
         );
     }
@@ -156,6 +157,7 @@ export class Pict {
         allCombinations: C.Combinations[],
         usedKeyCombinations: Key[][],
         line: KeyValueMap,
+        all: boolean,
         result: PictResult
     ): [KeyValueMap, boolean] {
         // choice next keys combination
@@ -168,24 +170,20 @@ export class Pict {
         if (line.size === 0) {
             // next line equals combinations.workingCombinations[0]
             // workingCombinations already omitted constraints violation
-            const result = this.random.randomElement(
-                combinations.workingCombinations
-            );
-            combinations.removeFromWorking(result);
+            const result = this.random.randomElement(combinations.uncovered);
+            combinations.removeFromUncovered(result);
+            combinations.markAsUsed(result);
             return [result, false];
         }
 
         // from working
-        let suitables = this.matchedSlot(
-            combinations.workingCombinations,
-            line
-        );
+        let suitables = this.matchedSlot(combinations.uncovered, line);
 
         let fromAll = false;
         if (suitables.length === 0) {
             // if all working aren't matched, from all
             fromAll = true;
-            suitables = this.matchedSlot(combinations.validCombinations, line);
+            suitables = this.matchedSlot(combinations.covered, line);
         }
 
         if (suitables.length === 0) {
@@ -195,6 +193,7 @@ export class Pict {
                     allCombinations,
                     usedKeyCombinations,
                     line,
+                    true,
                     result
                 );
             }
@@ -213,15 +212,17 @@ export class Pict {
                 // minimum slot doesn't revert because it's impossible
                 // mark as impossible
                 revertTargetCombinations.markAsImpossible(line);
+            } else if (!all) {
+                revertTargetCombinations.removeFromCovered(line);
+                revertTargetCombinations.uncovered.push(line);
             }
-
             return [KeyValueMap.empty(), false];
         }
 
         const nextSlot = this.random.randomElement(suitables);
 
         // mark as used
-        combinations.removeFromWorking(nextSlot);
+        combinations.markAsUsed(nextSlot);
         return [nextSlot, fromAll];
     }
 

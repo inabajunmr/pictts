@@ -18,28 +18,13 @@ export class PictResult {
     order: number;
 
     // for assertion
-    validSlots: KeyValueMap[] = [];
-    impossibleSlots: KeyValueMap[] = [];
-    allSlots: KeyValueMap[] = [];
+    coveredSlot: Set<KeyValueMap> = new Set();
+    excludedSlot: Set<KeyValueMap> = new Set();
+    allSlot: Set<KeyValueMap> = new Set();
 
     constructor(keys: Key[], order: number) {
         this.keys = keys;
         this.order = order;
-    }
-
-    setSlots(combinations: Combinations[]): void {
-        combinations.forEach((c) => {
-            c.validCombinations.forEach((ic) => {
-                this.validSlots.push(ic);
-            });
-
-            c.impossibleCombinations.forEach((ic) => {
-                this.impossibleSlots.push(ic);
-            });
-            c.allCombinations.forEach((ic) => {
-                this.allSlots.push(ic);
-            });
-        });
     }
 
     revert(): KeyValueMap {
@@ -148,14 +133,28 @@ export class PictResult {
         );
     }
 
+    setSlots(combinations: Combinations[]): void {
+        combinations.forEach((c) => {
+            c.covered.forEach((ic) => {
+                this.coveredSlot.add(ic);
+            });
+
+            c.excluded.forEach((ic) => {
+                this.excludedSlot.add(ic);
+            });
+            c.all.forEach((ic) => {
+                this.allSlot.add(ic);
+            });
+        });
+    }
+
     assert(): void {
         if (
-            this.allSlots.length !==
-            this.impossibleSlots.length + this.validSlots.length
+            this.allSlot.size !==
+            this.excludedSlot.size + this.coveredSlot.size
         ) {
             throw new AssertionError('Something wrong.');
         }
-
         const contains = (
             target: KeyValueMap,
             maps: KeyValueMap[]
@@ -173,29 +172,29 @@ export class PictResult {
                 }).length !== 0
             );
         };
-
-        // assert all slots contains all impossibleSlots and all validSlots
+        // assert all slots contains all covered and all excluded
         if (
-            this.allSlots
+            Array.from(this.allSlot)
                 .filter((s) => {
-                    return contains(s, this.impossibleSlots);
+                    return contains(s, Array.from(this.excludedSlot));
                 })
                 .filter((s) => {
-                    return contains(s, this.validSlots);
+                    return contains(s, Array.from(this.coveredSlot));
                 }).length !== 0
         ) {
             throw new AssertionError('Something wrong.');
         }
 
-        this.impossibleSlots.forEach((s) => {
+        // assert result doesn't have exclude
+        this.excludedSlot.forEach((s) => {
             if (this.contains(s)) {
                 throw new AssertionError(
                     `Contains impossible slot:${s.toString()}.`
                 );
             }
         });
-
-        this.validSlots.forEach((s) => {
+        // assert result has all covered
+        this.coveredSlot.forEach((s) => {
             if (!this.contains(s)) {
                 throw new AssertionError(
                     `Expected slot:${s.toString()} is not found.`
