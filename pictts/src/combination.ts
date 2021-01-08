@@ -37,6 +37,8 @@ export class Combinations {
 
     markAsImpossible(target: KeyValueMap): void {
         this.removeFromUncovered(target);
+        this.removeFromCovered(target);
+
         this.excluded.push(target);
         if (this.uncovered.length == 0) {
             this.done = true;
@@ -52,6 +54,14 @@ export class Combinations {
         if (this.uncovered.length === 0) {
             this.done = true;
         }
+    }
+
+    removeFromCovered(target: KeyValueMap): void {
+        const cache = this.covered.filter((c) => {
+            return !this.equalsAllElements(c, target);
+        });
+
+        this.covered = cache;
     }
 
     markAsUsed(target: KeyValueMap): void {

@@ -18,28 +18,13 @@ export class PictResult {
     order: number;
 
     // for assertion
-    validSlots: KeyValueMap[] = [];
-    impossibleSlots: KeyValueMap[] = [];
-    allSlots: KeyValueMap[] = [];
+    coveredSlot: Set<KeyValueMap> = new Set();
+    excludedSlot: Set<KeyValueMap> = new Set();
+    allSlot: Set<KeyValueMap> = new Set();
 
     constructor(keys: Key[], order: number) {
         this.keys = keys;
         this.order = order;
-    }
-
-    setSlots(combinations: Combinations[]): void {
-        combinations.forEach((c) => {
-            c.covered.forEach((ic) => {
-                this.validSlots.push(ic);
-            });
-
-            c.excluded.forEach((ic) => {
-                this.impossibleSlots.push(ic);
-            });
-            c.uncovered.forEach((ic) => {
-                this.allSlots.push(ic);
-            });
-        });
     }
 
     revert(): KeyValueMap {
@@ -148,56 +133,74 @@ export class PictResult {
         );
     }
 
+    setSlots(combinations: Combinations[]): void {
+        combinations.forEach((c) => {
+            c.covered.forEach((ic) => {
+                this.coveredSlot.add(ic);
+            });
+
+            c.excluded.forEach((ic) => {
+                this.excludedSlot.add(ic);
+            });
+            c.all.forEach((ic) => {
+                this.allSlot.add(ic);
+            });
+        });
+    }
+
     assert(): void {
-        // if (
-        //     this.allSlots.length !==
-        //     this.impossibleSlots.length + this.validSlots.length
-        // ) {
-        //     throw new AssertionError('Something wrong.');
-        // }
-        // const contains = (
-        //     target: KeyValueMap,
-        //     maps: KeyValueMap[]
-        // ): boolean => {
-        //     const keys = Array.from(target.keys());
-        //     return (
-        //         maps.filter((r) => {
-        //             let contains = true;
-        //             keys.filter((k) => {
-        //                 if (r.get(k) !== target.get(k)) {
-        //                     contains = false;
-        //                 }
-        //             });
-        //             return contains;
-        //         }).length !== 0
-        //     );
-        // };
-        // // assert all slots contains all impossibleSlots and all validSlots
-        // if (
-        //     this.allSlots
-        //         .filter((s) => {
-        //             return contains(s, this.impossibleSlots);
-        //         })
-        //         .filter((s) => {
-        //             return contains(s, this.validSlots);
-        //         }).length !== 0
-        // ) {
-        //     throw new AssertionError('Something wrong.');
-        // }
-        // this.impossibleSlots.forEach((s) => {
-        //     if (this.contains(s)) {
-        //         throw new AssertionError(
-        //             `Contains impossible slot:${s.toString()}.`
-        //         );
-        //     }
-        // });
-        // this.validSlots.forEach((s) => {
-        //     if (!this.contains(s)) {
-        //         throw new AssertionError(
-        //             `Expected slot:${s.toString()} is not found.`
-        //         );
-        //     }
-        // });
+        if (
+            this.allSlot.size !==
+            this.excludedSlot.size + this.coveredSlot.size
+        ) {
+            throw new AssertionError('Something wrong.');
+        }
+        const contains = (
+            target: KeyValueMap,
+            maps: KeyValueMap[]
+        ): boolean => {
+            const keys = Array.from(target.keys());
+            return (
+                maps.filter((r) => {
+                    let contains = true;
+                    keys.filter((k) => {
+                        if (r.get(k) !== target.get(k)) {
+                            contains = false;
+                        }
+                    });
+                    return contains;
+                }).length !== 0
+            );
+        };
+        // assert all slots contains all covered and all excluded
+        if (
+            Array.from(this.allSlot)
+                .filter((s) => {
+                    return contains(s, Array.from(this.excludedSlot));
+                })
+                .filter((s) => {
+                    return contains(s, Array.from(this.coveredSlot));
+                }).length !== 0
+        ) {
+            throw new AssertionError('Something wrong.');
+        }
+
+        // assert result doesn't have exclude
+        this.excludedSlot.forEach((s) => {
+            if (this.contains(s)) {
+                throw new AssertionError(
+                    `Contains impossible slot:${s.toString()}.`
+                );
+            }
+        });
+        // assert result has all covered
+        this.coveredSlot.forEach((s) => {
+            if (!this.contains(s)) {
+                throw new AssertionError(
+                    `Expected slot:${s.toString()} is not found.`
+                );
+            }
+        });
     }
 
     toString(delimiter = '\t'): string {

@@ -91,9 +91,11 @@ export class Pict {
             // get next slot from longest combinations
             const exceptKeys = result.nowKey(); // if longest combinations is the same as result, it will be skipped.
             const [suitable, fromAll] = this.nextSlot(
+                // TODO uncovered1なのにdoneのケースが在る
                 allCombinations,
                 [exceptKeys],
                 result.nowLine(),
+                false,
                 result
             );
 
@@ -113,8 +115,8 @@ export class Pict {
         result.clean();
 
         // assertion
-        // result.setSlots(allCombinations);
-        // result.assert();
+        result.setSlots(allCombinations);
+        result.assert();
 
         return result;
     }
@@ -157,6 +159,7 @@ export class Pict {
         allCombinations: C.Combinations[],
         usedKeyCombinations: Key[][],
         line: KeyValueMap,
+        all: boolean,
         result: PictResult
     ): [KeyValueMap, boolean] {
         // choice next keys combination
@@ -192,6 +195,7 @@ export class Pict {
                     allCombinations,
                     usedKeyCombinations,
                     line,
+                    true,
                     result
                 );
             }
@@ -210,8 +214,12 @@ export class Pict {
                 // minimum slot doesn't revert because it's impossible
                 // mark as impossible
                 revertTargetCombinations.markAsImpossible(line);
+            } else if (!all) {
+                revertTargetCombinations.removeFromCovered(line);
+                revertTargetCombinations.uncovered.push(line);
+                revertTargetCombinations.done =
+                    revertTargetCombinations.uncovered.length === 0;
             }
-
             return [KeyValueMap.empty(), false];
         }
 
