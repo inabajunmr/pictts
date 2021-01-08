@@ -2,7 +2,8 @@ import { combinationsBySingleArray } from '../combination';
 import { Key } from './key';
 import { Value } from './value';
 
-export class KeyValueMap extends Map<Key, Value> {
+export class KeyValueMap {
+    private source: Map<Key, Value> = new Map();
     static cache = new Map<string, KeyValueMap>();
 
     private static fromCache(map: KeyValueMap) {
@@ -20,19 +21,41 @@ export class KeyValueMap extends Map<Key, Value> {
     }
 
     static of(key: Key, value: Value): KeyValueMap {
-        const v = new KeyValueMap().set(key, value);
-        return this.fromCache(v);
+        const map = new KeyValueMap();
+        map.source.set(key, value);
+        return this.fromCache(map);
     }
 
     static set(map: KeyValueMap, key: Key, value: Value): KeyValueMap {
-        const v = new KeyValueMap(map);
-        v.set(key, value);
-        return this.fromCache(v);
+        const kv = new KeyValueMap();
+        kv.source = new Map(map.source);
+        kv.source.set(key, value);
+        return this.fromCache(kv);
+    }
+
+    entries(): [Key, Value][] {
+        return Array.from(this.source);
+    }
+
+    size(): number {
+        return this.source.size;
+    }
+
+    get(key: Key): Value | undefined {
+        return this.source.get(key);
+    }
+
+    has(key: Key): boolean {
+        return this.source.has(key);
+    }
+
+    keys(): IterableIterator<Key> {
+        return this.source.keys();
     }
 
     cacheKey(): string {
         return JSON.stringify(
-            Array.from(this).sort((a, b) => {
+            Array.from(this.source).sort((a, b) => {
                 if (a[0].key > b[0].key) {
                     return 1;
                 } else {
@@ -50,10 +73,10 @@ export class KeyValueMap extends Map<Key, Value> {
      * @param order
      */
     allCombinations(order: number): KeyValueMap[] {
-        const keys = Array.from(this.keys());
+        const keys = Array.from(this.source.keys());
         const b = combinationsBySingleArray(keys, order).reduce((acc, kc) => {
             const aa = kc.reduce((acc, k) => {
-                return KeyValueMap.set(acc, k, this.get(k) as Value);
+                return KeyValueMap.set(acc, k, this.source.get(k) as Value);
             }, KeyValueMap.empty());
             acc.push(aa);
             return acc;
@@ -71,14 +94,14 @@ export class KeyValueMap extends Map<Key, Value> {
      * @param m
      */
     contains(m: KeyValueMap): boolean {
-        const result = Array.from(this.entries()).reduce((acc, kv) => {
-            return acc && kv[1] === m.get(kv[0]);
+        const result = Array.from(this.source.entries()).reduce((acc, kv) => {
+            return acc && kv[1] === m.source.get(kv[0]);
         }, true);
         return result;
     }
 
     toString(): string {
-        return Array.from(this.entries())
+        return Array.from(this.source.entries())
             .map((kv) => {
                 return `${kv[0].key}:${kv[1].value}`;
             })

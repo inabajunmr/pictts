@@ -99,7 +99,7 @@ export class Pict {
                 result
             );
 
-            if (suitable.size == 0) {
+            if (suitable.size() == 0) {
                 continue;
             }
 
@@ -169,7 +169,7 @@ export class Pict {
         );
         usedKeyCombinations.push(combinations.keys);
 
-        if (line.size === 0) {
+        if (line.size() === 0) {
             // next line equals combinations.workingCombinations[0]
             // workingCombinations already omitted constraints violation
             const result = this.random.randomElement(combinations.uncovered);
@@ -210,7 +210,7 @@ export class Pict {
                 return containsKey1InKey2(c.keys, Array.from(revert.keys()));
             })[0];
 
-            if (this.factorCount === line.size) {
+            if (this.factorCount === line.size()) {
                 // minimum slot doesn't revert because it's impossible
                 // mark as impossible
                 revertTargetCombinations.markAsImpossible(line);
@@ -258,7 +258,7 @@ export class Pict {
         const constraintsFiltered = valueMatched.filter((s) => {
             let merge = s;
 
-            Array.from(line).forEach((k) => {
+            line.entries().forEach((k) => {
                 merge = KeyValueMap.set(merge, k[0], k[1]);
             });
             return matchAllConstraints(this.constraints, merge);

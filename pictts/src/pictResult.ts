@@ -71,7 +71,7 @@ export class PictResult {
             }
         });
 
-        if (line.size === this.keys.length) {
+        if (line.size() === this.keys.length) {
             line.allCombinations(this.order).forEach((element) => {
                 this.covered.add(element);
             });
@@ -88,7 +88,7 @@ export class PictResult {
             return true;
         }
 
-        return line.size === this.keys.length;
+        return line.size() === this.keys.length;
     }
 
     nowKey(): Key[] {
@@ -119,7 +119,7 @@ export class PictResult {
             }
         }
         // clean no element map
-        this.result = this.result.filter((v) => v.size !== 0);
+        this.result = this.result.filter((v) => v.size() !== 0);
 
         return this;
     }
