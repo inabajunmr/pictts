@@ -36,25 +36,14 @@ export class Combinations {
     }
 
     markAsImpossible(target: KeyValueMap): void {
-        this.removeFromWorking(target);
+        this.removeFromUncovered(target);
         this.excluded.push(target);
-        const cache1 = this.uncovered.filter((c) => {
-            return !this.equalsAllElements(c, target);
-        });
-
-        this.uncovered = cache1;
         if (this.uncovered.length == 0) {
             this.done = true;
         }
-
-        const cache2 = this.covered.filter((c) => {
-            return !this.equalsAllElements(c, target);
-        });
-
-        this.covered = cache2;
     }
 
-    removeFromWorking(target: KeyValueMap): void {
+    removeFromUncovered(target: KeyValueMap): void {
         const cache = this.uncovered.filter((c) => {
             return !this.equalsAllElements(c, target);
         });
@@ -66,16 +55,8 @@ export class Combinations {
     }
 
     markAsUsed(target: KeyValueMap): void {
-        this.removeFromWorking(target);
+        this.removeFromUncovered(target);
         this.covered.push(target);
-    }
-
-    removeFromValid(target: KeyValueMap): void {
-        const cache = this.covered.filter((c) => {
-            return !this.equalsAllElements(c, target);
-        });
-
-        this.covered = cache;
     }
 
     private equalsAllElements(
