@@ -170,7 +170,7 @@ export class Pict {
             // next line equals combinations.workingCombinations[0]
             // workingCombinations already omitted constraints violation
             const result = this.random.randomElement(combinations.uncovered);
-            combinations.removeFromWorking(result);
+            combinations.removeFromUncovered(result);
             combinations.markAsUsed(result);
             return [result, false];
         }
@@ -220,7 +220,7 @@ export class Pict {
         // mark as used
         // TODO workingからvalidへ
         // TODO このメソッドの中でやるとimpossibleがバグる
-        combinations.removeFromWorking(nextSlot);
+        combinations.removeFromUncovered(nextSlot);
         combinations.markAsUsed(nextSlot);
         return [nextSlot, fromAll];
     }
