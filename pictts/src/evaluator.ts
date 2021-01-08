@@ -173,7 +173,6 @@ export class Pict {
             // next line equals combinations.workingCombinations[0]
             // workingCombinations already omitted constraints violation
             const result = this.random.randomElement(combinations.uncovered);
-            combinations.removeFromUncovered(result);
             combinations.markAsUsed(result);
             return [result, false];
         }
