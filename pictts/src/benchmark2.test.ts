@@ -15,7 +15,6 @@ test('benchmark with prof', () => {
     let min = 100000000;
     let max = 0;
     let count = 0;
-    const start = performance.now();
     for (let index = 0; index < 1; index++) {
         const actual = sut.testCases();
         if (min > actual.result.length) {

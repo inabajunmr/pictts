@@ -153,5 +153,5 @@ avg:${count}
 `;
     console.log(result);
     fs.appendFileSync('benchmark.txt', result);
-    expect(count).toBeLessThan(1250);
+    expect(count).toBeLessThan(2600);
 });
