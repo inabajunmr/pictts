@@ -26,13 +26,6 @@ test('benchmark with prof', () => {
         }
         count += actual.result.length;
     }
-    const result = `
-### benchmarkp
-time:${performance.now() - start}
-min:${min}
-max:${max}
-avg:${count}
-`;
-    console.log(result);
+
     expect(count).toBeLessThan(2620);
 });
