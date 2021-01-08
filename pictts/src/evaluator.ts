@@ -136,7 +136,7 @@ export class Pict {
     allDone(c: C.Combinations[]): boolean {
         return (
             c.filter((c) => {
-                return c.done;
+                return c.isDone();
             }).length === c.length
         );
     }
@@ -217,8 +217,6 @@ export class Pict {
             } else if (!all) {
                 revertTargetCombinations.removeFromCovered(line);
                 revertTargetCombinations.uncovered.push(line);
-                revertTargetCombinations.done =
-                    revertTargetCombinations.uncovered.length === 0;
             }
             return [KeyValueMap.empty(), false];
         }

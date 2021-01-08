@@ -1,5 +1,5 @@
 import { Constraint } from './constraint/constraint';
-import { Key, KeyValueMap, map, Value } from './keyvalue';
+import { Key, KeyValueMap, Value } from './keyvalue';
 import { matchAllConstraints } from './constraint/constraint';
 
 export class Combinations {
@@ -9,10 +9,12 @@ export class Combinations {
     excluded: KeyValueMap[] = [];
     all: KeyValueMap[] = [];
 
-    // all combinations already applied, true
-    done = false;
     constructor(keys: Key[]) {
         this.keys = keys;
+    }
+
+    isDone(): boolean {
+        return this.uncovered.length === 0;
     }
 
     applyConstraints(constraints: Constraint[]): void {
@@ -26,9 +28,6 @@ export class Combinations {
 
         this.uncovered = matched;
         this.excluded = impossibles;
-        if (this.uncovered.length === 0) {
-            this.done = true;
-        }
     }
 
     push(combination: KeyValueMap): void {
@@ -40,9 +39,6 @@ export class Combinations {
         this.removeFromCovered(target);
 
         this.excluded.push(target);
-        if (this.uncovered.length == 0) {
-            this.done = true;
-        }
     }
 
     removeFromUncovered(target: KeyValueMap): void {
@@ -51,9 +47,6 @@ export class Combinations {
         });
 
         this.uncovered = cache;
-        if (this.uncovered.length === 0) {
-            this.done = true;
-        }
     }
 
     removeFromCovered(target: KeyValueMap): void {
