@@ -1,4 +1,4 @@
-import { KeyValueMap } from '../keyvalue';
+import { KeyValueMap } from '../keyvalue/keyvalue';
 import { ForceBoolean } from './forceBool';
 
 export abstract class Clause {

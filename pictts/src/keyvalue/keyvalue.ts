@@ -1,6 +1,6 @@
-import { combinationsBySingleArray } from './combination';
-import { Key } from './keyvalue/key';
-import { Value } from './keyvalue/value';
+import { combinationsBySingleArray } from '../combination';
+import { Key } from './key';
+import { Value } from './value';
 
 export class KeyValueMap extends Map<Key, Value> {
     static cache = new Map<string, KeyValueMap>();

@@ -1,6 +1,8 @@
 import { Combinations } from './combination';
 import { AssertionError } from './exception';
-import { Key, KeyValueMap, Value } from './keyvalue';
+import { Key } from './keyvalue/key';
+import { KeyValueMap } from './keyvalue/keyvalue';
+import { Value } from './keyvalue/value';
 
 export class PictResult {
     private readonly keys: Key[];

@@ -1,6 +1,8 @@
 import { Constraint } from './constraint/constraint';
-import { Key, KeyValueMap, Value } from './keyvalue';
+import { KeyValueMap } from './keyvalue/keyvalue';
 import { matchAllConstraints } from './constraint/constraint';
+import { Value } from './keyvalue/value';
+import { Key } from './keyvalue/key';
 
 export class Combinations {
     keys: Key[];

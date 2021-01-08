@@ -1,6 +1,7 @@
 import * as S from './sentenceParser';
 import { Pict } from '../evaluator';
-import { Key, Value } from '../keyvalue';
+import { Key } from '../keyvalue/key';
+import { Value } from '../keyvalue/value';
 import { Constraint } from '../constraint/constraint';
 
 export class Parser {
