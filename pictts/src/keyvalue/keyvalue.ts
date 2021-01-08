@@ -5,6 +5,7 @@ import { Value } from './value';
 export class KeyValueMap {
     private source: Map<Key, Value> = new Map();
     static cache = new Map<string, KeyValueMap>();
+    private cacheKeyCache: string | undefined;
 
     private static fromCache(map: KeyValueMap) {
         const cacheKey = map.cacheKey();
@@ -54,15 +55,18 @@ export class KeyValueMap {
     }
 
     cacheKey(): string {
-        return JSON.stringify(
-            Array.from(this.source).sort((a, b) => {
-                if (a[0].key > b[0].key) {
-                    return 1;
-                } else {
-                    return -1;
-                }
-            })
-        );
+        if (this.cacheKeyCache === undefined) {
+            this.cacheKeyCache = JSON.stringify(
+                Array.from(this.source).sort((a, b) => {
+                    if (a[0].key > b[0].key) {
+                        return 1;
+                    } else {
+                        return -1;
+                    }
+                })
+            );
+        }
+        return this.cacheKeyCache;
     }
 
     /**
