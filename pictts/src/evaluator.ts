@@ -79,7 +79,6 @@ export class Pict {
         const allCombinations: C.Combinations[] = this.buildAllSlot(
             keyCombinations
         );
-        // TODO not need working
         allCombinations.forEach((c) => c.applyConstraints(this.constraints));
 
         // consume slots and assemble results
