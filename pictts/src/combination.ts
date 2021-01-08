@@ -43,7 +43,7 @@ export class Combinations {
 
     removeFromUncovered(target: KeyValueMap): void {
         const cache = this.uncovered.filter((c) => {
-            return !this.equalsAllElements(c, target);
+            return c !== target;
         });
 
         this.uncovered = cache;
@@ -51,7 +51,7 @@ export class Combinations {
 
     removeFromCovered(target: KeyValueMap): void {
         const cache = this.covered.filter((c) => {
-            return !this.equalsAllElements(c, target);
+            return c !== target;
         });
 
         this.covered = cache;
@@ -60,17 +60,6 @@ export class Combinations {
     markAsUsed(target: KeyValueMap): void {
         this.removeFromUncovered(target);
         this.covered.push(target);
-    }
-
-    private equalsAllElements(
-        target1: KeyValueMap,
-        target2: KeyValueMap
-    ): boolean {
-        if (target1 === undefined || target2 === undefined) {
-            return target1 === target2;
-        }
-
-        return target1 === target2;
     }
 }
 
