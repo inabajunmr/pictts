@@ -1,5 +1,5 @@
 import { Constraint } from './constraint/constraint';
-import { Key, KeyValueMap, Value } from './keyvalue';
+import { Key, KeyValueMap, map, Value } from './keyvalue';
 import { matchAllConstraints } from './constraint/constraint';
 
 export class Combinations {
@@ -17,30 +17,25 @@ export class Combinations {
 
     applyConstraints(constraints: Constraint[]): void {
         // filter only constraints matched slot
-        const matched = this.uncovered.filter((v) =>
+        const matched = this.all.filter((v) =>
             matchAllConstraints(constraints, v)
         );
-        const impossibles = this.uncovered.filter(
+        const impossibles = this.all.filter(
             (v) => !matchAllConstraints(constraints, v)
         );
 
-        this.set(matched);
+        this.uncovered = matched;
         this.excluded = impossibles;
         if (this.uncovered.length === 0) {
             this.done = true;
         }
     }
 
-    set(combinations: KeyValueMap[]): void {
-        this.uncovered = [...combinations];
-    }
-
     push(combination: KeyValueMap): void {
-        this.uncovered.push(combination);
+        this.all.push(combination);
     }
 
     markAsImpossible(target: KeyValueMap): void {
-        this.removeFromValid(target);
         this.removeFromWorking(target);
         this.excluded.push(target);
         const cache1 = this.uncovered.filter((c) => {

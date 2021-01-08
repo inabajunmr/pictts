@@ -44,25 +44,25 @@ test('allCombinationsByMultipleArray', () => {
     );
     expect(actual.keys).toStrictEqual([Key.of('A'), Key.of('X')]);
 
-    expect(actual.uncovered[0].get(Key.of('A'))?.value).toBe('a');
-    expect(actual.uncovered[0].get(Key.of('X'))?.value).toBe('x');
-    expect(actual.uncovered[1].get(Key.of('A'))?.value).toBe('a');
-    expect(actual.uncovered[1].get(Key.of('X'))?.value).toBe('y');
-    expect(actual.uncovered[2].get(Key.of('A'))?.value).toBe('a');
-    expect(actual.uncovered[2].get(Key.of('X'))?.value).toBe('z');
-    expect(actual.uncovered[3].get(Key.of('A'))?.value).toBe('b');
-    expect(actual.uncovered[3].get(Key.of('X'))?.value).toBe('x');
-    expect(actual.uncovered[4].get(Key.of('A'))?.value).toBe('b');
-    expect(actual.uncovered[4].get(Key.of('X'))?.value).toBe('y');
-    expect(actual.uncovered[5].get(Key.of('A'))?.value).toBe('b');
-    expect(actual.uncovered[5].get(Key.of('X'))?.value).toBe('z');
-    expect(actual.uncovered[6].get(Key.of('A'))?.value).toBe('c');
-    expect(actual.uncovered[6].get(Key.of('X'))?.value).toBe('x');
-    expect(actual.uncovered[7].get(Key.of('A'))?.value).toBe('c');
-    expect(actual.uncovered[7].get(Key.of('X'))?.value).toBe('y');
-    expect(actual.uncovered[8].get(Key.of('A'))?.value).toBe('c');
-    expect(actual.uncovered[8].get(Key.of('X'))?.value).toBe('z');
-    expect(actual.uncovered.length).toBe(9);
+    expect(actual.all[0].get(Key.of('A'))?.value).toBe('a');
+    expect(actual.all[0].get(Key.of('X'))?.value).toBe('x');
+    expect(actual.all[1].get(Key.of('A'))?.value).toBe('a');
+    expect(actual.all[1].get(Key.of('X'))?.value).toBe('y');
+    expect(actual.all[2].get(Key.of('A'))?.value).toBe('a');
+    expect(actual.all[2].get(Key.of('X'))?.value).toBe('z');
+    expect(actual.all[3].get(Key.of('A'))?.value).toBe('b');
+    expect(actual.all[3].get(Key.of('X'))?.value).toBe('x');
+    expect(actual.all[4].get(Key.of('A'))?.value).toBe('b');
+    expect(actual.all[4].get(Key.of('X'))?.value).toBe('y');
+    expect(actual.all[5].get(Key.of('A'))?.value).toBe('b');
+    expect(actual.all[5].get(Key.of('X'))?.value).toBe('z');
+    expect(actual.all[6].get(Key.of('A'))?.value).toBe('c');
+    expect(actual.all[6].get(Key.of('X'))?.value).toBe('x');
+    expect(actual.all[7].get(Key.of('A'))?.value).toBe('c');
+    expect(actual.all[7].get(Key.of('X'))?.value).toBe('y');
+    expect(actual.all[8].get(Key.of('A'))?.value).toBe('c');
+    expect(actual.all[8].get(Key.of('X'))?.value).toBe('z');
+    expect(actual.all.length).toBe(9);
 });
 
 test('longestCombination no exceptkeys', () => {
