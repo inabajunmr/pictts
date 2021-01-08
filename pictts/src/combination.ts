@@ -206,7 +206,7 @@ export function longestCombination(
         });
     }
 
-    const withoutDone = nonUsed.filter((e) => !e.done);
+    const withoutDone = nonUsed.filter((e) => !e.isDone());
     if (withoutDone.length !== 0) {
         // if there are not done combinations, return it
         return withoutDone.reduce((b, a) => {
