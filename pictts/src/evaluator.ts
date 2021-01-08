@@ -1,9 +1,11 @@
 import * as C from './combination';
 import { Constraint, matchAllConstraints } from './constraint/constraint';
+import { Key } from './key';
 
-import { containsKey1InKey2, Key, KeyValueMap, Value } from './keyvalue';
+import { containsKey1InKey2, KeyValueMap } from './keyvalue';
 import { Random } from './random';
 import { PictResult } from './pictResult';
+import { Value } from './value';
 export class Pict {
     random: Random = new Random();
 

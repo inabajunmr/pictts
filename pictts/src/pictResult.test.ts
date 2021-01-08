@@ -1,4 +1,5 @@
-import { Key, KeyValueMap, map, map2, map3 } from './keyvalue';
+import { Key } from './key';
+import { map, map2, map3 } from './keyvalue';
 import { PictResult } from './pictResult';
 
 test('put', () => {

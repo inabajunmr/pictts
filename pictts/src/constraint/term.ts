@@ -1,5 +1,6 @@
 import { ParseException } from '../exception';
-import { Key, KeyValueMap, Value, ValueType } from '../keyvalue';
+import { Key } from '../key';
+import { KeyValueMap } from '../keyvalue';
 import {
     EqualToken,
     GreaterThanEqualToken,
@@ -16,6 +17,7 @@ import {
     Token,
     NumberToken,
 } from '../parser/token';
+import { Value, ValueType } from '../value';
 import { Clause } from './clause';
 import { ForceBoolean } from './forceBool';
 

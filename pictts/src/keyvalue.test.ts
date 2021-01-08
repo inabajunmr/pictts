@@ -1,4 +1,6 @@
-import { KeyValueMap, Key, Value, map2, map3 } from './keyvalue';
+import { Key } from './key';
+import { KeyValueMap, map2, map3 } from './keyvalue';
+import { Value } from './value';
 
 test('empty', () => {
     expect(KeyValueMap.empty() === KeyValueMap.empty()).toBe(true);
