@@ -91,7 +91,6 @@ export class Pict {
             // get next slot from longest combinations
             const exceptKeys = result.nowKey(); // if longest combinations is the same as result, it will be skipped.
             const [suitable, fromAll] = this.nextSlot(
-                // TODO uncovered1なのにdoneのケースが在る
                 allCombinations,
                 [exceptKeys],
                 result.nowLine(),
@@ -224,9 +223,6 @@ export class Pict {
         const nextSlot = this.random.randomElement(suitables);
 
         // mark as used
-        // TODO workingからvalidへ
-        // TODO このメソッドの中でやるとimpossibleがバグる
-        combinations.removeFromUncovered(nextSlot);
         combinations.markAsUsed(nextSlot);
         return [nextSlot, fromAll];
     }
