@@ -166,10 +166,10 @@ export class Combinations {
 
     applyConstraints(constraints: Constraint[]): void {
         // filter only constraints matched slot
-        const matched = this.allCombinations.filter((v) =>
+        const matched = this.workingCombinations.filter((v) =>
             matchAllConstraints(constraints, v)
         );
-        const impossibles = this.allCombinations.filter(
+        const impossibles = this.workingCombinations.filter(
             (v) => !matchAllConstraints(constraints, v)
         );
 
@@ -182,11 +182,10 @@ export class Combinations {
 
     set(combinations: KeyValueMap[]): void {
         this.workingCombinations = [...combinations];
-        this.validCombinations = [...combinations];
     }
 
     push(combination: KeyValueMap): void {
-        this.allCombinations.push(combination);
+        this.workingCombinations.push(combination);
     }
 
     markAsImpossible(target: KeyValueMap): void {
@@ -218,6 +217,11 @@ export class Combinations {
         if (this.workingCombinations.length === 0) {
             this.done = true;
         }
+    }
+
+    markAsUsed(target: KeyValueMap): void {
+        this.removeFromWorking(target);
+        this.validCombinations.push(target);
     }
 
     removeFromValid(target: KeyValueMap): void {

@@ -79,6 +79,7 @@ export class Pict {
         const allCombinations: C.Combinations[] = this.buildAllSlot(
             keyCombinations
         );
+        // TODO not need working
         allCombinations.forEach((c) => c.applyConstraints(this.constraints));
 
         // consume slots and assemble results
@@ -112,8 +113,8 @@ export class Pict {
         result.clean();
 
         // assertion
-        result.setSlots(allCombinations);
-        result.assert();
+        // result.setSlots(allCombinations);
+        // result.assert();
 
         return result;
     }
@@ -172,6 +173,7 @@ export class Pict {
                 combinations.workingCombinations
             );
             combinations.removeFromWorking(result);
+            combinations.markAsUsed(result);
             return [result, false];
         }
 
@@ -221,7 +223,10 @@ export class Pict {
         const nextSlot = this.random.randomElement(suitables);
 
         // mark as used
+        // TODO workingからvalidへ
+        // TODO このメソッドの中でやるとimpossibleがバグる
         combinations.removeFromWorking(nextSlot);
+        combinations.markAsUsed(nextSlot);
         return [nextSlot, fromAll];
     }
 
