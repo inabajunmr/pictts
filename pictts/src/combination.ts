@@ -2,6 +2,99 @@ import { Constraint } from './constraint/constraint';
 import { Key, KeyValueMap, Value } from './keyvalue';
 import { matchAllConstraints } from './constraint/constraint';
 
+export class Combinations {
+    keys: Key[];
+    uncovered: KeyValueMap[] = [];
+    covered: KeyValueMap[] = [];
+    excluded: KeyValueMap[] = [];
+    all: KeyValueMap[] = [];
+
+    // all combinations already applied, true
+    done = false;
+    constructor(keys: Key[]) {
+        this.keys = keys;
+    }
+
+    applyConstraints(constraints: Constraint[]): void {
+        // filter only constraints matched slot
+        const matched = this.uncovered.filter((v) =>
+            matchAllConstraints(constraints, v)
+        );
+        const impossibles = this.uncovered.filter(
+            (v) => !matchAllConstraints(constraints, v)
+        );
+
+        this.set(matched);
+        this.excluded = impossibles;
+        if (this.uncovered.length === 0) {
+            this.done = true;
+        }
+    }
+
+    set(combinations: KeyValueMap[]): void {
+        this.uncovered = [...combinations];
+    }
+
+    push(combination: KeyValueMap): void {
+        this.uncovered.push(combination);
+    }
+
+    markAsImpossible(target: KeyValueMap): void {
+        this.removeFromValid(target);
+        this.removeFromWorking(target);
+        this.excluded.push(target);
+        const cache1 = this.uncovered.filter((c) => {
+            return !this.equalsAllElements(c, target);
+        });
+
+        this.uncovered = cache1;
+        if (this.uncovered.length == 0) {
+            this.done = true;
+        }
+
+        const cache2 = this.covered.filter((c) => {
+            return !this.equalsAllElements(c, target);
+        });
+
+        this.covered = cache2;
+    }
+
+    removeFromWorking(target: KeyValueMap): void {
+        const cache = this.uncovered.filter((c) => {
+            return !this.equalsAllElements(c, target);
+        });
+
+        this.uncovered = cache;
+        if (this.uncovered.length === 0) {
+            this.done = true;
+        }
+    }
+
+    markAsUsed(target: KeyValueMap): void {
+        this.removeFromWorking(target);
+        this.covered.push(target);
+    }
+
+    removeFromValid(target: KeyValueMap): void {
+        const cache = this.covered.filter((c) => {
+            return !this.equalsAllElements(c, target);
+        });
+
+        this.covered = cache;
+    }
+
+    private equalsAllElements(
+        target1: KeyValueMap,
+        target2: KeyValueMap
+    ): boolean {
+        if (target1 === undefined || target2 === undefined) {
+            return target1 === target2;
+        }
+
+        return target1 === target2;
+    }
+}
+
 /**
  * All combination by multiple params.
  *
@@ -138,108 +231,12 @@ export function longestCombination(
     if (withoutDone.length !== 0) {
         // if there are not done combinations, return it
         return withoutDone.reduce((b, a) => {
-            return b.workingCombinations.length >= a.workingCombinations.length
-                ? b
-                : a;
+            return b.uncovered.length >= a.uncovered.length ? b : a;
         });
     }
 
     // if there are no not done combinations, return done it.
     return nonUsed.reduce((b, a) => {
-        return b.workingCombinations.length >= a.workingCombinations.length
-            ? b
-            : a;
+        return b.uncovered.length >= a.uncovered.length ? b : a;
     });
-}
-export class Combinations {
-    keys: Key[];
-    workingCombinations: KeyValueMap[] = [];
-    validCombinations: KeyValueMap[] = [];
-    impossibleCombinations: KeyValueMap[] = [];
-    allCombinations: KeyValueMap[] = [];
-
-    // all combinations already applied, true
-    done = false;
-    constructor(keys: Key[]) {
-        this.keys = keys;
-    }
-
-    applyConstraints(constraints: Constraint[]): void {
-        // filter only constraints matched slot
-        const matched = this.workingCombinations.filter((v) =>
-            matchAllConstraints(constraints, v)
-        );
-        const impossibles = this.workingCombinations.filter(
-            (v) => !matchAllConstraints(constraints, v)
-        );
-
-        this.set(matched);
-        this.impossibleCombinations = impossibles;
-        if (this.workingCombinations.length === 0) {
-            this.done = true;
-        }
-    }
-
-    set(combinations: KeyValueMap[]): void {
-        this.workingCombinations = [...combinations];
-    }
-
-    push(combination: KeyValueMap): void {
-        this.workingCombinations.push(combination);
-    }
-
-    markAsImpossible(target: KeyValueMap): void {
-        this.removeFromValid(target);
-        this.removeFromWorking(target);
-        this.impossibleCombinations.push(target);
-        const cache1 = this.workingCombinations.filter((c) => {
-            return !this.equalsAllElements(c, target);
-        });
-
-        this.workingCombinations = cache1;
-        if (this.workingCombinations.length == 0) {
-            this.done = true;
-        }
-
-        const cache2 = this.validCombinations.filter((c) => {
-            return !this.equalsAllElements(c, target);
-        });
-
-        this.validCombinations = cache2;
-    }
-
-    removeFromWorking(target: KeyValueMap): void {
-        const cache = this.workingCombinations.filter((c) => {
-            return !this.equalsAllElements(c, target);
-        });
-
-        this.workingCombinations = cache;
-        if (this.workingCombinations.length === 0) {
-            this.done = true;
-        }
-    }
-
-    markAsUsed(target: KeyValueMap): void {
-        this.removeFromWorking(target);
-        this.validCombinations.push(target);
-    }
-
-    removeFromValid(target: KeyValueMap): void {
-        const cache = this.validCombinations.filter((c) => {
-            return !this.equalsAllElements(c, target);
-        });
-
-        this.validCombinations = cache;
-    }
-
-    private equalsAllElements(
-        target1: KeyValueMap,
-        target2: KeyValueMap
-    ): boolean {
-        if (target1 === undefined || target2 === undefined) {
-            return target1 === target2;
-        }
-
-        return target1 === target2;
-    }
 }

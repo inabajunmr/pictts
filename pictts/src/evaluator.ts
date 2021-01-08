@@ -169,25 +169,20 @@ export class Pict {
         if (line.size === 0) {
             // next line equals combinations.workingCombinations[0]
             // workingCombinations already omitted constraints violation
-            const result = this.random.randomElement(
-                combinations.workingCombinations
-            );
+            const result = this.random.randomElement(combinations.uncovered);
             combinations.removeFromWorking(result);
             combinations.markAsUsed(result);
             return [result, false];
         }
 
         // from working
-        let suitables = this.matchedSlot(
-            combinations.workingCombinations,
-            line
-        );
+        let suitables = this.matchedSlot(combinations.uncovered, line);
 
         let fromAll = false;
         if (suitables.length === 0) {
             // if all working aren't matched, from all
             fromAll = true;
-            suitables = this.matchedSlot(combinations.validCombinations, line);
+            suitables = this.matchedSlot(combinations.covered, line);
         }
 
         if (suitables.length === 0) {

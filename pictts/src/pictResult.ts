@@ -29,14 +29,14 @@ export class PictResult {
 
     setSlots(combinations: Combinations[]): void {
         combinations.forEach((c) => {
-            c.validCombinations.forEach((ic) => {
+            c.covered.forEach((ic) => {
                 this.validSlots.push(ic);
             });
 
-            c.impossibleCombinations.forEach((ic) => {
+            c.excluded.forEach((ic) => {
                 this.impossibleSlots.push(ic);
             });
-            c.workingCombinations.forEach((ic) => {
+            c.uncovered.forEach((ic) => {
                 this.allSlots.push(ic);
             });
         });
