@@ -1,4 +1,4 @@
-import { map, map2, map3 } from '../keyvalue';
+import { map, map2, map3 } from '../keyvalue/keyvalue';
 import { ConstraintsLexer } from '../parser/constrainsLexer';
 import { Predicate } from './predicate';
 

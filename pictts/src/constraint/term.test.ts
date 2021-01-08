@@ -1,4 +1,4 @@
-import { map, map2 } from '../keyvalue';
+import { map, map2 } from '../keyvalue/keyvalue';
 import { ConstraintsLexer } from '../parser/constrainsLexer';
 import { Term } from './term';
 

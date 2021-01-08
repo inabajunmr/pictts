@@ -4,7 +4,9 @@ import {
     longestCombination,
     Combinations,
 } from './combination';
-import { Key, map2, Value } from './keyvalue';
+import { Key } from './keyvalue/key';
+import { map2 } from './keyvalue/keyvalue';
+import { Value } from './keyvalue/value';
 
 test('combinationsBySingleArray 2factors', () => {
     const actual = combinationsBySingleArray(
