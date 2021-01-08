@@ -214,6 +214,7 @@ export class Pict {
                 // mark as impossible
                 revertTargetCombinations.markAsImpossible(line);
             } else if (!all) {
+                // revert
                 revertTargetCombinations.removeFromCovered(line);
                 revertTargetCombinations.uncovered.push(line);
             }
