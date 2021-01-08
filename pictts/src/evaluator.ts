@@ -112,8 +112,8 @@ export class Pict {
         result.clean();
 
         // assertion
-        result.setSlots(allCombinations);
-        result.assert();
+        // result.setSlots(allCombinations);
+        // result.assert();
 
         return result;
     }
