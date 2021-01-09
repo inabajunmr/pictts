@@ -260,7 +260,6 @@ export class Pict {
                 return true;
             }
 
-            // TODO not line into c, c into line
             let merge = line;
             Array.from(c).forEach((k) => {
                 merge = KeyValueMap.set(merge, k[0], k[1]);
