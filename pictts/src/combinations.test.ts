@@ -94,14 +94,20 @@ test('longestCombination exceptKeys', () => {
 });
 
 test('shuffle', () => {
-    // TODO
-    const c1 = new Combinations([Key.of('A')]);
+    const random = new Random();
+    for (let index = 0; index < 1000; index++) {
+        const c1 = new Combinations([Key.of('A')]);
 
-    c1.uncovered.push(map('A', '1'));
-    c1.uncovered.push(map('B', '2'));
-    c1.uncovered.push(map('C', '3'));
-    c1.uncovered.push(map('D', '4'));
+        c1.uncovered.push(map('A', '1'));
+        c1.uncovered.push(map('B', '2'));
+        c1.uncovered.push(map('C', '3'));
+        c1.uncovered.push(map('D', '4'));
 
-    c1.shuffle(new Random());
-    c1.uncovered;
+        c1.shuffle(random);
+        expect(c1.uncovered.length).toBe(4);
+        expect(c1.uncovered.indexOf(map('A', '1'))).not.toBe(-1);
+        expect(c1.uncovered.indexOf(map('B', '2'))).not.toBe(-1);
+        expect(c1.uncovered.indexOf(map('C', '3'))).not.toBe(-1);
+        expect(c1.uncovered.indexOf(map('D', '4'))).not.toBe(-1);
+    }
 });
