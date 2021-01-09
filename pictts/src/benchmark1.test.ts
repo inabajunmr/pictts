@@ -155,3 +155,43 @@ avg:${count}
     fs.appendFileSync('benchmark.txt', result);
     expect(count).toBeLessThan(2600);
 });
+
+test('benchmark5', () => {
+    const sut = new Parser(
+        `
+        Type:           Primary, Logical, Single, Span, Stripe, Mirror, RAID-5
+        Size:           10, 100, 500, 1000, 5000, 10000, 40000
+        Format method:  quick, slow
+        File system:    FAT, FAT32, NTFS
+        Cluster size:   512, 1024, 2048, 4096, 8192, 16384, 32768, 65536
+        Compression:    on, off
+        F:              F1,F2,F3,F4
+`
+    ).parse();
+    sut.setFactorCount(6);
+    let min = 100000000;
+    let max = 0;
+    let count = 0;
+    const start = performance.now();
+    for (let index = 0; index < 1; index++) {
+        const actual = sut.testCases();
+        if (min > actual.result.length) {
+            min = actual.result.length;
+        }
+        if (max < actual.result.length) {
+            max = actual.result.length;
+        }
+        count += actual.result.length;
+    }
+
+    const result = `
+### benchmark5(order=6)
+time:${performance.now() - start}
+min:${min}
+max:${max}
+avg:${count}
+`;
+    console.log(result);
+    fs.appendFileSync('benchmark.txt', result);
+    expect(count).toBeLessThan(11000);
+});
