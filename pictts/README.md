@@ -2,6 +2,19 @@
 
 PICT clone by TypeScript.
 
+## Features
+
+| Features                               | pictts      | [microsoft/pict](https://github.com/microsoft/pict) |
+| -------------------------------------- | ----------- | --------------------------------------------------- |
+| Conditional Constraints                | ✅          | ✅                                                  |
+| Unconditional Constraints (Invariants) | Unsupported | ✅                                                  |
+| Re-using Parameter Definitions         | Unsupported | ✅                                                  |
+| Sub-Models                             | Unsupported | ✅                                                  |
+| Aliasing                               | Unsupported | ✅                                                  |
+| Negative Testing                       | Unsupported | ✅                                                  |
+| Weighting                              | Unsupported | ✅                                                  |
+| Seeding                                | Unsupported | ✅                                                  |
+
 ## Example
 
 ```typescript

@@ -11,6 +11,20 @@
 
 https://inabajunmr.github.io/pictts/pages/public/
 
+## Features
+
+| Features                               | pictts      | [microsoft/pict](https://github.com/microsoft/pict) |
+| -------------------------------------- | ----------- | --------------------------------------------------- |
+| Conditional Constraints                | ✅          | ✅                                                  |
+| Unconditional Constraints (Invariants) | Unsupported | ✅                                                  |
+| Re-using Parameter Definitions         | Unsupported | ✅                                                  |
+| Sub-Models                             | Unsupported | ✅                                                  |
+| Aliasing                               | Unsupported | ✅                                                  |
+| Negative Testing                       | Unsupported | ✅                                                  |
+| Weighting                              | Unsupported | ✅                                                  |
+| Seeding                                | Unsupported | ✅                                                  |
+
+
 ## Example
 
 [Read it for other usage.](./pictts)
