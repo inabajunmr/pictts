@@ -4,7 +4,8 @@ import {
     longestCombination,
     Combinations,
 } from './combination';
-import { Key, map2, Value } from './keyvalue';
+import { Key, map, map2, Value } from './keyvalue';
+import { Random } from './random';
 
 test('combinationsBySingleArray 2factors', () => {
     const actual = combinationsBySingleArray(
@@ -90,4 +91,17 @@ test('longestCombination exceptKeys', () => {
     );
     expect(actual.keys).toStrictEqual(c2.keys);
     expect(actual.uncovered).toStrictEqual(c2.uncovered);
+});
+
+test('shuffle', () => {
+    // TODO
+    const c1 = new Combinations([Key.of('A')]);
+
+    c1.uncovered.push(map('A', '1'));
+    c1.uncovered.push(map('B', '2'));
+    c1.uncovered.push(map('C', '3'));
+    c1.uncovered.push(map('D', '4'));
+
+    c1.shuffle(new Random());
+    c1.uncovered;
 });

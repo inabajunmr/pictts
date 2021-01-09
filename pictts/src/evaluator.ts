@@ -6,6 +6,7 @@ import { Random } from './random';
 import { PictResult } from './pictResult';
 export class Pict {
     random: Random = new Random();
+    seed = 88675123;
 
     // like `A:A1,A2\nB:B1,B2`
     readonly parameters: Map<Key, Value[]>;
@@ -42,6 +43,7 @@ export class Pict {
 
     setRandomSeed(seed: number): void {
         this.random = new Random(seed);
+        this.seed = seed;
     }
 
     setPower(power: number): Pict {
@@ -80,6 +82,7 @@ export class Pict {
             keyCombinations
         );
         allCombinations.forEach((c) => c.applyConstraints(this.constraints));
+        allCombinations.forEach((c) => c.shuffle(this.random));
 
         // consume slots and assemble results
         const result = new PictResult(keys, this.factorCount);
@@ -173,6 +176,7 @@ export class Pict {
             const result = this.random.randomElement(combinations.uncovered);
             combinations.removeFromUncovered(result);
             combinations.markAsUsed(result);
+
             return [result, false];
         }
 
@@ -257,18 +261,19 @@ export class Pict {
                 return true;
             }
 
-            if (this.impossibleCombinations.length === 0) {
-                return true;
-            }
-
             let merge = c;
             Array.from(line).forEach((k) => {
                 merge = KeyValueMap.set(merge, k[0], k[1]);
             });
-            return (
-                matchAllConstraints(this.constraints, merge) &&
-                !this.contains(c, this.impossibleCombinations)
-            );
+            if (!matchAllConstraints(this.constraints, merge)) {
+                return false;
+            }
+
+            if (this.impossibleCombinations.length === 0) {
+                return true;
+            }
+
+            return !this.contains(c, this.impossibleCombinations);
         });
     }
 

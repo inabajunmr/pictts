@@ -1,6 +1,7 @@
 import { Constraint } from './constraint/constraint';
 import { Key, KeyValueMap, Value } from './keyvalue';
 import { matchAllConstraints } from './constraint/constraint';
+import { Random } from './random';
 
 export class Combinations {
     keys: Key[];
@@ -11,6 +12,15 @@ export class Combinations {
 
     constructor(keys: Key[]) {
         this.keys = keys;
+    }
+
+    shuffle(random: Random): void {
+        for (let i = this.uncovered.length - 1; i > 0; i--) {
+            const j = random.random(0, i - 1);
+            const tmp = this.uncovered[i];
+            this.uncovered[i] = this.uncovered[j];
+            this.uncovered[j] = tmp;
+        }
     }
 
     isDone(): boolean {
