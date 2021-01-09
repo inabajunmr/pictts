@@ -180,13 +180,13 @@ export class Pict {
         let suitables = this.matchedSlot(combinations.uncovered, line);
 
         let fromAll = false;
-        if (suitables.length === 0) {
+        if (suitables === undefined) {
             // if all working aren't matched, from all
             fromAll = true;
             suitables = this.matchedSlot(combinations.covered, line);
         }
 
-        if (suitables.length === 0) {
+        if (suitables === undefined) {
             if (allCombinations.length !== usedKeyCombinations.length) {
                 // find other combinations
                 return this.nextSlot(
@@ -219,16 +219,17 @@ export class Pict {
             return [KeyValueMap.empty(), false];
         }
 
-        const nextSlot = this.random.randomElement(suitables);
-
         // mark as used
-        combinations.markAsUsed(nextSlot);
-        return [nextSlot, fromAll];
+        combinations.markAsUsed(suitables);
+        return [suitables, fromAll];
     }
 
-    matchedSlot(combinations: KeyValueMap[], line: KeyValueMap): KeyValueMap[] {
+    matchedSlot(
+        combinations: KeyValueMap[],
+        line: KeyValueMap
+    ): KeyValueMap | undefined {
         if (combinations.length === 0) {
-            return [];
+            return undefined;
         }
         // if line has keys['A', 'B', 'C'] and combinations has keys ['A', 'C', 'D'], mutualKeys are ['A', 'C']
         // mutualKeys matched value need to be same between combinations and line
@@ -236,8 +237,10 @@ export class Pict {
             line.has(k)
         );
 
+        // TODO random
         // combinations values and lines values matched in a range of mutual keys
-        const valueMatched = combinations.filter((c) => {
+        return combinations.find((c) => {
+            // all mutualKeyValue matched
             const allMatched = mutualKeys.reduce((acc, k) => {
                 if (line.get(k) !== c.get(k)) {
                     // if at least one value don't match, this combinations is invalid
@@ -245,33 +248,35 @@ export class Pict {
                 }
                 return acc;
             }, true);
-            return allMatched;
-        });
 
-        if (this.constraints.length === 0) {
-            return valueMatched;
-        }
+            if (!allMatched) {
+                return false;
+            }
 
-        // filtering by constraints
-        const constraintsFiltered = valueMatched.filter((s) => {
-            let merge = s;
+            if (this.constraints.length === 0) {
+                return true;
+            }
 
+            if (this.impossibleCombinations.length === 0) {
+                return true;
+            }
+
+            let merge = c;
             Array.from(line).forEach((k) => {
                 merge = KeyValueMap.set(merge, k[0], k[1]);
             });
-            return matchAllConstraints(this.constraints, merge);
+            return (
+                matchAllConstraints(this.constraints, merge) &&
+                !this.contains(c, this.impossibleCombinations)
+            );
         });
+    }
 
-        // filtering by impossibles
-        const contains = (target: KeyValueMap, maps: KeyValueMap[]) => {
-            if (maps.length === 0) {
-                return false;
-            }
-            return maps.filter((m) => m === target).length !== 0;
-        };
-
-        return constraintsFiltered.filter((c) => {
-            return !contains(c, this.impossibleCombinations);
-        });
+    // filtering by impossibles
+    contains(target: KeyValueMap, maps: KeyValueMap[]): boolean {
+        if (maps.length === 0) {
+            return false;
+        }
+        return maps.filter((m) => m === target).length !== 0;
     }
 }
