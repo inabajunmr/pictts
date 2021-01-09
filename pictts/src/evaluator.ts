@@ -261,8 +261,8 @@ export class Pict {
             }
 
             // TODO not line into c, c into line
-            let merge = c;
-            Array.from(line).forEach((k) => {
+            let merge = line;
+            Array.from(c).forEach((k) => {
                 merge = KeyValueMap.set(merge, k[0], k[1]);
             });
             if (!matchAllConstraints(this.constraints, merge)) {
