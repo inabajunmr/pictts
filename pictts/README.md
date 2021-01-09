@@ -1,6 +1,6 @@
 # pictts
 
-PICT clone by TypeScript.
+PICT clone in TypeScript.
 
 ## Features
 

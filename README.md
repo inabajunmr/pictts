@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/inabajunmr/pictts/workflows/CI/badge.svg)](https://github.com/inabajunmr/pictts/actions?query=branch%3Amain)
 
-[PICT](https://github.com/microsoft/pict) clone by TypeScript.
+[PICT](https://github.com/microsoft/pict) clone in TypeScript.
 
 * [Library implementation & documentation](./pictts)
 * [UI implementation](./pages)
