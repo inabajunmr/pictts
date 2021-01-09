@@ -139,3 +139,9 @@ export class ParametersSentence {
         return parameters;
     }
 }
+
+export class SubModelSentence {
+    readonly keys: Key[];
+    readonly order: number;
+    constructor(tokens: T.Token[]) {}
+}

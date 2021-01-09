@@ -1,6 +1,6 @@
 import * as T from './token';
 
-export class ConstraintsLexer {
+export class SubModelLexer {
     private index = 0;
     private readonly input: string;
 
@@ -29,26 +29,16 @@ export class ConstraintsLexer {
 
         try {
             switch (this.now) {
-                case '=':
-                    return T.EqualToken.TOKEN;
-                case ';':
-                    return T.SemicolonToken.TOKEN;
-                case '"':
-                    return new T.StringToken(this.readString());
-                case '(':
-                    return T.LParenthesesToken.TOKEN;
-                case ')':
-                    return T.RParenthesesToken.TOKEN;
                 case '{':
                     return T.LCurlyBraceToken.TOKEN;
                 case '}':
                     return T.RCurlyBraceToken.TOKEN;
                 case ',':
                     return T.CommaToken.TOKEN;
-                case '[':
-                    return new T.ParameterNameToken(this.readParameterName());
+                case '@':
+                    return T.AtMarkToken.TOKEN;
                 default: {
-                    return new T.IdentToken(this.readIdent()).asConstraint();
+                    return new T.IdentToken(this.readIdent());
                 }
             }
         } finally {
@@ -78,12 +68,12 @@ export class ConstraintsLexer {
 
     private readIdent(): string {
         let result = '';
-
         while (
             this.now !== ' ' &&
             this.now !== '\n' &&
             this.now != '\r' &&
-            this.now != ';'
+            this.now != ',' &&
+            this.now != '}'
         ) {
             result += this.now;
             if (this.lastChar()) {
@@ -93,38 +83,8 @@ export class ConstraintsLexer {
         }
 
         // semicolon doesn't include in ident but need to recognize as token
-        if (this.now === ';') {
+        if (this.now === '}' || this.now === ',') {
             this.index--;
-        }
-
-        return result;
-    }
-
-    private readString(): string {
-        let result = '';
-        this.nextChar();
-
-        while (this.now !== '"') {
-            result += this.now;
-            if (this.lastChar()) {
-                return result;
-            }
-            this.nextChar();
-        }
-
-        return result;
-    }
-
-    private readParameterName(): string {
-        let result = '';
-        this.nextChar();
-
-        while (this.now !== ']') {
-            result += this.now;
-            if (this.lastChar()) {
-                return result;
-            }
-            this.nextChar();
         }
 
         return result;
