@@ -241,7 +241,6 @@ export class Pict {
             line.has(k)
         );
 
-        // TODO random
         // combinations values and lines values matched in a range of mutual keys
         return combinations.find((c) => {
             // all mutualKeyValue matched
@@ -261,6 +260,7 @@ export class Pict {
                 return true;
             }
 
+            // TODO not line into c, c into line
             let merge = c;
             Array.from(line).forEach((k) => {
                 merge = KeyValueMap.set(merge, k[0], k[1]);
