@@ -29,7 +29,7 @@ export class Lexer {
             withoutComment
                 .split('\n')
                 .filter((v) => v.indexOf(':') === -1)
-                .filter((v) => !v.startsWith('{'))
+                .filter((v) => v.startsWith('{'))
                 .map((v) => v.trim())
                 .reduce((a, v) => a + v + '\n', '')
         );
