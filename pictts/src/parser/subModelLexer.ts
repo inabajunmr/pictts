@@ -1,6 +1,6 @@
 import * as T from './token';
 
-export class ConstraintsLexer {
+export class SubModelLexer {
     private index = 0;
     private readonly input: string;
 
@@ -21,7 +21,7 @@ export class ConstraintsLexer {
     }
 
     private nextToken(): T.Token {
-        this.skipReturnAndWhitespace();
+        this.skipWhitespace();
 
         if (this.isEOF()) {
             return new T.EOFToken();
@@ -29,26 +29,20 @@ export class ConstraintsLexer {
 
         try {
             switch (this.now) {
-                case '=':
-                    return T.EqualToken.TOKEN;
-                case ';':
-                    return T.SemicolonToken.TOKEN;
-                case '"':
-                    return new T.StringToken(this.readString());
-                case '(':
-                    return T.LParenthesesToken.TOKEN;
-                case ')':
-                    return T.RParenthesesToken.TOKEN;
                 case '{':
                     return T.LCurlyBraceToken.TOKEN;
                 case '}':
                     return T.RCurlyBraceToken.TOKEN;
                 case ',':
                     return T.CommaToken.TOKEN;
-                case '[':
-                    return new T.ParameterNameToken(this.readParameterName());
+                case '@':
+                    return T.AtMarkToken.TOKEN;
+                case '\r':
+                case '\n':
+                    this.skipReturnAndWhitespace();
+                    return T.ReturnToken.TOKEN;
                 default: {
-                    return new T.IdentToken(this.readIdent()).asConstraint();
+                    return new T.IdentToken(this.readIdent());
                 }
             }
         } finally {
@@ -65,6 +59,10 @@ export class ConstraintsLexer {
         this.now = this.input.charAt(++this.index);
     }
 
+    private peekChar(): string {
+        return this.input.charAt(this.index + 1);
+    }
+
     private lastChar(): boolean {
         if (this.input.length - 1 == this.index) {
             return true;
@@ -79,59 +77,55 @@ export class ConstraintsLexer {
     private readIdent(): string {
         let result = '';
 
-        while (
-            this.now !== ' ' &&
-            this.now !== '\n' &&
-            this.now != '\r' &&
-            this.now != ';'
-        ) {
+        while (!this.endIdent()) {
             result += this.now;
             if (this.lastChar()) {
                 return result;
             }
             this.nextChar();
         }
-
-        // semicolon doesn't include in ident but need to recognize as token
-        if (this.now === ';') {
-            this.index--;
-        }
+        this.index--;
 
         return result;
     }
 
-    private readString(): string {
-        let result = '';
-        this.nextChar();
-
-        while (this.now !== '"') {
-            result += this.now;
-            if (this.lastChar()) {
-                return result;
-            }
-            this.nextChar();
+    private endIdent(): boolean {
+        const next = this.nextWithoutSpace();
+        switch (next) {
+            case ',':
+            case '\n':
+            case '\r':
+            case '}':
+                return true;
+            default:
+                return false;
         }
-
-        return result;
     }
 
-    private readParameterName(): string {
-        let result = '';
-        this.nextChar();
-
-        while (this.now !== ']') {
-            result += this.now;
-            if (this.lastChar()) {
-                return result;
+    private nextWithoutSpace(): string {
+        let next = this.now;
+        let index = this.index;
+        while (next === ' ') {
+            if (this.now.length == index) {
+                return '';
             }
+            next = this.input.charAt(++index);
+        }
+        return next;
+    }
+
+    private skipWhitespace() {
+        while (this.now === ' ') {
             this.nextChar();
         }
-
-        return result;
     }
 
     private skipReturnAndWhitespace() {
-        while (this.now === ' ' || this.now === '\r' || this.now === '\n') {
+        while (
+            this.peekChar() === '\r' ||
+            this.peekChar() === '\n' ||
+            this.peekChar() === ' '
+        ) {
             this.nextChar();
         }
     }

@@ -4,6 +4,8 @@ import { Constraint, matchAllConstraints } from './constraint/constraint';
 import { containsKey1InKey2, Key, KeyValueMap, Value } from './keyvalue';
 import { Random } from './random';
 import { PictResult } from './pictResult';
+import { SubModelSentence } from './parser/sentenceParser';
+import { SubModel } from './subModel/subModel';
 export class Pict {
     random: Random = new Random();
     seed = 88675123;
@@ -12,6 +14,8 @@ export class Pict {
     readonly parameters: Map<Key, Value[]>;
     // like `IF [A] = "A1" THEN [B] = "B1";`
     readonly constraints: Constraint[];
+    // like
+    readonly subModels: SubModel[];
 
     // constraints sometimes never allows the combination.
     // impossibles has disallowed combinations.
@@ -22,8 +26,13 @@ export class Pict {
 
     power = 1;
 
-    constructor(parameters: Map<Key, Value[]>, constraints: Constraint[]) {
+    constructor(
+        parameters: Map<Key, Value[]>,
+        subModels: SubModel[],
+        constraints: Constraint[]
+    ) {
         this.parameters = parameters;
+        this.subModels = subModels;
         this.constraints = constraints;
     }
 

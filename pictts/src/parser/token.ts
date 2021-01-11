@@ -96,6 +96,17 @@ export class CommaToken extends Token {
     }
 }
 
+export class AtMarkToken extends Token {
+    toString(): string {
+        return `@`;
+    }
+
+    static readonly TOKEN = new AtMarkToken();
+    private constructor() {
+        super();
+    }
+}
+
 /**
  * EOF
  */
