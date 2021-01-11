@@ -12,6 +12,8 @@ export class Pict {
     readonly parameters: Map<Key, Value[]>;
     // like `IF [A] = "A1" THEN [B] = "B1";`
     readonly constraints: Constraint[];
+    // like
+    readonly subModels: 
 
     // constraints sometimes never allows the combination.
     // impossibles has disallowed combinations.

@@ -2,6 +2,7 @@ import * as S from './sentenceParser';
 import { Pict } from '../evaluator';
 import { Key, Value } from '../keyvalue';
 import { Constraint } from '../constraint/constraint';
+import { SubModel } from '../subModel/subModel';
 
 export class Parser {
     private sentences: S.SentenceParser;
@@ -37,6 +38,18 @@ export class Parser {
             if (sentence.tokens.length !== 0) {
                 result.push(new Constraint(sentence));
             }
+        } while (!eof);
+        return result;
+    }
+
+    parseSubModels(): SubModel[] {
+        let eof = false;
+        const result: SubModel[] = [];
+        do {
+            // parse 1 sentence
+            const s = this.sentences.nextSubModelSentence();
+            eof = s[1];
+            result.push(new SubModel(s[0].keys, s[0].order));
         } while (!eof);
         return result;
     }
