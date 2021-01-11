@@ -11,7 +11,11 @@ export class Parser {
     }
 
     parse(): Pict {
-        return new Pict(this.parseParameters(), this.parseConstraints());
+        return new Pict(
+            this.parseParameters(),
+            this.parseSubModels(),
+            this.parseConstraints()
+        );
     }
 
     parseParameters(): Map<Key, Value[]> {
@@ -49,7 +53,9 @@ export class Parser {
             // parse 1 sentence
             const s = this.sentences.nextSubModelSentence();
             eof = s[1];
-            result.push(new SubModel(s[0].keys, s[0].order));
+            if (s[0] !== undefined) {
+                result.push(new SubModel(s[0].keys, s[0].order));
+            }
         } while (!eof);
         return result;
     }

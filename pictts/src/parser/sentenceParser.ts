@@ -49,7 +49,7 @@ export class SentenceParser {
      *
      * If the sentence is last, second return value is true.
      */
-    nextSubModelSentence(): [SubModelSentence, boolean] {
+    nextSubModelSentence(): [SubModelSentence | undefined, boolean] {
         const results: T.Token[] = [];
         let eof = false;
         for (; this.sindex < this.subModelTokens.length; this.sindex++) {
@@ -62,6 +62,10 @@ export class SentenceParser {
             }
 
             results.push(this.subModelTokens[this.sindex]);
+        }
+
+        if (results.length === 0) {
+            return [undefined, eof];
         }
 
         return [new SubModelSentence(results), eof];
